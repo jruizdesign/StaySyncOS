@@ -1,0 +1,7 @@
+{
+  "name": "StaySyncOS",
+  "description": "StaySyncOS: A high-performance, modular hotel management system featuring real-time logging, financial tracking, room configuration wizards, and AI-powered management insights. Copyright Jason Ruiz at JruizDesign.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
