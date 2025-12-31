@@ -10,12 +10,21 @@ export interface User {
   role: 'Admin' | 'Manager' | 'Reception' | 'Maintenance';
 }
 
+import { Functions, httpsCallable } from '@angular/fire/functions';
+
+declare global {
+  interface Window {
+    grecaptcha: any;
+  }
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private auth = inject(Auth);
   private router = inject(Router);
+  private functions = inject(Functions);
 
   // Expose Firebase User as a signal
   private firebaseUser = toSignal(user(this.auth));
@@ -39,7 +48,29 @@ export class AuthService {
     return !!this.currentUser();
   }
 
+  async verifyRecaptcha(action: string): Promise<number> {
+    try {
+      const siteKey = '6Ldk8TssAAAAAHmIfBZ4GDSaaeR772oXEPSoVtfC';
+      const token = await window.grecaptcha.enterprise.execute(siteKey, { action });
+      const verifyFn = httpsCallable<{ token: string; action: string }, { score: number }>(
+        this.functions,
+        'verifyRecaptcha'
+      );
+      const result = await verifyFn({ token, action });
+      return result.data.score;
+    } catch (e) {
+      console.error('reCAPTCHA verification failed', e);
+      return 0; // Treat error as high risk
+    }
+  }
+
   async login(email: string, pass: string): Promise<boolean> {
+    const score = await this.verifyRecaptcha('login');
+    if (score < 0.5) {
+      console.error('reCAPTCHA score too low:', score);
+      return false;
+    }
+
     try {
       await signInWithEmailAndPassword(this.auth, email, pass);
       this.router.navigate(['/dashboard']);
@@ -51,6 +82,12 @@ export class AuthService {
   }
 
   async signup(email: string, pass: string): Promise<boolean> {
+    const score = await this.verifyRecaptcha('signup');
+    if (score < 0.5) {
+      console.error('reCAPTCHA score too low:', score);
+      return false;
+    }
+
     try {
       await createUserWithEmailAndPassword(this.auth, email, pass);
       this.router.navigate(['/dashboard']);

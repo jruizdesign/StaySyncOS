@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.helloWorld = exports.ai = void 0;
+exports.verifyRecaptcha = exports.helloWorld = exports.ai = void 0;
 const genkit_1 = require("genkit");
 const firebase_1 = require("@genkit-ai/firebase");
 const googleai_1 = require("@genkit-ai/googleai");
@@ -19,4 +19,6 @@ exports.helloWorld = exports.ai.defineFlow({
 }, async (subject) => {
     return `Hello, ${subject}!`;
 });
+var verify_recaptcha_1 = require("./verify-recaptcha");
+Object.defineProperty(exports, "verifyRecaptcha", { enumerable: true, get: function () { return verify_recaptcha_1.verifyRecaptcha; } });
 //# sourceMappingURL=index.js.map

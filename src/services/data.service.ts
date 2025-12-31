@@ -1,4 +1,7 @@
-import { Injectable, signal, computed, effect, inject } from '@angular/core';
+import { Injectable, signal, computed, effect, inject, Signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Firestore, collection, collectionData, doc, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 import { AiService } from './ai.service';
 
 export interface Room {
@@ -150,12 +153,12 @@ export class DataService {
   stays = signal<Stay[]>([]);
   logs = signal<LogEntry[]>([]);
   documents = signal<FinancialDocument[]>([]);
-  
+
   // Staff Signals
   staff = signal<Staff[]>([]);
   timeLogs = signal<TimeLog[]>([]);
   shifts = signal<Shift[]>([]);
-  
+
   // Maintenance Signals
   maintenanceRequests = signal<MaintenanceRequest[]>([]);
 
@@ -167,7 +170,7 @@ export class DataService {
     // Only seed if absolutely empty (first run)
     if (this.rooms().length === 0 && this.hotelConfig().demoMode) this.seedData();
     if (this.staff().length === 0 && this.hotelConfig().demoMode) this.seedStaff();
-    
+
     // Auto-save effect
     effect(() => {
       localStorage.setItem('nexus_config', JSON.stringify(this.hotelConfig()));
@@ -262,7 +265,7 @@ export class DataService {
     this.shifts.set([]);
     this.maintenanceRequests.set([]);
     this.storedDocuments.set([]);
-    
+
     // Update config
     this.hotelConfig.update(c => ({ ...c, demoMode: seedDemoData }));
 
@@ -293,14 +296,14 @@ export class DataService {
     const stayId = 's1';
 
     this.guests.set([
-      { 
-        id: guestId, 
-        name: 'John Doe', 
-        email: 'john@example.com', 
-        phone: '555-0123', 
-        currentStayId: stayId, 
-        history: [], 
-        notes: 'VIP Guest' 
+      {
+        id: guestId,
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '555-0123',
+        currentStayId: stayId,
+        history: [],
+        notes: 'VIP Guest'
       }
     ]);
 
@@ -332,10 +335,10 @@ export class DataService {
         notes: 'Plumber contacted'
       }
     ]);
-    
+
     // Seed an initial document
     this.createDocument('Invoice', stayId, guestId, 'John Doe', [
-        { description: 'Room Charge (5 nights)', quantity: 5, unitPrice: 120, total: 600 }
+      { description: 'Room Charge (5 nights)', quantity: 5, unitPrice: 120, total: 600 }
     ], 'Initial Stay Invoice');
 
     this.log('System', 'System initialized with seed data', 'System');
@@ -352,7 +355,7 @@ export class DataService {
     // Seed Shifts for today and tomorrow
     const today = new Date().toISOString().split('T')[0];
     const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-    
+
     this.shifts.set([
       { id: 'sh1', staffId: 'st1', date: today, startTime: '09:00', endTime: '17:00', type: 'Regular' },
       { id: 'sh2', staffId: 'st2', date: today, startTime: '07:00', endTime: '15:00', type: 'Regular' },
@@ -388,14 +391,14 @@ export class DataService {
       totalAmount,
       notes
     };
-    
+
     this.documents.update(docs => [newDoc, ...docs]);
 
     // Async AI Analysis for System Docs
     this.ai.analyzeSystemDocument(newDoc).then(res => {
-        if (res.tags || res.summary) {
-            this.documents.update(docs => docs.map(d => d.id === newDoc.id ? { ...d, ...res } : d));
-        }
+      if (res.tags || res.summary) {
+        this.documents.update(docs => docs.map(d => d.id === newDoc.id ? { ...d, ...res } : d));
+      }
     });
 
     return newDoc;
@@ -423,9 +426,9 @@ export class DataService {
 
   addRoomsBulk(roomsData: Omit<Room, 'id' | 'status'>[]) {
     const newRooms: Room[] = roomsData.map(r => ({
-        ...r,
-        id: crypto.randomUUID(),
-        status: 'Available'
+      ...r,
+      id: crypto.randomUUID(),
+      status: 'Available'
     }));
     this.rooms.update(current => [...current, ...newRooms]);
     this.log('System', 'Bulk Action', `Created ${newRooms.length} rooms via Wizard.`);
@@ -444,77 +447,77 @@ export class DataService {
     const checkIn = new Date();
     const checkOut = new Date(checkIn);
     checkOut.setDate(checkOut.getDate() + nights);
-    
+
     return this.bookStay(guest, roomId, checkIn.toISOString(), checkOut.toISOString());
   }
 
   bookStay(guest: Guest, roomId: string, checkInDate: string, checkOutDate?: string) {
-      const room = this.rooms().find(r => r.id === roomId);
-      if (!room || room.status !== 'Available') return;
+    const room = this.rooms().find(r => r.id === roomId);
+    if (!room || room.status !== 'Available') return;
 
-      const stayId = crypto.randomUUID();
-      const rate = room.price;
-      
-      const checkInTime = new Date(checkInDate).getTime();
-      let nights = 1;
-      let isIndefinite = false;
+    const stayId = crypto.randomUUID();
+    const rate = room.price;
 
-      if (checkOutDate) {
-          const checkOutTime = new Date(checkOutDate).getTime();
-          nights = Math.max(1, Math.ceil((checkOutTime - checkInTime) / (1000 * 60 * 60 * 24)));
-      } else {
-          isIndefinite = true;
-          // For indefinite, we just estimate 1 night for now to start, or charge a deposit
-          nights = 1; 
-      }
-      
-      const totalProjected = rate * nights;
+    const checkInTime = new Date(checkInDate).getTime();
+    let nights = 1;
+    let isIndefinite = false;
 
-      // If indefinite, set projected to far future so stats don't think it's ending today, 
-      // but UI will know it's indefinite
-      const projectedDate = checkOutDate 
-          ? new Date(checkOutDate).toISOString() 
-          : new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(); // 1 year out placeholder
+    if (checkOutDate) {
+      const checkOutTime = new Date(checkOutDate).getTime();
+      nights = Math.max(1, Math.ceil((checkOutTime - checkInTime) / (1000 * 60 * 60 * 24)));
+    } else {
+      isIndefinite = true;
+      // For indefinite, we just estimate 1 night for now to start, or charge a deposit
+      nights = 1;
+    }
 
-      const newStay: Stay = {
-          id: stayId,
-          guestId: guest.id,
-          roomId: roomId,
-          checkIn: new Date(checkInDate).toISOString(),
-          checkOutProjected: projectedDate,
-          ratePerNight: rate,
-          totalPaid: 0,
-          status: 'Active',
-          isIndefinite: isIndefinite
-      };
+    const totalProjected = rate * nights;
 
-      this.stays.update(s => [...s, newStay]);
-      this.rooms.update(rooms => rooms.map(r => r.id === roomId ? { ...r, status: 'Occupied' } : r));
-      this.guests.update(guests => guests.map(g => g.id === guest.id ? { ...g, currentStayId: stayId } : g));
+    // If indefinite, set projected to far future so stats don't think it's ending today, 
+    // but UI will know it's indefinite
+    const projectedDate = checkOutDate
+      ? new Date(checkOutDate).toISOString()
+      : new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(); // 1 year out placeholder
 
-      // Initial Invoice
-      // If Indefinite, maybe only charge 1 night deposit or similar. We'll do simple logic:
-      const desc = isIndefinite 
-          ? `Room Deposit (Indefinite Stay) - ${room.type}`
-          : `Room Charge (${nights} nights) - ${room.type}`;
+    const newStay: Stay = {
+      id: stayId,
+      guestId: guest.id,
+      roomId: roomId,
+      checkIn: new Date(checkInDate).toISOString(),
+      checkOutProjected: projectedDate,
+      ratePerNight: rate,
+      totalPaid: 0,
+      status: 'Active',
+      isIndefinite: isIndefinite
+    };
 
-      this.createDocument('Invoice', stayId, guest.id, guest.name, [
-          { description: desc, quantity: nights, unitPrice: rate, total: totalProjected }
-      ], 'Check-in Invoice');
+    this.stays.update(s => [...s, newStay]);
+    this.rooms.update(rooms => rooms.map(r => r.id === roomId ? { ...r, status: 'Occupied' } : r));
+    this.guests.update(guests => guests.map(g => g.id === guest.id ? { ...g, currentStayId: stayId } : g));
 
-      this.log('Guest', 'Check In', `${guest.name} booked Room ${room.number}${isIndefinite ? ' (Indefinite)' : ''}`);
+    // Initial Invoice
+    // If Indefinite, maybe only charge 1 night deposit or similar. We'll do simple logic:
+    const desc = isIndefinite
+      ? `Room Deposit (Indefinite Stay) - ${room.type}`
+      : `Room Charge (${nights} nights) - ${room.type}`;
+
+    this.createDocument('Invoice', stayId, guest.id, guest.name, [
+      { description: desc, quantity: nights, unitPrice: rate, total: totalProjected }
+    ], 'Check-in Invoice');
+
+    this.log('Guest', 'Check In', `${guest.name} booked Room ${room.number}${isIndefinite ? ' (Indefinite)' : ''}`);
   }
 
   makePayment(stayId: string, amount: number) {
     let guestName = 'Unknown Guest';
     let guestId = '';
-    
+
     this.stays.update(stays => stays.map(s => {
       if (s.id === stayId) {
         const guest = this.guests().find(g => g.id === s.guestId);
         if (guest) {
-           guestName = guest.name;
-           guestId = guest.id;
+          guestName = guest.name;
+          guestId = guest.id;
         }
         return { ...s, totalPaid: s.totalPaid + amount };
       }
@@ -549,10 +552,10 @@ export class DataService {
     // Update Stay
     this.stays.update(stays => stays.map(s => {
       if (s.id === stayId) {
-        return { 
-          ...s, 
-          status: 'Completed', 
-          checkOutActual: new Date().toISOString() 
+        return {
+          ...s,
+          status: 'Completed',
+          checkOutActual: new Date().toISOString()
         };
       }
       return s;
@@ -564,8 +567,8 @@ export class DataService {
     // Update Guest
     this.guests.update(guests => guests.map(g => {
       if (g.id === stay.guestId) {
-        return { 
-          ...g, 
+        return {
+          ...g,
           currentStayId: null,
           history: [...g.history, { ...stay, status: 'Completed', checkOutActual: new Date().toISOString() }]
         };
@@ -581,7 +584,7 @@ export class DataService {
       this.log('Guest', 'Check Out', `${guest.name} checked out with outstanding balance: $${debt}`);
     } else {
       this.createDocument('Receipt', stayId, guest.id, guest.name, [
-         { description: 'Final Statement - Balance Cleared', quantity: 1, unitPrice: 0, total: 0 }
+        { description: 'Final Statement - Balance Cleared', quantity: 1, unitPrice: 0, total: 0 }
       ], 'Checkout Complete');
       this.log('Guest', 'Check Out', `${guest.name} checked out successfully.`);
     }
@@ -605,20 +608,20 @@ export class DataService {
     this.maintenanceRequests.update(curr => [newReq, ...curr]);
     this.updateRoomStatus(req.roomId, 'Maintenance');
     this.log('Maintenance', 'Request Created', `Issue reported in Room ${room.number}: ${req.description}`);
-    
+
     return newReq;
   }
 
   updateMaintenanceRequest(id: string, updates: Partial<MaintenanceRequest>) {
     this.maintenanceRequests.update(reqs => reqs.map(r => r.id === id ? { ...r, ...updates } : r));
-    
+
     const req = this.maintenanceRequests().find(r => r.id === id);
     if (req) {
       if (updates.status === 'Completed') {
-         this.updateRoomStatus(req.roomId, 'Available');
-         this.log('Maintenance', 'Issue Resolved', `Maintenance completed for Room ${req.roomNumber}. Total Cost: $${updates.cost || req.cost}`);
+        this.updateRoomStatus(req.roomId, 'Available');
+        this.log('Maintenance', 'Issue Resolved', `Maintenance completed for Room ${req.roomNumber}. Total Cost: $${updates.cost || req.cost}`);
       } else {
-         this.log('Maintenance', 'Update', `Request ${id.substring(0,6)} updated.`);
+        this.log('Maintenance', 'Update', `Request ${id.substring(0, 6)} updated.`);
       }
     }
   }
@@ -637,15 +640,15 @@ export class DataService {
 
   updateDocument(id: string, updates: Partial<StoredDocument>) {
     this.storedDocuments.update(docs => docs.map(d => d.id === id ? { ...d, ...updates } : d));
-    this.log('Document', 'Update', `Document AI analysis completed: ${id.substring(0,6)}`);
+    this.log('Document', 'Update', `Document AI analysis completed: ${id.substring(0, 6)}`);
   }
 
   deleteDocument(id: string) {
-      const doc = this.storedDocuments().find(d => d.id === id);
-      if (doc) {
-          this.storedDocuments.update(docs => docs.filter(d => d.id !== id));
-          this.log('Document', 'Delete', `Document deleted: ${doc.title}`);
-      }
+    const doc = this.storedDocuments().find(d => d.id === id);
+    if (doc) {
+      this.storedDocuments.update(docs => docs.filter(d => d.id !== id));
+      this.log('Document', 'Delete', `Document deleted: ${doc.title}`);
+    }
   }
 
   // --- Staff & Time Logic ---
@@ -691,7 +694,7 @@ export class DataService {
         const endTime = new Date().toISOString();
         // Close any open break implicitly
         const updatedBreaks = l.breaks.map(b => !b.end ? { ...b, end: endTime } : b);
-        
+
         return {
           ...l,
           endTime,
@@ -702,7 +705,7 @@ export class DataService {
       }
       return l;
     }));
-    
+
     this.updateStaffStatus(staffId, 'Clocked Out');
     this.log('Staff', 'Clock Out', `${s.name} ended shift.`);
   }
@@ -741,7 +744,7 @@ export class DataService {
   updateTimeLog(updatedLog: TimeLog) {
     // Recalculate hours if edited manually
     if (updatedLog.endTime) {
-        updatedLog.totalHours = this.calculateHours(updatedLog.startTime, updatedLog.endTime, updatedLog.breaks);
+      updatedLog.totalHours = this.calculateHours(updatedLog.startTime, updatedLog.endTime, updatedLog.breaks);
     }
     this.timeLogs.update(logs => logs.map(l => l.id === updatedLog.id ? updatedLog : l));
     this.log('Staff', 'Log Edit', `Time log updated manually for ${updatedLog.staffName}`);
@@ -755,7 +758,7 @@ export class DataService {
   }
 
   deleteShift(shiftId: string) {
-      this.shifts.update(s => s.filter(shift => shift.id !== shiftId));
+    this.shifts.update(s => s.filter(shift => shift.id !== shiftId));
   }
 
   private updateStaffStatus(staffId: string, status: Staff['currentStatus']) {
@@ -764,7 +767,7 @@ export class DataService {
 
   private calculateHours(start: string, end: string, breaks: TimeBreak[]): number {
     let duration = new Date(end).getTime() - new Date(start).getTime();
-    
+
     // Subtract breaks
     breaks.forEach(b => {
       if (b.end) {
@@ -783,7 +786,7 @@ export class DataService {
       .map(stay => {
         const guest = this.guests().find(g => g.id === stay.guestId);
         const room = this.rooms().find(r => r.id === stay.roomId);
-        
+
         const checkInTime = new Date(stay.checkIn).getTime();
         const nowTime = Date.now();
         const daysStayed = Math.max(1, Math.ceil((nowTime - checkInTime) / (1000 * 60 * 60 * 24)));
@@ -808,10 +811,10 @@ export class DataService {
     const occupied = rooms.filter(r => r.status === 'Occupied').length;
     const maintenance = rooms.filter(r => r.status === 'Maintenance').length;
     const available = rooms.filter(r => r.status === 'Available').length;
-    
+
     // Financials today (simplified)
-    const todayLogs = this.logs().filter(l => 
-      l.category === 'Finance' && 
+    const todayLogs = this.logs().filter(l =>
+      l.category === 'Finance' &&
       new Date(l.timestamp).toDateString() === new Date().toDateString()
     );
 

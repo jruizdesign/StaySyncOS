@@ -18,7 +18,10 @@ import { AuthService } from './src/services/auth.service';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideStorage, getStorage } from '@angular/fire/storage';
+import { provideFunctions, getFunctions } from '@angular/fire/functions';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { firebaseConfig } from './src/firebase-config';
+import { provideAppCheck, initializeAppCheck, ReCaptchaEnterpriseProvider } from '@angular/fire/app-check';
 
 const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
@@ -59,7 +62,13 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes, withHashLocation()),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideAuth(() => getAuth()),
-    provideStorage(() => getStorage())
+    provideStorage(() => getStorage()),
+    provideFunctions(() => getFunctions()),
+    provideFirestore(() => getFirestore()),
+    provideAppCheck(() => initializeAppCheck(undefined, {
+      provider: new ReCaptchaEnterpriseProvider('6Ldk8TssAAAAAHmIfBZ4GDSaaeR772oXEPSoVtfC'),
+      isTokenAutoRefreshEnabled: true
+    }))
   ]
 }).catch(err => console.error(err));
 

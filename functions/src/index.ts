@@ -22,3 +22,5 @@ export const helloWorld = ai.defineFlow(
         return `Hello, ${subject}!`;
     }
 );
+
+export { verifyRecaptcha } from './verify-recaptcha';
