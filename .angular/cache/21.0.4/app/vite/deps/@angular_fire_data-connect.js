@@ -19,29 +19,29 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-HBGOQ4ZI.js";
-import "./chunk-OLSPUTAR.js";
-import "./chunk-JS7UPFDT.js";
+} from "./chunk-DRKXN4VZ.js";
+import "./chunk-WXWJ24DR.js";
+import "./chunk-TO2ZCXMC.js";
 import {
   NgModule,
   Optional,
   setClassMetadata,
   ɵɵdefineNgModule
-} from "./chunk-2OVTG2SB.js";
+} from "./chunk-WWLEEM6L.js";
 import {
   InjectionToken,
   Injector,
   NgZone,
   makeEnvironmentProviders,
   ɵɵdefineInjector
-} from "./chunk-AFXNZWYR.js";
+} from "./chunk-QYJRLS6B.js";
 import {
   concatMap,
   distinct,
   from,
   timer
 } from "./chunk-MUD6KAHP.js";
-import "./chunk-GOMI4DH3.js";
+import "./chunk-653SOEEV.js";
 
 // node_modules/@angular/fire/node_modules/@firebase/data-connect/dist/index.esm2017.js
 var name = "@firebase/data-connect";

@@ -1,6 +1,6 @@
 import {
   AuthInstances
-} from "./chunk-AT2QQ73S.js";
+} from "./chunk-RC7RPDLL.js";
 import {
   Component as Component2,
   FirebaseError as FirebaseError2,
@@ -9,11 +9,11 @@ import {
   getModularInstance as getModularInstance2,
   isCloudWorkstation as isCloudWorkstation2,
   registerVersion as registerVersion2
-} from "./chunk-MWLDWBR4.js";
+} from "./chunk-XPVU57NH.js";
 import {
   AppCheckInstances
-} from "./chunk-IUNEO3OY.js";
-import "./chunk-ICD67JMF.js";
+} from "./chunk-VVRJ3KGE.js";
+import "./chunk-ENKYQDZC.js";
 import {
   Component,
   FirebaseApp,
@@ -34,22 +34,22 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-HBGOQ4ZI.js";
-import "./chunk-OLSPUTAR.js";
-import "./chunk-JS7UPFDT.js";
+} from "./chunk-DRKXN4VZ.js";
+import "./chunk-WXWJ24DR.js";
+import "./chunk-TO2ZCXMC.js";
 import {
   NgModule,
   Optional,
   setClassMetadata,
   ɵɵdefineNgModule
-} from "./chunk-2OVTG2SB.js";
+} from "./chunk-WWLEEM6L.js";
 import {
   InjectionToken,
   Injector,
   NgZone,
   makeEnvironmentProviders,
   ɵɵdefineInjector
-} from "./chunk-AFXNZWYR.js";
+} from "./chunk-QYJRLS6B.js";
 import {
   concatMap,
   distinct,
@@ -57,7 +57,7 @@ import {
   map,
   timer
 } from "./chunk-MUD6KAHP.js";
-import "./chunk-GOMI4DH3.js";
+import "./chunk-653SOEEV.js";
 
 // node_modules/@firebase/functions/dist/esm/index.esm.js
 var LONG_TYPE = "type.googleapis.com/google.protobuf.Int64Value";

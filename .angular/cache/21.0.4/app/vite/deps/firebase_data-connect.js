@@ -12,12 +12,12 @@ import {
   pingServer,
   registerVersion,
   updateEmulatorBanner
-} from "./chunk-MWLDWBR4.js";
-import "./chunk-JS7UPFDT.js";
+} from "./chunk-XPVU57NH.js";
+import "./chunk-WXWJ24DR.js";
 import {
   __spreadProps,
   __spreadValues
-} from "./chunk-GOMI4DH3.js";
+} from "./chunk-653SOEEV.js";
 
 // node_modules/@firebase/data-connect/dist/index.esm.js
 var name = "@firebase/data-connect";

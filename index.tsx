@@ -69,6 +69,8 @@ const routes: Routes = [
   { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
 ];
 
+import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideZonelessChangeDetection(),
@@ -85,7 +87,8 @@ bootstrapApplication(AppComponent, {
     provideAppCheck(() => initializeAppCheck(undefined, {
       provider: new ReCaptchaEnterpriseProvider('6Ldk8TssAAAAAHmIfBZ4GDSaaeR772oXEPSoVtfC'),
       isTokenAutoRefreshEnabled: true
-    }))
+    })),
+    provideAngularQuery(new QueryClient())
   ]
 }).catch(err => console.error(err));
 

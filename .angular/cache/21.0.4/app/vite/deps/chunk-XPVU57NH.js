@@ -1,50 +1,14 @@
 import {
-  pendingUntilEvent
-} from "./chunk-OLSPUTAR.js";
-import {
   openDB
-} from "./chunk-JS7UPFDT.js";
+} from "./chunk-WXWJ24DR.js";
 import {
-  Inject,
-  Injectable,
-  NgModule,
-  Optional,
-  PLATFORM_ID,
-  isDevMode,
-  setClassMetadata,
-  ɵɵdefineNgModule
-} from "./chunk-2OVTG2SB.js";
-import {
-  EnvironmentInjector,
-  InjectionToken,
-  Injector,
-  NgZone,
-  PendingTasks,
-  VERSION,
-  Version,
-  inject,
-  makeEnvironmentProviders,
-  queueScheduler,
-  runInInjectionContext,
-  ɵɵdefineInjectable,
-  ɵɵdefineInjector,
-  ɵɵinject
-} from "./chunk-AFXNZWYR.js";
-import {
-  Observable,
-  asyncScheduler,
-  concatMap,
-  distinct,
-  from,
-  observeOn,
-  subscribeOn,
-  timer
-} from "./chunk-MUD6KAHP.js";
+  __spreadValues
+} from "./chunk-653SOEEV.js";
 
-// node_modules/@angular/fire/node_modules/@firebase/util/dist/postinstall.mjs
+// node_modules/@firebase/util/dist/postinstall.mjs
 var getDefaultsFromPostinstall = () => void 0;
 
-// node_modules/@angular/fire/node_modules/@firebase/util/dist/index.esm2017.js
+// node_modules/@firebase/util/dist/index.esm.js
 var stringToByteArray$1 = function(str) {
   const out = [];
   let p = 0;
@@ -336,34 +300,8 @@ var getDefaults = () => {
     return;
   }
 };
-var getDefaultEmulatorHost = (productName) => {
-  var _a, _b;
-  return (_b = (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.emulatorHosts) === null || _b === void 0 ? void 0 : _b[productName];
-};
-var getDefaultEmulatorHostnameAndPort = (productName) => {
-  const host = getDefaultEmulatorHost(productName);
-  if (!host) {
-    return void 0;
-  }
-  const separatorIndex = host.lastIndexOf(":");
-  if (separatorIndex <= 0 || separatorIndex + 1 === host.length) {
-    throw new Error(`Invalid host ${host} with no separate hostname and port!`);
-  }
-  const port = parseInt(host.substring(separatorIndex + 1), 10);
-  if (host[0] === "[") {
-    return [host.substring(1, separatorIndex - 1), port];
-  } else {
-    return [host.substring(0, separatorIndex), port];
-  }
-};
-var getDefaultAppConfig = () => {
-  var _a;
-  return (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.config;
-};
-var getExperimentalSetting = (name3) => {
-  var _a;
-  return (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a[`_${name3}`];
-};
+var getDefaultAppConfig = () => getDefaults()?.config;
+var getExperimentalSetting = (name2) => getDefaults()?.[`_${name2}`];
 var Deferred = class {
   constructor() {
     this.reject = () => {
@@ -403,7 +341,7 @@ function isCloudWorkstation(url) {
   try {
     const host = url.startsWith("http://") || url.startsWith("https://") ? new URL(url).hostname : url;
     return host.endsWith(".cloudworkstations.dev");
-  } catch (_a) {
+  } catch {
     return false;
   }
 }
@@ -412,41 +350,6 @@ async function pingServer(endpoint) {
     credentials: "include"
   });
   return result.ok;
-}
-function createMockUserToken(token, projectId) {
-  if (token.uid) {
-    throw new Error('The "uid" field is no longer supported by mockUserToken. Please use "sub" instead for Firebase Auth User ID.');
-  }
-  const header = {
-    alg: "none",
-    type: "JWT"
-  };
-  const project = projectId || "demo-project";
-  const iat = token.iat || 0;
-  const sub = token.sub || token.user_id;
-  if (!sub) {
-    throw new Error("mockUserToken must contain 'sub' or 'user_id' field!");
-  }
-  const payload = Object.assign({
-    // Set all required fields to decent defaults
-    iss: `https://securetoken.google.com/${project}`,
-    aud: project,
-    iat,
-    exp: iat + 3600,
-    auth_time: iat,
-    sub,
-    user_id: sub,
-    firebase: {
-      sign_in_provider: "custom",
-      identities: {}
-    }
-  }, token);
-  const signature = "";
-  return [
-    base64urlEncodeWithoutPadding(JSON.stringify(header)),
-    base64urlEncodeWithoutPadding(JSON.stringify(payload)),
-    signature
-  ].join(".");
 }
 var emulatorStatus = {};
 function getEmulatorSummary() {
@@ -474,12 +377,12 @@ function getOrCreateEl(id) {
   return { created, element: parentDiv };
 }
 var previouslyDismissed = false;
-function updateEmulatorBanner(name3, isRunningEmulator) {
-  if (typeof window === "undefined" || typeof document === "undefined" || !isCloudWorkstation(window.location.host) || emulatorStatus[name3] === isRunningEmulator || emulatorStatus[name3] || // If already set to use emulator, can't go back to prod.
+function updateEmulatorBanner(name2, isRunningEmulator) {
+  if (typeof window === "undefined" || typeof document === "undefined" || !isCloudWorkstation(window.location.host) || emulatorStatus[name2] === isRunningEmulator || emulatorStatus[name2] || // If already set to use emulator, can't go back to prod.
   previouslyDismissed) {
     return;
   }
-  emulatorStatus[name3] = isRunningEmulator;
+  emulatorStatus[name2] = isRunningEmulator;
   function prefixedId(id) {
     return `__firebase__banner__${id}`;
   }
@@ -589,8 +492,7 @@ function isMobileCordova() {
   !!(window["cordova"] || window["phonegap"] || window["PhoneGap"]) && /ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(getUA());
 }
 function isNode() {
-  var _a;
-  const forceEnvironment = (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.forceEnvironment;
+  const forceEnvironment = getDefaults()?.forceEnvironment;
   if (forceEnvironment === "node") {
     return true;
   } else if (forceEnvironment === "browser") {
@@ -601,12 +503,6 @@ function isNode() {
   } catch (e) {
     return false;
   }
-}
-function isBrowser() {
-  return typeof window !== "undefined" || isWebWorker();
-}
-function isWebWorker() {
-  return typeof WorkerGlobalScope !== "undefined" && typeof self !== "undefined" && self instanceof WorkerGlobalScope;
 }
 function isCloudflareWorker() {
   return typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers";
@@ -624,9 +520,6 @@ function isIE() {
 }
 function isSafari() {
   return !isNode() && !!navigator.userAgent && navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome");
-}
-function isSafariOrWebkit() {
-  return !isNode() && !!navigator.userAgent && (navigator.userAgent.includes("Safari") || navigator.userAgent.includes("WebKit")) && !navigator.userAgent.includes("Chrome");
 }
 function isIndexedDBAvailable() {
   try {
@@ -652,8 +545,7 @@ function validateIndexedDBOpenable() {
         preExist = false;
       };
       request.onerror = () => {
-        var _a;
-        reject(((_a = request.error) === null || _a === void 0 ? void 0 : _a.message) || "");
+        reject(request.error?.message || "");
       };
     } catch (error) {
       reject(error);
@@ -696,42 +588,6 @@ function replaceTemplate(template, data) {
   });
 }
 var PATTERN = /\{\$([^}]+)}/g;
-function jsonEval(str) {
-  return JSON.parse(str);
-}
-var decode = function(token) {
-  let header = {}, claims = {}, data = {}, signature = "";
-  try {
-    const parts = token.split(".");
-    header = jsonEval(base64Decode(parts[0]) || "");
-    claims = jsonEval(base64Decode(parts[1]) || "");
-    signature = parts[2];
-    data = claims["d"] || {};
-    delete claims["d"];
-  } catch (e) {
-  }
-  return {
-    header,
-    claims,
-    data,
-    signature
-  };
-};
-var issuedAtTime = function(token) {
-  const claims = decode(token).claims;
-  if (typeof claims === "object" && claims.hasOwnProperty("iat")) {
-    return claims["iat"];
-  }
-  return null;
-};
-function isEmpty(obj) {
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      return false;
-    }
-  }
-  return true;
-}
 function deepEqual(a, b) {
   if (a === b) {
     return true;
@@ -947,21 +803,7 @@ function implementsAnyMethods(obj, methods) {
 }
 function noop() {
 }
-var DEFAULT_INTERVAL_MILLIS = 1e3;
-var DEFAULT_BACKOFF_FACTOR = 2;
 var MAX_VALUE_MILLIS = 4 * 60 * 60 * 1e3;
-var RANDOM_FACTOR = 0.5;
-function calculateBackoffMillis(backoffCount, intervalMillis = DEFAULT_INTERVAL_MILLIS, backoffFactor = DEFAULT_BACKOFF_FACTOR) {
-  const currBaseValue = intervalMillis * Math.pow(backoffFactor, backoffCount);
-  const randomWait = Math.round(
-    // A fraction of the backoff value to add/subtract.
-    // Deviation: changes multiplication order to improve readability.
-    RANDOM_FACTOR * currBaseValue * // A random float (rounded to int by Math.round above) in the range [-1, 1]. Determines
-    // if we add or subtract.
-    (Math.random() - 0.5) * 2
-  );
-  return Math.min(MAX_VALUE_MILLIS, currBaseValue + randomWait);
-}
 function getModularInstance(service) {
   if (service && service._delegate) {
     return service._delegate;
@@ -970,7 +812,7 @@ function getModularInstance(service) {
   }
 }
 
-// node_modules/@angular/fire/node_modules/@firebase/component/dist/esm/index.esm2017.js
+// node_modules/@firebase/component/dist/esm/index.esm.js
 var Component = class {
   /**
    *
@@ -978,8 +820,8 @@ var Component = class {
    * @param instanceFactory Service factory responsible for creating the public interface
    * @param type whether the service provided by the component is public or private
    */
-  constructor(name3, instanceFactory, type) {
-    this.name = name3;
+  constructor(name2, instanceFactory, type) {
+    this.name = name2;
     this.instanceFactory = instanceFactory;
     this.type = type;
     this.multipleInstances = false;
@@ -1006,8 +848,8 @@ var Component = class {
 };
 var DEFAULT_ENTRY_NAME = "[DEFAULT]";
 var Provider = class {
-  constructor(name3, container) {
-    this.name = name3;
+  constructor(name2, container) {
+    this.name = name2;
     this.container = container;
     this.component = null;
     this.instances = /* @__PURE__ */ new Map();
@@ -1039,9 +881,8 @@ var Provider = class {
     return this.instancesDeferred.get(normalizedIdentifier).promise;
   }
   getImmediate(options) {
-    var _a;
-    const normalizedIdentifier = this.normalizeInstanceIdentifier(options === null || options === void 0 ? void 0 : options.identifier);
-    const optional = (_a = options === null || options === void 0 ? void 0 : options.optional) !== null && _a !== void 0 ? _a : false;
+    const normalizedIdentifier = this.normalizeInstanceIdentifier(options?.identifier);
+    const optional = options?.optional ?? false;
     if (this.isInitialized(normalizedIdentifier) || this.shouldAutoInitialize()) {
       try {
         return this.getOrInitializeService({
@@ -1146,9 +987,8 @@ var Provider = class {
    * @returns a function to unregister the callback
    */
   onInit(callback, identifier) {
-    var _a;
     const normalizedIdentifier = this.normalizeInstanceIdentifier(identifier);
-    const existingCallbacks = (_a = this.onInitCallbacks.get(normalizedIdentifier)) !== null && _a !== void 0 ? _a : /* @__PURE__ */ new Set();
+    const existingCallbacks = this.onInitCallbacks.get(normalizedIdentifier) ?? /* @__PURE__ */ new Set();
     existingCallbacks.add(callback);
     this.onInitCallbacks.set(normalizedIdentifier, existingCallbacks);
     const existingInstance = this.instances.get(normalizedIdentifier);
@@ -1171,7 +1011,7 @@ var Provider = class {
     for (const callback of callbacks) {
       try {
         callback(instance, identifier);
-      } catch (_a) {
+      } catch {
       }
     }
   }
@@ -1188,7 +1028,7 @@ var Provider = class {
       if (this.component.onInstanceCreated) {
         try {
           this.component.onInstanceCreated(this.container, instanceIdentifier, instance);
-        } catch (_a) {
+        } catch {
         }
       }
     }
@@ -1212,8 +1052,8 @@ function isComponentEager(component) {
   return component.instantiationMode === "EAGER";
 }
 var ComponentContainer = class {
-  constructor(name3) {
-    this.name = name3;
+  constructor(name2) {
+    this.name = name2;
     this.providers = /* @__PURE__ */ new Map();
   }
   /**
@@ -1246,12 +1086,12 @@ var ComponentContainer = class {
    * Firebase SDKs providing services should extend NameServiceMapping interface to register
    * themselves.
    */
-  getProvider(name3) {
-    if (this.providers.has(name3)) {
-      return this.providers.get(name3);
+  getProvider(name2) {
+    if (this.providers.has(name2)) {
+      return this.providers.get(name2);
     }
-    const provider = new Provider(name3, this);
-    this.providers.set(name3, provider);
+    const provider = new Provider(name2, this);
+    this.providers.set(name2, provider);
     return provider;
   }
   getProviders() {
@@ -1259,16 +1099,16 @@ var ComponentContainer = class {
   }
 };
 
-// node_modules/@angular/fire/node_modules/@firebase/logger/dist/esm/index.esm2017.js
+// node_modules/@firebase/logger/dist/esm/index.esm.js
 var instances = [];
 var LogLevel;
-(function(LogLevel3) {
-  LogLevel3[LogLevel3["DEBUG"] = 0] = "DEBUG";
-  LogLevel3[LogLevel3["VERBOSE"] = 1] = "VERBOSE";
-  LogLevel3[LogLevel3["INFO"] = 2] = "INFO";
-  LogLevel3[LogLevel3["WARN"] = 3] = "WARN";
-  LogLevel3[LogLevel3["ERROR"] = 4] = "ERROR";
-  LogLevel3[LogLevel3["SILENT"] = 5] = "SILENT";
+(function(LogLevel2) {
+  LogLevel2[LogLevel2["DEBUG"] = 0] = "DEBUG";
+  LogLevel2[LogLevel2["VERBOSE"] = 1] = "VERBOSE";
+  LogLevel2[LogLevel2["INFO"] = 2] = "INFO";
+  LogLevel2[LogLevel2["WARN"] = 3] = "WARN";
+  LogLevel2[LogLevel2["ERROR"] = 4] = "ERROR";
+  LogLevel2[LogLevel2["SILENT"] = 5] = "SILENT";
 })(LogLevel || (LogLevel = {}));
 var levelStringToEnum = {
   "debug": LogLevel.DEBUG,
@@ -1305,8 +1145,8 @@ var Logger = class {
    *
    * @param name The name that the logs will be associated with
    */
-  constructor(name3) {
-    this.name = name3;
+  constructor(name2) {
+    this.name = name2;
     this._logLevel = defaultLogLevel;
     this._logHandler = defaultLogHandler;
     this._userLogHandler = null;
@@ -1364,52 +1204,8 @@ var Logger = class {
     this._logHandler(this, LogLevel.ERROR, ...args);
   }
 };
-function setLogLevel(level) {
-  instances.forEach((inst) => {
-    inst.setLogLevel(level);
-  });
-}
-function setUserLogHandler(logCallback, options) {
-  for (const instance of instances) {
-    let customLogLevel = null;
-    if (options && options.level) {
-      customLogLevel = levelStringToEnum[options.level];
-    }
-    if (logCallback === null) {
-      instance.userLogHandler = null;
-    } else {
-      instance.userLogHandler = (instance2, level, ...args) => {
-        const message = args.map((arg) => {
-          if (arg == null) {
-            return null;
-          } else if (typeof arg === "string") {
-            return arg;
-          } else if (typeof arg === "number" || typeof arg === "boolean") {
-            return arg.toString();
-          } else if (arg instanceof Error) {
-            return arg.message;
-          } else {
-            try {
-              return JSON.stringify(arg);
-            } catch (ignored) {
-              return null;
-            }
-          }
-        }).filter((arg) => arg).join(" ");
-        if (level >= (customLogLevel !== null && customLogLevel !== void 0 ? customLogLevel : instance2.logLevel)) {
-          logCallback({
-            level: LogLevel[level].toLowerCase(),
-            message,
-            args,
-            type: instance2.name
-          });
-        }
-      };
-    }
-  }
-}
 
-// node_modules/@angular/fire/node_modules/@firebase/app/dist/esm/index.esm2017.js
+// node_modules/@firebase/app/dist/esm/index.esm.js
 var PlatformLoggerServiceImpl = class {
   constructor(container) {
     this.container = container;
@@ -1430,10 +1226,10 @@ var PlatformLoggerServiceImpl = class {
 };
 function isVersionServiceProvider(provider) {
   const component = provider.getComponent();
-  return (component === null || component === void 0 ? void 0 : component.type) === "VERSION";
+  return component?.type === "VERSION";
 }
 var name$q = "@firebase/app";
-var version$1 = "0.13.2";
+var version$1 = "0.14.6";
 var logger = new Logger("@firebase/app");
 var name$p = "@firebase/app-compat";
 var name$o = "@firebase/analytics-compat";
@@ -1461,7 +1257,7 @@ var name$3 = "@firebase/firestore";
 var name$2 = "@firebase/ai";
 var name$1 = "@firebase/firestore-compat";
 var name = "firebase";
-var version = "11.10.0";
+var version = "12.6.0";
 var DEFAULT_ENTRY_NAME2 = "[DEFAULT]";
 var PLATFORM_LOG_STRING = {
   [name$q]: "fire-core",
@@ -1504,9 +1300,6 @@ function _addComponent(app, component) {
     logger.debug(`Component ${component.name} failed to register with FirebaseApp ${app.name}`, e);
   }
 }
-function _addOrOverwriteComponent(app, component) {
-  app.container.addOrOverwriteComponent(component);
-}
 function _registerComponent(component) {
   const componentName = component.name;
   if (_components.has(componentName)) {
@@ -1522,27 +1315,21 @@ function _registerComponent(component) {
   }
   return true;
 }
-function _getProvider(app, name3) {
+function _getProvider(app, name2) {
   const heartbeatController = app.container.getProvider("heartbeat").getImmediate({ optional: true });
   if (heartbeatController) {
     void heartbeatController.triggerHeartbeat();
   }
-  return app.container.getProvider(name3);
+  return app.container.getProvider(name2);
 }
-function _removeServiceInstance(app, name3, instanceIdentifier = DEFAULT_ENTRY_NAME2) {
-  _getProvider(app, name3).clearInstance(instanceIdentifier);
-}
-function _isFirebaseApp(obj) {
-  return obj.options !== void 0;
+function _removeServiceInstance(app, name2, instanceIdentifier = DEFAULT_ENTRY_NAME2) {
+  _getProvider(app, name2).clearInstance(instanceIdentifier);
 }
 function _isFirebaseServerApp(obj) {
   if (obj === null || obj === void 0) {
     return false;
   }
   return obj.settings !== void 0;
-}
-function _clearComponents() {
-  _components.clear();
 }
 var ERRORS = {
   [
@@ -1606,8 +1393,8 @@ var ERROR_FACTORY = new ErrorFactory("app", "Firebase", ERRORS);
 var FirebaseAppImpl = class {
   constructor(options, config, container) {
     this._isDeleted = false;
-    this._options = Object.assign({}, options);
-    this._config = Object.assign({}, config);
+    this._options = __spreadValues({}, options);
+    this._config = __spreadValues({}, config);
     this._name = config.name;
     this._automaticDataCollectionEnabled = config.automaticDataCollectionEnabled;
     this._container = container;
@@ -1657,115 +1444,21 @@ var FirebaseAppImpl = class {
     }
   }
 };
-function validateTokenTTL(base64Token, tokenName) {
-  const secondPart = base64Decode(base64Token.split(".")[1]);
-  if (secondPart === null) {
-    console.error(`FirebaseServerApp ${tokenName} is invalid: second part could not be parsed.`);
-    return;
-  }
-  const expClaim = JSON.parse(secondPart).exp;
-  if (expClaim === void 0) {
-    console.error(`FirebaseServerApp ${tokenName} is invalid: expiration claim could not be parsed`);
-    return;
-  }
-  const exp = JSON.parse(secondPart).exp * 1e3;
-  const now = (/* @__PURE__ */ new Date()).getTime();
-  const diff = exp - now;
-  if (diff <= 0) {
-    console.error(`FirebaseServerApp ${tokenName} is invalid: the token has expired.`);
-  }
-}
-var FirebaseServerAppImpl = class extends FirebaseAppImpl {
-  constructor(options, serverConfig, name3, container) {
-    const automaticDataCollectionEnabled = serverConfig.automaticDataCollectionEnabled !== void 0 ? serverConfig.automaticDataCollectionEnabled : true;
-    const config = {
-      name: name3,
-      automaticDataCollectionEnabled
-    };
-    if (options.apiKey !== void 0) {
-      super(options, config, container);
-    } else {
-      const appImpl = options;
-      super(appImpl.options, config, container);
-    }
-    this._serverConfig = Object.assign({ automaticDataCollectionEnabled }, serverConfig);
-    if (this._serverConfig.authIdToken) {
-      validateTokenTTL(this._serverConfig.authIdToken, "authIdToken");
-    }
-    if (this._serverConfig.appCheckToken) {
-      validateTokenTTL(this._serverConfig.appCheckToken, "appCheckToken");
-    }
-    this._finalizationRegistry = null;
-    if (typeof FinalizationRegistry !== "undefined") {
-      this._finalizationRegistry = new FinalizationRegistry(() => {
-        this.automaticCleanup();
-      });
-    }
-    this._refCount = 0;
-    this.incRefCount(this._serverConfig.releaseOnDeref);
-    this._serverConfig.releaseOnDeref = void 0;
-    serverConfig.releaseOnDeref = void 0;
-    registerVersion(name$q, version$1, "serverapp");
-  }
-  toJSON() {
-    return void 0;
-  }
-  get refCount() {
-    return this._refCount;
-  }
-  // Increment the reference count of this server app. If an object is provided, register it
-  // with the finalization registry.
-  incRefCount(obj) {
-    if (this.isDeleted) {
-      return;
-    }
-    this._refCount++;
-    if (obj !== void 0 && this._finalizationRegistry !== null) {
-      this._finalizationRegistry.register(obj, this);
-    }
-  }
-  // Decrement the reference count.
-  decRefCount() {
-    if (this.isDeleted) {
-      return 0;
-    }
-    return --this._refCount;
-  }
-  // Invoked by the FinalizationRegistry callback to note that this app should go through its
-  // reference counts and delete itself if no reference count remain. The coordinating logic that
-  // handles this is in deleteApp(...).
-  automaticCleanup() {
-    void deleteApp(this);
-  }
-  get settings() {
-    this.checkDestroyed();
-    return this._serverConfig;
-  }
-  /**
-   * This function will throw an Error if the App has already been deleted -
-   * use before performing API actions on the App.
-   */
-  checkDestroyed() {
-    if (this.isDeleted) {
-      throw ERROR_FACTORY.create(
-        "server-app-deleted"
-        /* AppError.SERVER_APP_DELETED */
-      );
-    }
-  }
-};
 var SDK_VERSION = version;
 function initializeApp(_options, rawConfig = {}) {
   let options = _options;
   if (typeof rawConfig !== "object") {
-    const name4 = rawConfig;
-    rawConfig = { name: name4 };
+    const name3 = rawConfig;
+    rawConfig = { name: name3 };
   }
-  const config = Object.assign({ name: DEFAULT_ENTRY_NAME2, automaticDataCollectionEnabled: true }, rawConfig);
-  const name3 = config.name;
-  if (typeof name3 !== "string" || !name3) {
+  const config = __spreadValues({
+    name: DEFAULT_ENTRY_NAME2,
+    automaticDataCollectionEnabled: true
+  }, rawConfig);
+  const name2 = config.name;
+  if (typeof name2 !== "string" || !name2) {
     throw ERROR_FACTORY.create("bad-app-name", {
-      appName: String(name3)
+      appName: String(name2)
     });
   }
   options || (options = getDefaultAppConfig());
@@ -1775,106 +1468,42 @@ function initializeApp(_options, rawConfig = {}) {
       /* AppError.NO_OPTIONS */
     );
   }
-  const existingApp = _apps.get(name3);
+  const existingApp = _apps.get(name2);
   if (existingApp) {
     if (deepEqual(options, existingApp.options) && deepEqual(config, existingApp.config)) {
       return existingApp;
     } else {
-      throw ERROR_FACTORY.create("duplicate-app", { appName: name3 });
+      throw ERROR_FACTORY.create("duplicate-app", { appName: name2 });
     }
   }
-  const container = new ComponentContainer(name3);
+  const container = new ComponentContainer(name2);
   for (const component of _components.values()) {
     container.addComponent(component);
   }
   const newApp = new FirebaseAppImpl(options, config, container);
-  _apps.set(name3, newApp);
+  _apps.set(name2, newApp);
   return newApp;
 }
-function initializeServerApp(_options, _serverAppConfig) {
-  if (isBrowser() && !isWebWorker()) {
-    throw ERROR_FACTORY.create(
-      "invalid-server-app-environment"
-      /* AppError.INVALID_SERVER_APP_ENVIRONMENT */
-    );
-  }
-  if (_serverAppConfig.automaticDataCollectionEnabled === void 0) {
-    _serverAppConfig.automaticDataCollectionEnabled = true;
-  }
-  let appOptions;
-  if (_isFirebaseApp(_options)) {
-    appOptions = _options.options;
-  } else {
-    appOptions = _options;
-  }
-  const nameObj = Object.assign(Object.assign({}, _serverAppConfig), appOptions);
-  if (nameObj.releaseOnDeref !== void 0) {
-    delete nameObj.releaseOnDeref;
-  }
-  const hashCode = (s) => {
-    return [...s].reduce((hash, c) => Math.imul(31, hash) + c.charCodeAt(0) | 0, 0);
-  };
-  if (_serverAppConfig.releaseOnDeref !== void 0) {
-    if (typeof FinalizationRegistry === "undefined") {
-      throw ERROR_FACTORY.create("finalization-registry-not-supported", {});
-    }
-  }
-  const nameString = "" + hashCode(JSON.stringify(nameObj));
-  const existingApp = _serverApps.get(nameString);
-  if (existingApp) {
-    existingApp.incRefCount(_serverAppConfig.releaseOnDeref);
-    return existingApp;
-  }
-  const container = new ComponentContainer(nameString);
-  for (const component of _components.values()) {
-    container.addComponent(component);
-  }
-  const newApp = new FirebaseServerAppImpl(appOptions, _serverAppConfig, nameString, container);
-  _serverApps.set(nameString, newApp);
-  return newApp;
-}
-function getApp(name3 = DEFAULT_ENTRY_NAME2) {
-  const app = _apps.get(name3);
-  if (!app && name3 === DEFAULT_ENTRY_NAME2 && getDefaultAppConfig()) {
+function getApp(name2 = DEFAULT_ENTRY_NAME2) {
+  const app = _apps.get(name2);
+  if (!app && name2 === DEFAULT_ENTRY_NAME2 && getDefaultAppConfig()) {
     return initializeApp();
   }
   if (!app) {
-    throw ERROR_FACTORY.create("no-app", { appName: name3 });
+    throw ERROR_FACTORY.create("no-app", { appName: name2 });
   }
   return app;
 }
-function getApps() {
-  return Array.from(_apps.values());
-}
-async function deleteApp(app) {
-  let cleanupProviders = false;
-  const name3 = app.name;
-  if (_apps.has(name3)) {
-    cleanupProviders = true;
-    _apps.delete(name3);
-  } else if (_serverApps.has(name3)) {
-    const firebaseServerApp = app;
-    if (firebaseServerApp.decRefCount() <= 0) {
-      _serverApps.delete(name3);
-      cleanupProviders = true;
-    }
-  }
-  if (cleanupProviders) {
-    await Promise.all(app.container.getProviders().map((provider) => provider.delete()));
-    app.isDeleted = true;
-  }
-}
-function registerVersion(libraryKeyOrName, version3, variant) {
-  var _a;
-  let library = (_a = PLATFORM_LOG_STRING[libraryKeyOrName]) !== null && _a !== void 0 ? _a : libraryKeyOrName;
+function registerVersion(libraryKeyOrName, version2, variant) {
+  let library = PLATFORM_LOG_STRING[libraryKeyOrName] ?? libraryKeyOrName;
   if (variant) {
     library += `-${variant}`;
   }
   const libraryMismatch = library.match(/\s|\//);
-  const versionMismatch = version3.match(/\s|\//);
+  const versionMismatch = version2.match(/\s|\//);
   if (libraryMismatch || versionMismatch) {
     const warning = [
-      `Unable to register library "${library}" with version "${version3}":`
+      `Unable to register library "${library}" with version "${version2}":`
     ];
     if (libraryMismatch) {
       warning.push(`library name "${library}" contains illegal characters (whitespace or "/")`);
@@ -1883,29 +1512,17 @@ function registerVersion(libraryKeyOrName, version3, variant) {
       warning.push("and");
     }
     if (versionMismatch) {
-      warning.push(`version name "${version3}" contains illegal characters (whitespace or "/")`);
+      warning.push(`version name "${version2}" contains illegal characters (whitespace or "/")`);
     }
     logger.warn(warning.join(" "));
     return;
   }
   _registerComponent(new Component(
     `${library}-version`,
-    () => ({ library, version: version3 }),
+    () => ({ library, version: version2 }),
     "VERSION"
     /* ComponentType.VERSION */
   ));
-}
-function onLog(logCallback, options) {
-  if (logCallback !== null && typeof logCallback !== "function") {
-    throw ERROR_FACTORY.create(
-      "invalid-log-argument"
-      /* AppError.INVALID_LOG_ARGUMENT */
-    );
-  }
-  setUserLogHandler(logCallback, options);
-}
-function setLogLevel2(logLevel) {
-  setLogLevel(logLevel);
 }
 var DB_NAME = "firebase-heartbeat-database";
 var DB_VERSION = 1;
@@ -1944,7 +1561,7 @@ async function readHeartbeatsFromIndexedDB(app) {
       logger.warn(e.message);
     } else {
       const idbGetError = ERROR_FACTORY.create("idb-get", {
-        originalErrorMessage: e === null || e === void 0 ? void 0 : e.message
+        originalErrorMessage: e?.message
       });
       logger.warn(idbGetError.message);
     }
@@ -1962,7 +1579,7 @@ async function writeHeartbeatsToIndexedDB(app, heartbeatObject) {
       logger.warn(e.message);
     } else {
       const idbGetError = ERROR_FACTORY.create("idb-set", {
-        originalErrorMessage: e === null || e === void 0 ? void 0 : e.message
+        originalErrorMessage: e?.message
       });
       logger.warn(idbGetError.message);
     }
@@ -1992,14 +1609,13 @@ var HeartbeatServiceImpl = class {
    * already logged, subsequent calls to this function in the same day will be ignored.
    */
   async triggerHeartbeat() {
-    var _a, _b;
     try {
       const platformLogger = this.container.getProvider("platform-logger").getImmediate();
       const agent = platformLogger.getPlatformInfoString();
       const date = getUTCDateString();
-      if (((_a = this._heartbeatsCache) === null || _a === void 0 ? void 0 : _a.heartbeats) == null) {
+      if (this._heartbeatsCache?.heartbeats == null) {
         this._heartbeatsCache = await this._heartbeatsCachePromise;
-        if (((_b = this._heartbeatsCache) === null || _b === void 0 ? void 0 : _b.heartbeats) == null) {
+        if (this._heartbeatsCache?.heartbeats == null) {
           return;
         }
       }
@@ -2025,12 +1641,11 @@ var HeartbeatServiceImpl = class {
    * returns an empty string.
    */
   async getHeartbeatsHeader() {
-    var _a;
     try {
       if (this._heartbeatsCache === null) {
         await this._heartbeatsCachePromise;
       }
-      if (((_a = this._heartbeatsCache) === null || _a === void 0 ? void 0 : _a.heartbeats) == null || this._heartbeatsCache.heartbeats.length === 0) {
+      if (this._heartbeatsCache?.heartbeats == null || this._heartbeatsCache.heartbeats.length === 0) {
         return "";
       }
       const date = getUTCDateString();
@@ -2104,7 +1719,7 @@ var HeartbeatStorageImpl = class {
       return { heartbeats: [] };
     } else {
       const idbHeartbeatObject = await readHeartbeatsFromIndexedDB(this.app);
-      if (idbHeartbeatObject === null || idbHeartbeatObject === void 0 ? void 0 : idbHeartbeatObject.heartbeats) {
+      if (idbHeartbeatObject?.heartbeats) {
         return idbHeartbeatObject;
       } else {
         return { heartbeats: [] };
@@ -2113,28 +1728,26 @@ var HeartbeatStorageImpl = class {
   }
   // overwrite the storage with the provided heartbeats
   async overwrite(heartbeatsObject) {
-    var _a;
     const canUseIndexedDB = await this._canUseIndexedDBPromise;
     if (!canUseIndexedDB) {
       return;
     } else {
       const existingHeartbeatsObject = await this.read();
       return writeHeartbeatsToIndexedDB(this.app, {
-        lastSentHeartbeatDate: (_a = heartbeatsObject.lastSentHeartbeatDate) !== null && _a !== void 0 ? _a : existingHeartbeatsObject.lastSentHeartbeatDate,
+        lastSentHeartbeatDate: heartbeatsObject.lastSentHeartbeatDate ?? existingHeartbeatsObject.lastSentHeartbeatDate,
         heartbeats: heartbeatsObject.heartbeats
       });
     }
   }
   // add heartbeats
   async add(heartbeatsObject) {
-    var _a;
     const canUseIndexedDB = await this._canUseIndexedDBPromise;
     if (!canUseIndexedDB) {
       return;
     } else {
       const existingHeartbeatsObject = await this.read();
       return writeHeartbeatsToIndexedDB(this.app, {
-        lastSentHeartbeatDate: (_a = heartbeatsObject.lastSentHeartbeatDate) !== null && _a !== void 0 ? _a : existingHeartbeatsObject.lastSentHeartbeatDate,
+        lastSentHeartbeatDate: heartbeatsObject.lastSentHeartbeatDate ?? existingHeartbeatsObject.lastSentHeartbeatDate,
         heartbeats: [
           ...existingHeartbeatsObject.heartbeats,
           ...heartbeatsObject.heartbeats
@@ -2177,288 +1790,16 @@ function registerCoreComponents(variant) {
     /* ComponentType.PRIVATE */
   ));
   registerVersion(name$q, version$1, variant);
-  registerVersion(name$q, version$1, "esm2017");
+  registerVersion(name$q, version$1, "esm2020");
   registerVersion("fire-js", "");
 }
 registerCoreComponents("");
 
-// node_modules/@angular/fire/node_modules/firebase/app/dist/esm/index.esm.js
-var name2 = "firebase";
-var version2 = "11.10.0";
-registerVersion(name2, version2, "app");
-
-// node_modules/@angular/fire/fesm2022/angular-fire.mjs
-var VERSION2 = new Version("ANGULARFIRE2_VERSION");
-function ɵgetDefaultInstanceOf(identifier, provided, defaultApp) {
-  if (provided) {
-    if (provided.length === 1) {
-      return provided[0];
-    }
-    const providedUsingDefaultApp = provided.filter((it) => it.app === defaultApp);
-    if (providedUsingDefaultApp.length === 1) {
-      return providedUsingDefaultApp[0];
-    }
-  }
-  const defaultAppWithContainer = defaultApp;
-  const provider = defaultAppWithContainer.container.getProvider(identifier);
-  return provider.getImmediate({
-    optional: true
-  });
-}
-var ɵgetAllInstancesOf = (identifier, app) => {
-  const apps = app ? [app] : getApps();
-  const instances2 = [];
-  apps.forEach((app2) => {
-    const provider = app2.container.getProvider(identifier);
-    provider.instances.forEach((instance) => {
-      if (!instances2.includes(instance)) {
-        instances2.push(instance);
-      }
-    });
-  });
-  return instances2;
-};
-var LogLevel2;
-(function(LogLevel3) {
-  LogLevel3[LogLevel3["SILENT"] = 0] = "SILENT";
-  LogLevel3[LogLevel3["WARN"] = 1] = "WARN";
-  LogLevel3[LogLevel3["VERBOSE"] = 2] = "VERBOSE";
-})(LogLevel2 || (LogLevel2 = {}));
-var currentLogLevel = isDevMode() && typeof Zone !== "undefined" ? LogLevel2.WARN : LogLevel2.SILENT;
-var ɵZoneScheduler = class {
-  zone;
-  delegate;
-  constructor(zone, delegate = queueScheduler) {
-    this.zone = zone;
-    this.delegate = delegate;
-  }
-  now() {
-    return this.delegate.now();
-  }
-  schedule(work, delay, state) {
-    const targetZone = this.zone;
-    const workInZone = function(state2) {
-      if (targetZone) {
-        targetZone.runGuarded(() => {
-          work.apply(this, [state2]);
-        });
-      } else {
-        work.apply(this, [state2]);
-      }
-    };
-    return this.delegate.schedule(workInZone, delay, state);
-  }
-};
-var ɵAngularFireSchedulers = class _ɵAngularFireSchedulers {
-  outsideAngular;
-  insideAngular;
-  constructor() {
-    const ngZone = inject(NgZone);
-    this.outsideAngular = ngZone.runOutsideAngular(() => new ɵZoneScheduler(typeof Zone === "undefined" ? void 0 : Zone.current));
-    this.insideAngular = ngZone.run(() => new ɵZoneScheduler(typeof Zone === "undefined" ? void 0 : Zone.current, asyncScheduler));
-  }
-  static ɵfac = function ɵAngularFireSchedulers_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ɵAngularFireSchedulers)();
-  };
-  static ɵprov = ɵɵdefineInjectable({
-    token: _ɵAngularFireSchedulers,
-    factory: _ɵAngularFireSchedulers.ɵfac,
-    providedIn: "root"
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ɵAngularFireSchedulers, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [], null);
-})();
-var alreadyWarned = false;
-function warnOutsideInjectionContext(original, logLevel) {
-  if (!alreadyWarned && (currentLogLevel > LogLevel2.SILENT || isDevMode())) {
-    alreadyWarned = true;
-    console.warn("Calling Firebase APIs outside of an Injection context may destabilize your application leading to subtle change-detection and hydration bugs. Find more at https://github.com/angular/angularfire/blob/main/docs/zones.md");
-  }
-  if (currentLogLevel >= logLevel) {
-    console.warn(`Firebase API called outside injection context: ${original.name}`);
-  }
-}
-function runOutsideAngular(fn) {
-  const ngZone = inject(NgZone, {
-    optional: true
-  });
-  if (!ngZone) {
-    return fn();
-  }
-  return ngZone.runOutsideAngular(() => fn());
-}
-function run(fn) {
-  const ngZone = inject(NgZone, {
-    optional: true
-  });
-  if (!ngZone) {
-    return fn();
-  }
-  return ngZone.run(() => fn());
-}
-var zoneWrapFn = (it, taskDone, injector) => {
-  return (...args) => {
-    if (taskDone) {
-      setTimeout(taskDone, 0);
-    }
-    return runInInjectionContext(injector, () => run(() => it.apply(void 0, args)));
-  };
-};
-var ɵzoneWrap = (it, blockUntilFirst, logLevel) => {
-  logLevel ||= blockUntilFirst ? LogLevel2.WARN : LogLevel2.VERBOSE;
-  return function() {
-    let taskDone;
-    const _arguments = arguments;
-    let schedulers;
-    let pendingTasks;
-    let injector;
-    try {
-      schedulers = inject(ɵAngularFireSchedulers);
-      pendingTasks = inject(PendingTasks);
-      injector = inject(EnvironmentInjector);
-    } catch (e) {
-      warnOutsideInjectionContext(it, logLevel);
-      return it.apply(this, _arguments);
-    }
-    for (let i = 0; i < arguments.length; i++) {
-      if (typeof _arguments[i] === "function") {
-        if (blockUntilFirst) {
-          taskDone ||= run(() => pendingTasks.add());
-        }
-        _arguments[i] = zoneWrapFn(_arguments[i], taskDone, injector);
-      }
-    }
-    const ret = runOutsideAngular(() => it.apply(this, _arguments));
-    if (!blockUntilFirst) {
-      if (ret instanceof Observable) {
-        return ret.pipe(subscribeOn(schedulers.outsideAngular), observeOn(schedulers.insideAngular));
-      } else {
-        return run(() => ret);
-      }
-    }
-    if (ret instanceof Observable) {
-      return ret.pipe(subscribeOn(schedulers.outsideAngular), observeOn(schedulers.insideAngular), pendingUntilEvent(injector));
-    } else if (ret instanceof Promise) {
-      return run(() => {
-        const removeTask = pendingTasks.add();
-        return new Promise((resolve, reject) => {
-          ret.then((it2) => runInInjectionContext(injector, () => run(() => resolve(it2))), (reason) => runInInjectionContext(injector, () => run(() => reject(reason)))).finally(removeTask);
-        });
-      });
-    } else if (typeof ret === "function" && taskDone) {
-      return function() {
-        setTimeout(taskDone, 0);
-        return ret.apply(this, arguments);
-      };
-    } else {
-      return run(() => ret);
-    }
-  };
-};
-
-// node_modules/@angular/fire/fesm2022/angular-fire-app.mjs
-var FirebaseApp = class {
-  constructor(app) {
-    return app;
-  }
-};
-var FirebaseApps = class {
-  constructor() {
-    return getApps();
-  }
-};
-var firebaseApp$ = timer(0, 300).pipe(concatMap(() => from(getApps())), distinct());
-function defaultFirebaseAppFactory(provided) {
-  if (provided && provided.length === 1) {
-    return provided[0];
-  }
-  return new FirebaseApp(getApp());
-}
-var PROVIDED_FIREBASE_APPS = new InjectionToken("angularfire2._apps");
-var DEFAULT_FIREBASE_APP_PROVIDER = {
-  provide: FirebaseApp,
-  useFactory: defaultFirebaseAppFactory,
-  deps: [[new Optional(), PROVIDED_FIREBASE_APPS]]
-};
-var FIREBASE_APPS_PROVIDER = {
-  provide: FirebaseApps,
-  deps: [[new Optional(), PROVIDED_FIREBASE_APPS]]
-};
-function firebaseAppFactory(fn) {
-  return (zone, injector) => {
-    const platformId = injector.get(PLATFORM_ID);
-    registerVersion("angularfire", VERSION2.full, "core");
-    registerVersion("angularfire", VERSION2.full, "app");
-    registerVersion("angular", VERSION.full, platformId.toString());
-    const app = zone.runOutsideAngular(() => fn(injector));
-    return new FirebaseApp(app);
-  };
-}
-var FirebaseAppModule = class _FirebaseAppModule {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  constructor(platformId) {
-    registerVersion("angularfire", VERSION2.full, "core");
-    registerVersion("angularfire", VERSION2.full, "app");
-    registerVersion("angular", VERSION.full, platformId.toString());
-  }
-  static ɵfac = function FirebaseAppModule_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _FirebaseAppModule)(ɵɵinject(PLATFORM_ID));
-  };
-  static ɵmod = ɵɵdefineNgModule({
-    type: _FirebaseAppModule
-  });
-  static ɵinj = ɵɵdefineInjector({
-    providers: [DEFAULT_FIREBASE_APP_PROVIDER, FIREBASE_APPS_PROVIDER]
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(FirebaseAppModule, [{
-    type: NgModule,
-    args: [{
-      providers: [DEFAULT_FIREBASE_APP_PROVIDER, FIREBASE_APPS_PROVIDER]
-    }]
-  }], () => [{
-    type: Object,
-    decorators: [{
-      type: Inject,
-      args: [PLATFORM_ID]
-    }]
-  }], null);
-})();
-function provideFirebaseApp(fn, ...deps) {
-  return makeEnvironmentProviders([DEFAULT_FIREBASE_APP_PROVIDER, FIREBASE_APPS_PROVIDER, {
-    provide: PROVIDED_FIREBASE_APPS,
-    useFactory: firebaseAppFactory(fn),
-    multi: true,
-    deps: [NgZone, Injector, ɵAngularFireSchedulers, ...deps]
-  }]);
-}
-var deleteApp2 = ɵzoneWrap(deleteApp, true);
-var getApp2 = ɵzoneWrap(getApp, true);
-var getApps2 = ɵzoneWrap(getApps, true);
-var initializeApp2 = ɵzoneWrap(initializeApp, true);
-var initializeServerApp2 = ɵzoneWrap(initializeServerApp, true);
-var onLog2 = ɵzoneWrap(onLog, true);
-var registerVersion2 = ɵzoneWrap(registerVersion, true);
-var setLogLevel3 = ɵzoneWrap(setLogLevel2, true);
-
 export {
-  base64,
   base64Decode,
-  getGlobal,
-  getDefaultEmulatorHost,
-  getDefaultEmulatorHostnameAndPort,
   getExperimentalSetting,
-  Deferred,
   isCloudWorkstation,
   pingServer,
-  createMockUserToken,
   updateEmulatorBanner,
   getUA,
   isMobileCordova,
@@ -2467,54 +1808,22 @@ export {
   isReactNative,
   isIE,
   isSafari,
-  isSafariOrWebkit,
-  isIndexedDBAvailable,
   FirebaseError,
   ErrorFactory,
-  issuedAtTime,
-  isEmpty,
-  deepEqual,
   querystring,
   querystringDecode,
   extractQuerystring,
   createSubscribe,
-  calculateBackoffMillis,
   getModularInstance,
   Component,
   LogLevel,
   Logger,
-  DEFAULT_ENTRY_NAME2 as DEFAULT_ENTRY_NAME,
-  _apps,
-  _serverApps,
-  _components,
-  _addComponent,
-  _addOrOverwriteComponent,
   _registerComponent,
   _getProvider,
   _removeServiceInstance,
-  _isFirebaseApp,
   _isFirebaseServerApp,
-  _clearComponents,
   SDK_VERSION,
   getApp,
-  registerVersion,
-  VERSION2 as VERSION,
-  ɵgetDefaultInstanceOf,
-  ɵgetAllInstancesOf,
-  ɵAngularFireSchedulers,
-  ɵzoneWrap,
-  FirebaseApp,
-  FirebaseApps,
-  firebaseApp$,
-  FirebaseAppModule,
-  provideFirebaseApp,
-  deleteApp2 as deleteApp,
-  getApp2,
-  getApps2 as getApps,
-  initializeApp2 as initializeApp,
-  initializeServerApp2 as initializeServerApp,
-  onLog2 as onLog,
-  registerVersion2,
-  setLogLevel3 as setLogLevel
+  registerVersion
 };
-//# sourceMappingURL=chunk-HBGOQ4ZI.js.map
+//# sourceMappingURL=chunk-XPVU57NH.js.map
