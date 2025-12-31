@@ -21,6 +21,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@tanstack-query-firebase/angular/data-connect": [
+        "./src/vendor/tanstack-query-firebase/index.ts"
       ]
     }
   },

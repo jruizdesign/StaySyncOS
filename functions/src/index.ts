@@ -1,33 +1,37 @@
-import { genkit, z } from 'genkit';
-import { enableFirebaseTelemetry } from '@genkit-ai/firebase';
-import { googleAI } from '@genkit-ai/googleai';
+// import { genkit, z } from 'genkit';
+// import { enableFirebaseTelemetry } from '@genkit-ai/firebase';
+// import { googleAI } from '@genkit-ai/googleai';
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { RecaptchaEnterpriseServiceClient } from "@google-cloud/recaptcha-enterprise";
 
-enableFirebaseTelemetry();
+// enableFirebaseTelemetry();
 
-// Initialize Genkit
-export const ai = genkit({
-    plugins: [
-        googleAI()
-    ]
-});
+// // Initialize Genkit
+// export const ai = genkit({
+//     plugins: [
+//         googleAI()
+//     ]
+// });
 
-// Example flow
-export const helloWorld = ai.defineFlow(
-    {
-        name: 'helloWorld',
-        inputSchema: z.string(),
-        outputSchema: z.string(),
-    },
-    async (subject) => {
-        return `Hello, ${subject}!`;
-    }
-);
+// // Example flow
+// export const helloWorld = ai.defineFlow(
+//     {
+//         name: 'helloWorld',
+//         inputSchema: z.string(),
+//         outputSchema: z.string(),
+//     },
+//     async (subject) => {
+//         return `Hello, ${subject}!`;
+//     }
+// );
 
-const client = new RecaptchaEnterpriseServiceClient();
+let client: RecaptchaEnterpriseServiceClient | null = null;
 
 export const verifyRecaptcha = onCall(async (request) => {
+    if (!client) {
+        client = new RecaptchaEnterpriseServiceClient();
+    }
+
     const token = request.data.token;
     const action = request.data.action;
 

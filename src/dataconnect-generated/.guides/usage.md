@@ -11,7 +11,7 @@ The generated SDK creates injectable wrapper functions.
 
 Here's an example:
 ```
-import { injectCreateHotel, injectGetFirstHotel, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectUpdateRoomStatus, injectListAvailableRooms, injectCreateMaintenanceRequest, injectGetHotelStaff } from '@dataconnect/generated/angular';
+import { injectGetFirstHotel, injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectUpdateRoomStatus, injectCreateGuest, injectCreateBooking } from '@dataconnect/generated/angular';
 
 @Component({
   selector: 'my-component',
@@ -19,15 +19,13 @@ import { injectCreateHotel, injectGetFirstHotel, injectCreateRoom, injectCreateG
 })
 class MyComponent {
   // The types of these injectors are available in angular/index.d.ts
-  private readonly CreateHotelOperation = injectCreateHotel(createHotelVars);
   private readonly GetFirstHotelOperation = injectGetFirstHotel();
+  private readonly ListAvailableRoomsOperation = injectListAvailableRooms();
   private readonly CreateRoomOperation = injectCreateRoom(createRoomVars);
+  private readonly CreateHotelOperation = injectCreateHotel(createHotelVars);
+  private readonly UpdateRoomStatusOperation = injectUpdateRoomStatus(updateRoomStatusVars);
   private readonly CreateGuestOperation = injectCreateGuest(createGuestVars);
   private readonly CreateBookingOperation = injectCreateBooking(createBookingVars);
-  private readonly UpdateRoomStatusOperation = injectUpdateRoomStatus(updateRoomStatusVars);
-  private readonly ListAvailableRoomsOperation = injectListAvailableRooms();
-  private readonly CreateMaintenanceRequestOperation = injectCreateMaintenanceRequest(createMaintenanceRequestVars);
-  private readonly GetHotelStaffOperation = injectGetHotelStaff(getHotelStaffVars);
   }
 ```
 
@@ -70,35 +68,29 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { createHotel, getFirstHotel, createRoom, createGuest, createBooking, updateRoomStatus, listAvailableRooms, createMaintenanceRequest, getHotelStaff } from '@dataconnect/generated';
+import { getFirstHotel, listAvailableRooms, createRoom, createHotel, updateRoomStatus, createGuest, createBooking } from '@dataconnect/generated';
 
-
-// Operation CreateHotel:  For variables, look at type CreateHotelVars in ../index.d.ts
-const { data } = await CreateHotel(dataConnect, createHotelVars);
 
 // Operation GetFirstHotel: 
 const { data } = await GetFirstHotel(dataConnect);
 
+// Operation ListAvailableRooms: 
+const { data } = await ListAvailableRooms(dataConnect);
+
 // Operation CreateRoom:  For variables, look at type CreateRoomVars in ../index.d.ts
 const { data } = await CreateRoom(dataConnect, createRoomVars);
+
+// Operation CreateHotel:  For variables, look at type CreateHotelVars in ../index.d.ts
+const { data } = await CreateHotel(dataConnect, createHotelVars);
+
+// Operation UpdateRoomStatus:  For variables, look at type UpdateRoomStatusVars in ../index.d.ts
+const { data } = await UpdateRoomStatus(dataConnect, updateRoomStatusVars);
 
 // Operation CreateGuest:  For variables, look at type CreateGuestVars in ../index.d.ts
 const { data } = await CreateGuest(dataConnect, createGuestVars);
 
 // Operation CreateBooking:  For variables, look at type CreateBookingVars in ../index.d.ts
 const { data } = await CreateBooking(dataConnect, createBookingVars);
-
-// Operation UpdateRoomStatus:  For variables, look at type UpdateRoomStatusVars in ../index.d.ts
-const { data } = await UpdateRoomStatus(dataConnect, updateRoomStatusVars);
-
-// Operation ListAvailableRooms: 
-const { data } = await ListAvailableRooms(dataConnect);
-
-// Operation CreateMaintenanceRequest:  For variables, look at type CreateMaintenanceRequestVars in ../index.d.ts
-const { data } = await CreateMaintenanceRequest(dataConnect, createMaintenanceRequestVars);
-
-// Operation GetHotelStaff:  For variables, look at type GetHotelStaffVars in ../index.d.ts
-const { data } = await GetHotelStaff(dataConnect, getHotelStaffVars);
 
 
 ```

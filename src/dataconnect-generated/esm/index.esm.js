@@ -6,17 +6,6 @@ export const connectorConfig = {
   location: 'us-central1'
 };
 
-export const createHotelRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
-  dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'CreateHotel', inputVars);
-}
-createHotelRef.operationName = 'CreateHotel';
-
-export function createHotel(dcOrVars, vars) {
-  return executeMutation(createHotelRef(dcOrVars, vars));
-}
-
 export const getFirstHotelRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
@@ -28,6 +17,17 @@ export function getFirstHotel(dc) {
   return executeQuery(getFirstHotelRef(dc));
 }
 
+export const listAvailableRoomsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListAvailableRooms');
+}
+listAvailableRoomsRef.operationName = 'ListAvailableRooms';
+
+export function listAvailableRooms(dc) {
+  return executeQuery(listAvailableRoomsRef(dc));
+}
+
 export const createRoomRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -37,6 +37,28 @@ createRoomRef.operationName = 'CreateRoom';
 
 export function createRoom(dcOrVars, vars) {
   return executeMutation(createRoomRef(dcOrVars, vars));
+}
+
+export const createHotelRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateHotel', inputVars);
+}
+createHotelRef.operationName = 'CreateHotel';
+
+export function createHotel(dcOrVars, vars) {
+  return executeMutation(createHotelRef(dcOrVars, vars));
+}
+
+export const updateRoomStatusRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateRoomStatus', inputVars);
+}
+updateRoomStatusRef.operationName = 'UpdateRoomStatus';
+
+export function updateRoomStatus(dcOrVars, vars) {
+  return executeMutation(updateRoomStatusRef(dcOrVars, vars));
 }
 
 export const createGuestRef = (dcOrVars, vars) => {
@@ -59,49 +81,5 @@ createBookingRef.operationName = 'CreateBooking';
 
 export function createBooking(dcOrVars, vars) {
   return executeMutation(createBookingRef(dcOrVars, vars));
-}
-
-export const updateRoomStatusRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
-  dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'UpdateRoomStatus', inputVars);
-}
-updateRoomStatusRef.operationName = 'UpdateRoomStatus';
-
-export function updateRoomStatus(dcOrVars, vars) {
-  return executeMutation(updateRoomStatusRef(dcOrVars, vars));
-}
-
-export const listAvailableRoomsRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
-  dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListAvailableRooms');
-}
-listAvailableRoomsRef.operationName = 'ListAvailableRooms';
-
-export function listAvailableRooms(dc) {
-  return executeQuery(listAvailableRoomsRef(dc));
-}
-
-export const createMaintenanceRequestRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
-  dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'CreateMaintenanceRequest', inputVars);
-}
-createMaintenanceRequestRef.operationName = 'CreateMaintenanceRequest';
-
-export function createMaintenanceRequest(dcOrVars, vars) {
-  return executeMutation(createMaintenanceRequestRef(dcOrVars, vars));
-}
-
-export const getHotelStaffRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
-  dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'GetHotelStaff', inputVars);
-}
-getHotelStaffRef.operationName = 'GetHotelStaff';
-
-export function getHotelStaff(dcOrVars, vars) {
-  return executeQuery(getHotelStaffRef(dcOrVars, vars));
 }
 

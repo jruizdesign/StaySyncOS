@@ -149,7 +149,7 @@ export class DataService {
 
   guests = toSignal(collectionData(collection(this.firestore, 'guests'), { idField: 'id' }) as Observable<Guest[]>, { initialValue: [] as Guest[] });
   stays = toSignal(collectionData(collection(this.firestore, 'stays'), { idField: 'id' }) as Observable<Stay[]>, { initialValue: [] as Stay[] });
-  logs = toSignal(collectionData(query(collection(this.firestore, 'logs'), orderBy('timestamp', 'desc')), { idField: 'id' }) as Observable<LogEntry[]>, { initialValue: [] as LogEntry[] });
+  logs = toSignal(collectionData(collection(this.firestore, 'logs'), { idField: 'id' }) as Observable<LogEntry[]>, { initialValue: [] as LogEntry[] });
   documents = toSignal(collectionData(collection(this.firestore, 'documents'), { idField: 'id' }) as Observable<FinancialDocument[]>, { initialValue: [] as FinancialDocument[] });
 
   staff = toSignal(collectionData(collection(this.firestore, 'staff'), { idField: 'id' }) as Observable<Staff[]>, { initialValue: [] as Staff[] });
@@ -160,7 +160,7 @@ export class DataService {
   storedDocuments = toSignal(collectionData(collection(this.firestore, 'storedDocuments'), { idField: 'id' }) as Observable<StoredDocument[]>, { initialValue: [] as StoredDocument[] });
 
   // Config - Using a specific document 'config/main'
-  private configDoc = doc(this.firestore, 'config/main');
+  private configDoc = doc(this.firestore, 'config', 'main');
   hotelConfigSignal = toSignal(docData(this.configDoc) as Observable<HotelConfig>, { initialValue: null });
 
   // Computed wrapper to provide default if config is missing
@@ -195,7 +195,7 @@ export class DataService {
     addDoc(collection(this.firestore, 'logs'), entry);
   }
 
-  async addRoom(room: Omit<Room, 'id' | 'status'>) {
+  async addRoom(room: Omit<Room, 'id' | 'status' | 'hotel'>) {
     const hotel = this.firstHotelQuery.data()?.hotels?.[0];
     if (!hotel) {
       console.error("Cannot add room: No hotel record found.");
@@ -208,7 +208,8 @@ export class DataService {
         roomNumber: room.roomNumber,
         roomType: room.roomType,
         status: 'Available',
-        dailyRate: room.dailyRate ?? 100
+        dailyRate: room.dailyRate ?? 100,
+        capacity: room.capacity ?? 2
       });
       this.log('Room', 'Room Created', `Room ${room.roomNumber} added.`);
     } catch (e) {
@@ -216,7 +217,7 @@ export class DataService {
     }
   }
 
-  async addRoomsBulk(roomsData: Omit<Room, 'id' | 'status'>[]) {
+  async addRoomsBulk(roomsData: Omit<Room, 'id' | 'status' | 'hotel'>[]) {
     // Sequential execution for now
     for (const r of roomsData) {
       await this.addRoom(r);

@@ -34,8 +34,7 @@ const authGuard: CanActivateFn = () => {
       if (user) {
         return true;
       }
-      router.navigate(['/login']);
-      return false;
+      return router.parseUrl('/login');
     })
   );
 };
@@ -48,8 +47,7 @@ const loginGuard: CanActivateFn = () => {
       if (!user) {
         return true;
       }
-      router.navigate(['/']);
-      return false;
+      return router.parseUrl('/');
     })
   );
 };
@@ -84,10 +82,15 @@ bootstrapApplication(AppComponent, {
       const dc = getDataConnect(getApp(), connectorConfig);
       return dc;
     }),
-    provideAppCheck(() => initializeAppCheck(undefined, {
-      provider: new ReCaptchaEnterpriseProvider('6Ldk8TssAAAAAHmIfBZ4GDSaaeR772oXEPSoVtfC'),
-      isTokenAutoRefreshEnabled: true
-    })),
+    provideAppCheck(() => {
+      if (window.location.hostname === 'localhost') {
+        (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = "DEBUG_TOKEN";
+      }
+      return initializeAppCheck(undefined, {
+        provider: new ReCaptchaEnterpriseProvider('6Ldk8TssAAAAAHmIfBZ4GDSaaeR772oXEPSoVtfC'),
+        isTokenAutoRefreshEnabled: true
+      });
+    }),
     provideAngularQuery(new QueryClient())
   ]
 }).catch(err => console.error(err));

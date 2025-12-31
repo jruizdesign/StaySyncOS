@@ -1,0 +1,35 @@
+
+query ListAvailableRooms @auth(level: PUBLIC) {
+  rooms {
+    id
+    roomNumber
+    roomType
+    status
+    dailyRate
+    capacity
+    hotel {
+      id
+      name
+    }
+  }
+}
+
+mutation CreateRoom($hotelId: UUID!, $roomNumber: String!, $roomType: String!, $status: String!, $dailyRate: Float!, $capacity: Int) @auth(level: PUBLIC) {
+  room_insert(data: {hotelId: $hotelId, roomNumber: $roomNumber, roomType: $roomType, status: $status, dailyRate: $dailyRate, capacity: $capacity})
+}
+
+mutation CreateHotel($name: String!, $address: String!, $propertyId: String!) @auth(level: PUBLIC) {
+  hotel_insert(data: {name: $name, address: $address, propertyId: $propertyId})
+}
+
+mutation UpdateRoomStatus($id: UUID!, $status: String!) @auth(level: PUBLIC) {
+  room_update(id: $id, data: {status: $status})
+}
+
+mutation CreateGuest($firstName: String!, $lastName: String!, $email: String!) @auth(level: PUBLIC) {
+  guest_insert(data: {firstName: $firstName, lastName: $lastName, email: $email})
+}
+
+mutation CreateBooking($guestId: UUID!, $hotelId: UUID!, $checkInDate: Date!, $checkOutDate: Date!, $bookingStatus: String!) @auth(level: PUBLIC) {
+  booking_insert(data: {guestId: $guestId, hotelId: $hotelId, checkInDate: $checkInDate, checkOutDate: $checkOutDate, bookingStatus: $bookingStatus})
+}
