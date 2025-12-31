@@ -5,6 +5,10 @@
     "firebase": {
       "command": "npx",
       "args": ["-y", "firebase-tools", "mcp", "--dir", "/Users/jason/StaySyncOS"]
+    },
+    "notifications": {
+      "command": "npx",
+      "args": ["-y", "notification-service", "mcp", "--dir", "/Users/jason/StaySyncOS"]
     }
   },
   "contextFileName": "FIREBASE.md"

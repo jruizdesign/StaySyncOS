@@ -1,14 +1,39 @@
-mutation CreateNewGuest @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
-  guest_insert(data: {firstName: "John", lastName: "Doe", email: "john.doe@example.com"})
+
+mutation CreateHotel($name: String!, $address: String!, $propertyId: String!) @auth(level: PUBLIC, insecureReason: "Init") {
+  hotel_insert(data: {name: $name, address: $address, propertyId: $propertyId})
+}
+
+query GetFirstHotel @auth(level: PUBLIC, insecureReason: "Init") {
+    hotels(limit: 1) {
+        id
+        name
+    }
+}
+
+mutation CreateRoom($hotelId: UUID!, $roomNumber: String!, $roomType: String!, $status: String!, $dailyRate: Float!) @auth(level: PUBLIC, insecureReason: "Init") {
+  room_insert(data: {hotelId: $hotelId, roomNumber: $roomNumber, roomType: $roomType, status: $status, dailyRate: $dailyRate})
+}
+
+mutation CreateGuest($firstName: String!, $lastName: String!, $email: String!) @auth(level: PUBLIC, insecureReason: "Init") {
+    guest_insert(data: {firstName: $firstName, lastName: $lastName, email: $email})
+}
+
+mutation CreateBooking($guestId: UUID!, $roomId: UUID!, $hotelId: UUID!, $checkInDate: Date!, $checkOutDate: Date!, $status: String!) @auth(level: PUBLIC, insecureReason: "Init") {
+    booking_insert(data: {guestId: $guestId, roomId: $roomId, hotelId: $hotelId, checkInDate: $checkInDate, checkOutDate: $checkOutDate, bookingStatus: $status})
+}
+
+mutation UpdateRoomStatus($id: UUID!, $status: String!) @auth(level: PUBLIC, insecureReason: "Init") {
+  room_update(id: $id, data: {status: $status})
 }
 
 query ListAvailableRooms @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
-  rooms(where: {status: {eq: "available"}}) {
+  rooms {
     id
     roomNumber
     roomType
     capacity
     dailyRate
+    status
   }
 }
 
@@ -16,7 +41,7 @@ mutation CreateMaintenanceRequest($roomId: UUID!, $hotelId: UUID!, $description:
   maintenanceRequest_insert(data: {roomId: $roomId, hotelId: $hotelId, description: $description, requestDate: $requestDate, status: "open"})
 }
 
-query GetHotelStaff($hotelId: UUID!) @auth(level: USER) {
+query GetHotelStaff($hotelId: UUID!) @auth(level: USER, insecureReason: "This operation is safe for authenticated users to access hotel staff information.") {
   staffs(where: {hotelId: {eq: $hotelId}}) {
     id
     firstName

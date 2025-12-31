@@ -5,10 +5,10 @@ import { DataService, HotelConfig, Room } from '../services/data.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
-  selector: 'app-settings',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  template: `
+    selector: 'app-settings',
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, FormsModule],
+    template: `
     <div class="p-6 space-y-6">
       <div class="flex justify-between items-center">
         <div>
@@ -229,153 +229,154 @@ import { AuthService } from '../services/auth.service';
   `
 })
 export class SettingsComponent {
-  data = inject(DataService);
-  auth = inject(AuthService);
-  fb = inject(FormBuilder);
+    data = inject(DataService);
+    auth = inject(AuthService);
+    fb = inject(FormBuilder);
 
-  configForm: FormGroup;
-  hasBackedUp = signal(false);
-  showRaw = signal(false);
-  
-  // Wizard State
-  showBulkWizard = signal(false);
-  wizFloors = 3;
-  wizRoomsPerFloor = 10;
-  wizStartFloor = 1;
-  wizDefaultType: Room['type'] = 'Single';
-  wizDefaultPrice = 120;
-  wizAmenities = 'Wifi, TV, Mini-bar';
+    configForm: FormGroup;
+    hasBackedUp = signal(false);
+    showRaw = signal(false);
 
-  constructor() {
-    const config = this.data.hotelConfig();
-    this.configForm = this.fb.group({
-      name: [config.name, Validators.required],
-      address: [config.address, Validators.required],
-      email: [config.email, [Validators.required, Validators.email]],
-      phone: [config.phone, Validators.required],
-      demoMode: [config.demoMode]
-    });
-  }
+    // Wizard State
+    showBulkWizard = signal(false);
+    wizFloors = 3;
+    wizRoomsPerFloor = 10;
+    wizStartFloor = 1;
+    wizDefaultType: Room['roomType'] = 'Single';
+    wizDefaultPrice = 120;
+    wizAmenities = 'Wifi, TV, Mini-bar';
 
-  updateConfig() {
-    if (this.configForm.valid) {
-      const newConfig = this.configForm.value;
-      const oldConfig = this.data.hotelConfig();
-
-      // Handle Demo Mode Toggle Workflow
-      if (newConfig.demoMode !== oldConfig.demoMode) {
-         if (newConfig.demoMode) {
-             // Enabling Demo Mode
-             if (confirm("Enable Demo Mode? This will wipe your current data and load sample data.")) {
-                 this.data.factoryReset(true);
-             } else {
-                 // Revert checkbox in UI if cancelled
-                 this.configForm.patchValue({ demoMode: false });
-                 return; 
-             }
-         } else {
-             // Disabling Demo Mode (Going Real)
-             if (confirm("Disable Demo Mode? This will WIPE ALL MOCK DATA to prepare for real usage.")) {
-                 this.data.factoryReset(false); // Wipes data, sets demoMode=false in config internally
-                 // We don't save the form immediately here because factoryReset handles the config signal
-                 // But we want to trigger the wizard
-                 this.showBulkWizard.set(true);
-                 // We can return early as factoryReset updated the config signal already
-                 return;
-             } else {
-                 // Revert
-                 this.configForm.patchValue({ demoMode: true });
-                 return;
-             }
-         }
-      }
-
-      this.data.updateHotelDetails(newConfig);
-      this.configForm.markAsPristine();
-      
-      // Only alert if we didn't just switch modes (which has its own prompts)
-      if (newConfig.demoMode === oldConfig.demoMode) {
-          alert('Property profile updated successfully.');
-      }
+    constructor() {
+        const config = this.data.hotelConfig();
+        this.configForm = this.fb.group({
+            name: [config.name, Validators.required],
+            address: [config.address, Validators.required],
+            email: [config.email, [Validators.required, Validators.email]],
+            phone: [config.phone, Validators.required],
+            demoMode: [config.demoMode]
+        });
     }
-  }
 
-  runBulkWizard() {
-      const roomsToAdd: Omit<Room, 'id' | 'status'>[] = [];
-      const amenities = this.wizAmenities.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    updateConfig() {
+        if (this.configForm.valid) {
+            const newConfig = this.configForm.value;
+            const oldConfig = this.data.hotelConfig();
 
-      for (let f = 0; f < this.wizFloors; f++) {
-          const currentFloor = this.wizStartFloor + f;
-          for (let r = 1; r <= this.wizRoomsPerFloor; r++) {
-              const roomNum = (currentFloor * 100) + r;
-              roomsToAdd.push({
-                  number: roomNum.toString(),
-                  type: this.wizDefaultType,
-                  price: this.wizDefaultPrice,
-                  amenities: amenities
-              });
-          }
-      }
+            // Handle Demo Mode Toggle Workflow
+            if (newConfig.demoMode !== oldConfig.demoMode) {
+                if (newConfig.demoMode) {
+                    // Enabling Demo Mode
+                    if (confirm("Enable Demo Mode? This will wipe your current data and load sample data.")) {
+                        this.data.factoryReset(true);
+                    } else {
+                        // Revert checkbox in UI if cancelled
+                        this.configForm.patchValue({ demoMode: false });
+                        return;
+                    }
+                } else {
+                    // Disabling Demo Mode (Going Real)
+                    if (confirm("Disable Demo Mode? This will WIPE ALL MOCK DATA to prepare for real usage.")) {
+                        this.data.factoryReset(false); // Wipes data, sets demoMode=false in config internally
+                        // We don't save the form immediately here because factoryReset handles the config signal
+                        // But we want to trigger the wizard
+                        this.showBulkWizard.set(true);
+                        // We can return early as factoryReset updated the config signal already
+                        return;
+                    } else {
+                        // Revert
+                        this.configForm.patchValue({ demoMode: true });
+                        return;
+                    }
+                }
+            }
 
-      this.data.addRoomsBulk(roomsToAdd);
-      this.showBulkWizard.set(false);
-      alert(`${roomsToAdd.length} rooms generated successfully.`);
-  }
+            this.data.updateHotelDetails(newConfig);
+            this.configForm.markAsPristine();
 
-  downloadBackup() {
-    const json = this.data.getExportData();
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `nexus_backup_${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-    
-    this.hasBackedUp.set(true);
-  }
-
-  triggerRestore(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-       const file = input.files[0];
-       const reader = new FileReader();
-       
-       reader.onload = (e) => {
-          const content = e.target?.result as string;
-          if (confirm('WARNING: This will overwrite all current system data with the backup file. Continue?')) {
-             const success = this.data.importData(content);
-             if (success) {
-                alert('System successfully restored.');
-                // Refresh form values
-                const config = this.data.hotelConfig();
-                this.configForm.patchValue(config);
-             } else {
-                alert('Failed to restore data. Invalid backup file.');
-             }
-          }
-       };
-       reader.readAsText(file);
+            // Only alert if we didn't just switch modes (which has its own prompts)
+            if (newConfig.demoMode === oldConfig.demoMode) {
+                alert('Property profile updated successfully.');
+            }
+        }
     }
-  }
 
-  hardReset() {
-    if (!this.hasBackedUp()) return;
-    
-    const mode = confirm('Initialize system with Demo Data (Rooms, Guests, Staff)? \n\nClick Cancel for a completely empty system.');
-    
-    if (confirm('FINAL WARNING: This action is irreversible. All current data will be lost. Proceed?')) {
-       this.data.factoryReset(mode); // true = demo, false = empty
-       alert('System re-initialized.');
-       this.hasBackedUp.set(false);
-       // Refresh form
-       this.configForm.patchValue(this.data.hotelConfig());
-       
-       // If empty reset, offer wizard
-       if (!mode) {
-           this.showBulkWizard.set(true);
-       }
+    async runBulkWizard() {
+        const roomsToAdd: Omit<Room, 'id' | 'status'>[] = [];
+        const amenities = this.wizAmenities.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
+        for (let f = 0; f < this.wizFloors; f++) {
+            const currentFloor = this.wizStartFloor + f;
+            for (let r = 1; r <= this.wizRoomsPerFloor; r++) {
+                const roomNum = (currentFloor * 100) + r;
+                roomsToAdd.push({
+                    roomNumber: roomNum.toString(),
+                    roomType: this.wizDefaultType,
+                    dailyRate: this.wizDefaultPrice,
+                    capacity: this.wizDefaultType === 'Single' ? 1 : 2, // Simple logic
+                    // amenities // Amenities not in Room type yet if looking at schema, but ignoring for now
+                });
+            }
+        }
+
+        await this.data.addRoomsBulk(roomsToAdd);
+        this.showBulkWizard.set(false);
+        alert(`${roomsToAdd.length} rooms generated successfully.`);
     }
-  }
+
+    downloadBackup() {
+        const json = this.data.getExportData();
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `nexus_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+
+        this.hasBackedUp.set(true);
+    }
+
+    triggerRestore(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const content = e.target?.result as string;
+                if (confirm('WARNING: This will overwrite all current system data with the backup file. Continue?')) {
+                    const success = this.data.importData(content);
+                    if (success) {
+                        alert('System successfully restored.');
+                        // Refresh form values
+                        const config = this.data.hotelConfig();
+                        this.configForm.patchValue(config);
+                    } else {
+                        alert('Failed to restore data. Invalid backup file.');
+                    }
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    hardReset() {
+        if (!this.hasBackedUp()) return;
+
+        const mode = confirm('Initialize system with Demo Data (Rooms, Guests, Staff)? \n\nClick Cancel for a completely empty system.');
+
+        if (confirm('FINAL WARNING: This action is irreversible. All current data will be lost. Proceed?')) {
+            this.data.factoryReset(mode); // true = demo, false = empty
+            alert('System re-initialized.');
+            this.hasBackedUp.set(false);
+            // Refresh form
+            this.configForm.patchValue(this.data.hotelConfig());
+
+            // If empty reset, offer wizard
+            if (!mode) {
+                this.showBulkWizard.set(true);
+            }
+        }
+    }
 }

@@ -27,7 +27,8 @@ export class AuthService {
   private functions = inject(Functions);
 
   // Expose Firebase User as a signal
-  private firebaseUser = toSignal(user(this.auth));
+  user$ = user(this.auth);
+  private firebaseUser = toSignal(this.user$);
 
   // Computed "App User" to maintain compatibility with existing components
   currentUser = computed<User | null>(() => {

@@ -15,7 +15,7 @@ import { SettingsComponent } from './src/components/settings.component';
 import { LoginComponent } from './src/components/login.component';
 import { DocumentCenterComponent } from './src/components/document-center.component';
 import { AuthService } from './src/services/auth.service';
-import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideFirebaseApp, initializeApp, getApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { provideFunctions, getFunctions } from '@angular/fire/functions';
@@ -24,9 +24,51 @@ import { provideDataConnect, getDataConnect } from '@angular/fire/data-connect';
 import { firebaseConfig } from './src/firebase-config';
 import { connectorConfig } from './src/dataconnect-generated';
 import { provideAppCheck, initializeAppCheck, ReCaptchaEnterpriseProvider } from '@angular/fire/app-check';
+import { map } from 'rxjs/operators';
 
 const authGuard: CanActivateFn = () => {
-...
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  return auth.user$.pipe(
+    map(user => {
+      if (user) {
+        return true;
+      }
+      router.navigate(['/login']);
+      return false;
+    })
+  );
+};
+
+const loginGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  return auth.user$.pipe(
+    map(user => {
+      if (!user) {
+        return true;
+      }
+      router.navigate(['/']);
+      return false;
+    })
+  );
+};
+
+const routes: Routes = [
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'overview', component: DailyOverviewComponent, canActivate: [authGuard] },
+  { path: 'rooms', component: RoomManagerComponent, canActivate: [authGuard] },
+  { path: 'guests', component: GuestManagerComponent, canActivate: [authGuard] },
+  { path: 'staff', component: StaffManagerComponent, canActivate: [authGuard] },
+  { path: 'documents', component: DocumentCenterComponent, canActivate: [authGuard] },
+  { path: 'maintenance', component: MaintenanceComponent, canActivate: [authGuard] },
+  { path: 'accounting', component: AccountingComponent, canActivate: [authGuard] },
+  { path: 'logs', component: LogsComponent, canActivate: [authGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
+];
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideZonelessChangeDetection(),
@@ -36,9 +78,8 @@ bootstrapApplication(AppComponent, {
     provideStorage(() => getStorage()),
     provideFunctions(() => getFunctions()),
     provideFirestore(() => getFirestore()),
-    provideDataConnect(injector => {
-      const dc = getDataConnect(injector);
-      Object.assign(dc, connectorConfig);
+    provideDataConnect(() => {
+      const dc = getDataConnect(getApp(), connectorConfig);
       return dc;
     }),
     provideAppCheck(() => initializeAppCheck(undefined, {

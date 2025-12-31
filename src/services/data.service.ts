@@ -3,19 +3,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { AiService } from './ai.service';
-import { injectListAvailableRooms } from '../dataconnect-generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetFirstHotel, injectUpdateRoomStatus } from '../dataconnect-generated/angular';
 import { ListAvailableRoomsData } from '../dataconnect-generated';
 
-/*
-export interface Room {
-  id: string;
-  number: string;
-  type: 'Single' | 'Double' | 'Suite' | 'Penthouse';
-  price: number;
-  status: 'Available' | 'Occupied' | 'Maintenance' | 'Dirty';
-  amenities: string[];
-}
-*/
+// Interfaces
 export type Room = ListAvailableRoomsData['rooms'][0];
 
 export interface Guest {
@@ -65,7 +56,6 @@ export interface FinancialDocument {
   summary?: string;
 }
 
-// --- New Staff Interfaces ---
 export interface Staff {
   id: string;
   name: string;
@@ -144,9 +134,19 @@ export class DataService {
   ai = inject(AiService);
   firestore = inject(Firestore);
 
-  // Firestore Collections as Signals with Explicit Casting
+  // Data Connect Queries & Mutations
   roomsQuery = injectListAvailableRooms();
+  firstHotelQuery = injectGetFirstHotel();
+
+  createRoomMut = injectCreateRoom();
+  createGuestMut = injectCreateGuest();
+  createBookingMut = injectCreateBooking();
+  createHotelMut = injectCreateHotel();
+  updateRoomStatusMut = injectUpdateRoomStatus();
+
+  // Signals
   rooms = computed(() => this.roomsQuery.data()?.rooms ?? []);
+
   guests = toSignal(collectionData(collection(this.firestore, 'guests'), { idField: 'id' }) as Observable<Guest[]>, { initialValue: [] as Guest[] });
   stays = toSignal(collectionData(collection(this.firestore, 'stays'), { idField: 'id' }) as Observable<Stay[]>, { initialValue: [] as Stay[] });
   logs = toSignal(collectionData(query(collection(this.firestore, 'logs'), orderBy('timestamp', 'desc')), { idField: 'id' }) as Observable<LogEntry[]>, { initialValue: [] as LogEntry[] });
@@ -163,7 +163,7 @@ export class DataService {
   private configDoc = doc(this.firestore, 'config/main');
   hotelConfigSignal = toSignal(docData(this.configDoc) as Observable<HotelConfig>, { initialValue: null });
 
-  // Computed wrapper to provide default if config is missing (or not loaded yet)
+  // Computed wrapper to provide default if config is missing
   hotelConfig = computed(() => {
     const c = this.hotelConfigSignal();
     return c || {
@@ -183,337 +183,167 @@ export class DataService {
     return collection(this.firestore, name);
   }
 
-  // --- Actions ---
-
   log(category: LogEntry['category'], action: string, details: string) {
-    const newLog: LogEntry = {
+    const entry: LogEntry = {
       id: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
-      user: 'System',
-      category,
       action,
+      user: 'Admin', // TODO: Get current user
+      category,
       details
     };
-    addDoc(this.col('logs'), newLog);
+    addDoc(collection(this.firestore, 'logs'), entry);
   }
 
-  /*
-  addRoom(room: Omit<Room, 'id' | 'status'>) {
-    const newRoom: Room = { ...room, id: crypto.randomUUID(), status: 'Available' };
-    setDoc(doc(this.firestore, 'rooms', newRoom.id), newRoom);
-    this.log('Room', 'Room Created', `Room ${room.number} added.`);
+  async addRoom(room: Omit<Room, 'id' | 'status'>) {
+    const hotel = this.firstHotelQuery.data()?.hotels?.[0];
+    if (!hotel) {
+      console.error("Cannot add room: No hotel record found.");
+      return;
+    }
+
+    try {
+      await this.createRoomMut.mutateAsync({
+        hotelId: hotel.id,
+        roomNumber: room.roomNumber,
+        roomType: room.roomType,
+        status: 'Available',
+        dailyRate: room.dailyRate ?? 100
+      });
+      this.log('Room', 'Room Created', `Room ${room.roomNumber} added.`);
+    } catch (e) {
+      console.error("Failed to add room", e);
+    }
   }
 
-  addRoomsBulk(roomsData: Omit<Room, 'id' | 'status'>[]) {
-    roomsData.forEach(r => {
-      this.addRoom(r);
-    });
+  async addRoomsBulk(roomsData: Omit<Room, 'id' | 'status'>[]) {
+    // Sequential execution for now
+    for (const r of roomsData) {
+      await this.addRoom(r);
+    }
     this.log('System', 'Bulk Action', `Created ${roomsData.length} rooms via Wizard.`);
   }
 
-  updateRoomStatus(roomId: string, status: Room['status']) {
-    updateDoc(doc(this.firestore, 'rooms', roomId), { status });
-    this.log('Room', 'Status Change', `Room ${roomId} status set to ${status}`);
-  }
-  */
-
-  // --- Guest Actions ---
-  addGuest(guest: Omit<Guest, 'id'>) {
-    const newGuest: Guest = {
-      ...guest,
-      id: crypto.randomUUID()
-    };
-    setDoc(doc(this.firestore, 'guests', newGuest.id), newGuest);
-    this.log('Guest', 'Guest Created', `Added guest: ${newGuest.name}`);
-    return newGuest;
+  async updateRoomStatus(roomId: string, status: string) {
+    try {
+      await this.updateRoomStatusMut.mutateAsync({ id: roomId, status });
+      this.log('Room', 'Status Update', `Room status updated to ${status}`);
+    } catch (e) {
+      console.error("Failed to update room status", e);
+    }
   }
 
-  updateGuest(id: string, updates: Partial<Guest>) {
-    updateDoc(doc(this.firestore, 'guests', id), updates);
-    this.log('Guest', 'Update', `Guest ${id} updated.`);
+  factoryReset(seedDemoData: boolean) {
+    if (seedDemoData) {
+      this.seedData();
+      this.seedStaff();
+    }
   }
 
-  deleteGuest(id: string) {
-    deleteDoc(doc(this.firestore, 'guests', id));
-    this.log('Guest', 'Delete', `Guest ${id} deleted.`);
-  }
+  private async seedData() {
+    // 1. Ensure Hotel Exists
+    let hotel = this.firstHotelQuery.data()?.hotels?.[0];
 
-  // --- Stay Actions ---
-
-  createStay(guest: Guest, roomId: string, nights: number) {
-    const checkIn = new Date();
-    const checkOut = new Date(checkIn);
-    checkOut.setDate(checkOut.getDate() + nights);
-    return this.bookStay(guest, roomId, checkIn.toISOString(), checkOut.toISOString());
-  }
-
-  async bookStay(guest: Guest, roomId: string, checkInDate: string, checkOutDate?: string) {
-    const room = this.rooms().find(r => r.id === roomId);
-    if (!room || room.status !== 'Available') return;
-
-    const stayId = crypto.randomUUID();
-    const rate = room.dailyRate;
-
-    const checkInTime = new Date(checkInDate).getTime();
-    let nights = 1;
-    let isIndefinite = false;
-
-    if (checkOutDate) {
-      const checkOutTime = new Date(checkOutDate).getTime();
-      nights = Math.max(1, Math.ceil((checkOutTime - checkInTime) / (1000 * 60 * 60 * 24)));
-    } else {
-      isIndefinite = true;
-      nights = 1;
+    if (!hotel) {
+      try {
+        const res = await this.createHotelMut.mutateAsync({
+          name: "StaySyncOS Demo Hotel",
+          address: "123 Luxury Blvd, Metropolis, NY",
+          propertyId: "PROP-001"
+        });
+        if (res.data?.hotel_insert?.id) {
+          hotel = { id: res.data.hotel_insert.id, name: "StaySyncOS Demo Hotel" };
+          this.log('System', 'Initialization', 'Created default hotel record.');
+        }
+      } catch (e) {
+        console.error("Failed to create hotel", e);
+        return;
+      }
     }
 
-    const totalProjected = rate * nights;
-    const projectedDate = checkOutDate
-      ? new Date(checkOutDate).toISOString()
-      : new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString();
+    if (!hotel) return;
 
-    const newStay: Stay = {
-      id: stayId,
-      guestId: guest.id,
-      roomId: roomId,
-      checkIn: new Date(checkInDate).toISOString(),
-      checkOutProjected: projectedDate,
-      ratePerNight: rate,
-      totalPaid: 0,
-      status: 'Active',
-      isIndefinite: isIndefinite
-    };
+    // 2. Seed Rooms if empty
+    if ((this.rooms()?.length || 0) === 0) {
+      const roomsToCreate = [
+        { roomNumber: '101', roomType: 'Single', dailyRate: 120 },
+        { roomNumber: '102', roomType: 'Double', dailyRate: 180 },
+        { roomNumber: '201', roomType: 'Suite', dailyRate: 350 },
+        { roomNumber: '305', roomType: 'Single', dailyRate: 110 },
+      ];
 
-    await setDoc(doc(this.firestore, 'stays', stayId), newStay);
-    // TODO: Re-enable when mutations are available
-    // await updateDoc(doc(this.firestore, 'rooms', roomId), { status: 'Occupied' });
-
-    await updateDoc(doc(this.firestore, 'guests', guest.id), { currentStayId: stayId });
-
-
-    const desc = isIndefinite
-      ? `Room Deposit (Indefinite Stay) - ${room.roomType}`
-      : `Room Charge (${nights} nights) - ${room.roomType}`;
-
-    this.createDocument('Invoice', stayId, guest.id, guest.name, [
-      { description: desc, quantity: nights, unitPrice: rate, total: totalProjected }
-    ], 'Check-in Invoice');
-
-    this.log('Guest', 'Check In', `${guest.name} booked Room ${room.roomNumber}${isIndefinite ? ' (Indefinite)' : ''}`);
+      for (const r of roomsToCreate) {
+        await this.createRoomMut.mutateAsync({
+          hotelId: hotel.id,
+          roomNumber: r.roomNumber,
+          roomType: r.roomType,
+          status: 'Available',
+          dailyRate: r.dailyRate
+        });
+      }
+      this.log('System', 'Seeding', 'Seeded initial rooms.');
+    }
   }
 
+  private seedStaff() {
+    if (this.staff().length > 0) return;
+
+    const staff: Staff[] = [
+      { id: 'st1', name: 'Alice Manager', role: 'Manager', pin: '1234', status: 'Active', currentStatus: 'Clocked Out' },
+      { id: 'st2', name: 'Bob Reception', role: 'Reception', pin: '0000', status: 'Active', currentStatus: 'Clocked Out' },
+      { id: 'st3', name: 'Charlie Clean', role: 'Housekeeping', pin: '1111', status: 'Active', currentStatus: 'Clocked Out' },
+      { id: 'st4', name: 'Mike Fixit', role: 'Maintenance', pin: '2222', status: 'Active', currentStatus: 'Clocked Out' },
+    ];
+    staff.forEach(s => setDoc(doc(this.firestore, 'staff', s.id), s));
+  }
+
+  updateHotelDetails(details: Partial<HotelConfig>) {
+    setDoc(this.configDoc, details, { merge: true });
+    this.log('System', 'Config Update', 'Hotel details updated.');
+  }
+
+  // Legacy Actions (kept for other components)
+  addGuest(guest: Guest) {
+    if (!guest.id) guest.id = crypto.randomUUID();
+    setDoc(doc(this.firestore, 'guests', guest.id), guest);
+    this.log('Guest', 'Guest Added', `Guest ${guest.name} added.`);
+  }
+
+  updateGuest(guest: Guest) {
+    setDoc(doc(this.firestore, 'guests', guest.id), guest);
+    this.log('Guest', 'Guest Update', `Guest ${guest.name} updated.`);
+  }
+
+  deleteGuest(guestId: string) {
+    deleteDoc(doc(this.firestore, 'guests', guestId));
+    this.log('Guest', 'Guest Deleted', `Guest record deleted.`);
+  }
+
+  createStay(stay: Stay) {
+    if (!stay.id) stay.id = crypto.randomUUID();
+    setDoc(doc(this.firestore, 'stays', stay.id), stay);
+    this.log('Guest', 'Stay Created', `Stay start ${stay.checkIn}`);
+  }
+
+  /* Legacy methods replaced by implementations below */
+
+  // --- Financial ---
   async makePayment(stayId: string, amount: number) {
     const stay = this.stays().find(s => s.id === stayId);
-    if (!stay) return null;
+    if (!stay) return;
 
-    await updateDoc(doc(this.firestore, 'stays', stayId), { totalPaid: stay.totalPaid + amount });
+    const newTotal = (stay.totalPaid || 0) + amount;
+    await updateDoc(doc(this.firestore, 'stays', stayId), { totalPaid: newTotal });
 
+    // Also generate receipt
     const guest = this.guests().find(g => g.id === stay.guestId);
-    let docRef = null;
-
     if (guest) {
-      docRef = this.createDocument('Receipt', stayId, guest.id, guest.name, [
+      const receipt = this.createDocument('Receipt', stayId, guest.id, guest.name, [
         { description: 'Payment Received', quantity: 1, unitPrice: amount, total: amount }
-      ], 'Payment Thank You');
+      ]);
+      return receipt;
     }
-
-    this.log('Finance', 'Payment Received', `Payment of $${amount} for stay ${stayId}`);
-    return docRef;
-  }
-
-  async checkOut(stayId: string) {
-    const stay = this.stays().find(s => s.id === stayId);
-    if (!stay || stay.status !== 'Active') return;
-
-    const guest = this.guests().find(g => g.id === stay.guestId);
-    if (!guest) return;
-
-    const room = this.rooms().find(r => r.id === stay.roomId);
-    if (!room) return;
-
-    const checkInTime = new Date(stay.checkIn).getTime();
-    const nowTime = Date.now();
-    const daysStayed = Math.max(1, Math.ceil((nowTime - checkInTime) / (1000 * 60 * 60 * 24)));
-    const totalCost = daysStayed * room.dailyRate;
-    const debt = totalCost - stay.totalPaid;
-
-    // Update Stay
-    await updateDoc(doc(this.firestore, 'stays', stayId), {
-      status: 'Completed',
-      checkOutActual: new Date().toISOString()
-    });
-
-    // Update Room
-    // TODO: Re-enable when mutations are available
-    // await updateDoc(doc(this.firestore, 'rooms', stay.roomId), { status: 'Dirty' });
-
-    // Update Guest
-    await updateDoc(doc(this.firestore, 'guests', guest.id), { currentStayId: null });
-
-    if (debt > 0) {
-      this.createDocument('Invoice', stayId, guest.id, guest.name, [
-        { description: `Final Adjustment (${daysStayed} nights total)`, quantity: 1, unitPrice: debt, total: debt }
-      ], 'Final Balance Due on Checkout');
-      this.log('Guest', 'Check Out', `${guest.name} checked out with outstanding balance: $${debt}`);
-    } else {
-      this.createDocument('Receipt', stayId, guest.id, guest.name, [
-        { description: 'Final Statement - Balance Cleared', quantity: 1, unitPrice: 0, total: 0 }
-      ], 'Checkout Complete');
-      this.log('Guest', 'Check Out', `${guest.name} checked out successfully.`);
-    }
-  }
-
-  addMaintenanceRequest(req: Omit<MaintenanceRequest, 'id' | 'reportedAt' | 'cost' | 'status' | 'roomNumber'>) {
-    const room = this.rooms().find(r => r.id === req.roomId);
-    if (!room) return null;
-
-    const newReq: MaintenanceRequest = {
-      ...req,
-      id: crypto.randomUUID(),
-      roomNumber: room.roomNumber,
-      reportedAt: new Date().toISOString(),
-      status: 'Pending',
-      cost: 0
-    };
-
-    setDoc(doc(this.firestore, 'maintenance', newReq.id), newReq);
-    // this.updateRoomStatus(req.roomId, 'Maintenance');
-    this.log('Maintenance', 'Request Created', `Issue reported in Room ${room.roomNumber}: ${req.description}`);
-
-    return newReq;
-  }
-
-  updateMaintenanceRequest(id: string, updates: Partial<MaintenanceRequest>) {
-    updateDoc(doc(this.firestore, 'maintenance', id), updates);
-
-    if (updates.status === 'Completed') {
-      const req = this.maintenanceRequests().find(r => r.id === id);
-      if (req) {
-        // this.updateRoomStatus(req.roomId, 'Available');
-        this.log('Maintenance', 'Issue Resolved', `Maintenance completed.`);
-      }
-    } else {
-      this.log('Maintenance', 'Update', `Request ${id.substring(0, 6)} updated.`);
-    }
-  }
-
-  uploadDocument(docData: Omit<StoredDocument, 'id' | 'uploadedAt'>): StoredDocument {
-    const newDoc: StoredDocument = {
-      ...docData,
-      id: crypto.randomUUID(),
-      uploadedAt: new Date().toISOString()
-    };
-    setDoc(doc(this.firestore, 'storedDocuments', newDoc.id), newDoc);
-    this.log('Document', 'Upload', `Document uploaded: ${newDoc.title}`);
-    return newDoc;
-  }
-
-  updateDocument(id: string, updates: Partial<StoredDocument>) {
-    updateDoc(doc(this.firestore, 'storedDocuments', id), updates);
-    this.log('Document', 'Update', `Document updated: ${id.substring(0, 6)}`);
-  }
-
-  deleteDocument(id: string) {
-    deleteDoc(doc(this.firestore, 'storedDocuments', id));
-    this.log('Document', 'Delete', `Document deleted`);
-  }
-
-  addStaff(staffData: Omit<Staff, 'id' | 'status' | 'currentStatus'>) {
-    const newStaff: Staff = {
-      ...staffData,
-      id: crypto.randomUUID(),
-      status: 'Active',
-      currentStatus: 'Clocked Out'
-    };
-    setDoc(doc(this.firestore, 'staff', newStaff.id), newStaff);
-    this.log('Staff', 'Staff Created', `Added ${newStaff.name} to team.`);
-  }
-
-  clockIn(staffId: string) {
-    const s = this.staff().find(u => u.id === staffId);
-    if (!s || s.currentStatus !== 'Clocked Out') return;
-
-    const newLog: TimeLog = {
-      id: crypto.randomUUID(),
-      staffId,
-      staffName: s.name,
-      date: new Date().toISOString().split('T')[0],
-      startTime: new Date().toISOString(),
-      breaks: [],
-      totalHours: 0,
-      status: 'Open'
-    };
-
-    setDoc(doc(this.firestore, 'timeLogs', newLog.id), newLog);
-    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
-    this.log('Staff', 'Clock In', `${s.name} started shift.`);
-  }
-
-  clockOut(staffId: string) {
-    const s = this.staff().find(u => u.id === staffId);
-    if (!s || s.currentStatus === 'Clocked Out') return;
-
-    // Find open log
-    const openLog = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
-    if (openLog) {
-      const endTime = new Date().toISOString();
-      const updatedBreaks = openLog.breaks.map(b => !b.end ? { ...b, end: endTime } : b);
-
-      updateDoc(doc(this.firestore, 'timeLogs', openLog.id), {
-        endTime,
-        breaks: updatedBreaks,
-        status: 'Closed',
-        totalHours: this.calculateHours(openLog.startTime, endTime, updatedBreaks)
-      });
-    }
-
-    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked Out' });
-    this.log('Staff', 'Clock Out', `${s.name} ended shift.`);
-  }
-
-  startBreak(staffId: string) {
-    const s = this.staff().find(u => u.id === staffId);
-    if (!s || s.currentStatus !== 'Clocked In') return;
-
-    const openLog = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
-    if (openLog) {
-      const newBreaks = [...openLog.breaks, { start: new Date().toISOString() }];
-      updateDoc(doc(this.firestore, 'timeLogs', openLog.id), { breaks: newBreaks });
-    }
-
-    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'On Break' });
-    this.log('Staff', 'Break Start', `${s.name} went on break.`);
-  }
-
-  endBreak(staffId: string) {
-    const s = this.staff().find(u => u.id === staffId);
-    if (!s || s.currentStatus !== 'On Break') return;
-
-    const openLog = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
-    if (openLog) {
-      const updatedBreaks = openLog.breaks.map(b => !b.end ? { ...b, end: new Date().toISOString() } : b);
-      updateDoc(doc(this.firestore, 'timeLogs', openLog.id), { breaks: updatedBreaks });
-    }
-
-    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
-    this.log('Staff', 'Break End', `${s.name} returned from break.`);
-  }
-
-  updateTimeLog(updatedLog: TimeLog) {
-    if (updatedLog.endTime) {
-      updatedLog.totalHours = this.calculateHours(updatedLog.startTime, updatedLog.endTime, updatedLog.breaks);
-    }
-    setDoc(doc(this.firestore, 'timeLogs', updatedLog.id), updatedLog);
-    this.log('Staff', 'Log Edit', `Time log updated manually for ${updatedLog.staffName}`);
-  }
-
-  addShift(shift: Omit<Shift, 'id'>) {
-    const newShift: Shift = { ...shift, id: crypto.randomUUID() };
-    setDoc(doc(this.firestore, 'shifts', newShift.id), newShift);
-    this.log('Staff', 'Shift Added', `Shift scheduled for staff ${shift.staffId} on ${shift.date}`);
-  }
-
-  deleteShift(shiftId: string) {
-    deleteDoc(doc(this.firestore, 'shifts', shiftId));
+    return null;
   }
 
   // --- Document Helpers ---
@@ -557,20 +387,19 @@ export class DataService {
     return newDoc;
   }
 
-
-  // --- Computed Views ---
-
+  // --- Stats, Maintenance, etc ---
   activeStaysWithDebt = computed(() => {
     return this.stays()
       .filter(s => s.status === 'Active')
       .map(stay => {
         const guest = this.guests().find(g => g.id === stay.guestId);
         const room = this.rooms().find(r => r.id === stay.roomId);
+        if (!room) return null;
 
         const checkInTime = new Date(stay.checkIn).getTime();
         const nowTime = Date.now();
         const daysStayed = Math.max(1, Math.ceil((nowTime - checkInTime) / (1000 * 60 * 60 * 24)));
-        const totalCostSoFar = daysStayed * room.dailyRate;
+        const totalCostSoFar = daysStayed * (room.dailyRate || 0);
         const debt = totalCostSoFar - stay.totalPaid;
 
         return {
@@ -583,7 +412,8 @@ export class DataService {
           isIndefinite: !!stay.isIndefinite
         };
       })
-      .sort((a, b) => b.debt - a.debt); // Highest debt first
+      .filter(x => x !== null)
+      .sort((a, b) => (b?.debt || 0) - (a?.debt || 0)); // Highest debt first
   });
 
   stats = computed(() => {
@@ -591,12 +421,6 @@ export class DataService {
     const occupied = rooms.filter(r => r.status === 'Occupied').length;
     const maintenance = rooms.filter(r => r.status === 'Maintenance').length;
     const available = rooms.filter(r => r.status === 'Available').length;
-
-    // Financials today (simplified)
-    const todayLogs = this.logs().filter(l =>
-      l.category === 'Finance' &&
-      new Date(l.timestamp).toDateString() === new Date().toDateString()
-    );
 
     return {
       totalRooms: rooms.length,
@@ -607,95 +431,164 @@ export class DataService {
     };
   });
 
-  // --- Utils ---
+  // Staff helpers (clock in/out) needed by StaffManager
+  clockIn(staffId: string) {
+    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
+    // Create TimeLog
+    const newLog: TimeLog = {
+      id: crypto.randomUUID(),
+      staffId,
+      staffName: this.staff().find(s => s.id === staffId)?.name || 'Unknown',
+      date: new Date().toISOString().split('T')[0],
+      startTime: new Date().toISOString(),
+      breaks: [],
+      totalHours: 0,
+      status: 'Open'
+    };
+    setDoc(doc(this.firestore, 'timeLogs', newLog.id), newLog);
+  }
+
+  clockOut(staffId: string) {
+    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked Out' });
+    // Close TimeLog
+    const log = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
+    if (log) {
+      const end = new Date().toISOString();
+      const totalHours = this.calculateHours(log.startTime, end, log.breaks);
+      updateDoc(doc(this.firestore, 'timeLogs', log.id), { endTime: end, status: 'Closed', totalHours });
+    }
+  }
+
+  startBreak(staffId: string) {
+    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'On Break' });
+    const log = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
+    if (log) {
+      const newBreaks = [...log.breaks, { start: new Date().toISOString() }];
+      updateDoc(doc(this.firestore, 'timeLogs', log.id), { breaks: newBreaks });
+    }
+  }
+
+  endBreak(staffId: string) {
+    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
+    const log = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
+    if (log) {
+      const breaks = log.breaks.map(b => !b.end ? { ...b, end: new Date().toISOString() } : b);
+      updateDoc(doc(this.firestore, 'timeLogs', log.id), { breaks });
+    }
+  }
+
   private calculateHours(start: string, end: string, breaks: TimeBreak[]): number {
     let duration = new Date(end).getTime() - new Date(start).getTime();
-
-    // Subtract breaks
     breaks.forEach(b => {
       if (b.end) {
         duration -= (new Date(b.end).getTime() - new Date(b.start).getTime());
       }
     });
-
     return Math.max(0, duration / (1000 * 60 * 60)); // Return in hours
   }
 
-  // --- Maintenance / Admin ---
-  factoryReset(seedDemoData: boolean) {
-    if (seedDemoData) {
-      this.seedData();
-      this.seedStaff();
+  // Misc methods referenced in compilation errors
+  addShift(shift: Omit<Shift, 'id'>) {
+    const id = crypto.randomUUID();
+    setDoc(doc(this.firestore, 'shifts', id), { ...shift, id });
+  }
+
+  deleteShift(id: string) {
+    deleteDoc(doc(this.firestore, 'shifts', id));
+  }
+
+  updateTimeLog(log: TimeLog) {
+    setDoc(doc(this.firestore, 'timeLogs', log.id), log);
+  }
+
+  // --- Missing Methods Implementation ---
+
+  bookStay(guest: Guest, roomId: string, checkIn: string, checkOut?: string) {
+    const stay: Stay = {
+      id: crypto.randomUUID(),
+      guestId: guest.id,
+      roomId: roomId,
+      checkIn: checkIn,
+      checkOutProjected: checkOut || new Date(new Date(checkIn).getTime() + 24 * 60 * 60 * 1000).toISOString(),
+      ratePerNight: this.rooms().find(r => r.id === roomId)?.dailyRate || 100,
+      totalPaid: 0,
+      status: 'Active',
+      isIndefinite: !checkOut
+    };
+
+    // Save/Update Guest
+    const updatedGuest = { ...guest, currentStayId: stay.id, history: [...guest.history, stay] };
+    this.updateGuest(updatedGuest);
+
+    // Create Stay
+    this.createStay(stay);
+
+    // Update Room Status
+    this.updateRoomStatus(stay.roomId, 'Occupied');
+
+    this.log('Guest', 'Check In', `Guest ${guest.name} checked into Room (ID: ${stay.roomId})`);
+  }
+
+  async checkOut(stayId: string, roomId?: string, guestId?: string) {
+    const stay = this.stays().find(s => s.id === stayId);
+    if (stay) {
+      updateDoc(doc(this.firestore, 'stays', stayId), {
+        status: 'Completed',
+        checkOutActual: new Date().toISOString()
+      });
+
+      const rId = roomId || stay.roomId;
+      if (rId) await this.updateRoomStatus(rId, 'Dirty');
+
+      // Update Guest
+      const gId = guestId || stay.guestId;
+      if (gId) {
+        const guest = this.guests().find(g => g.id === gId);
+        if (guest) {
+          updateDoc(doc(this.firestore, 'guests', gId), { currentStayId: null });
+        }
+      }
     }
   }
 
-  updateHotelDetails(details: Partial<HotelConfig>) {
-    setDoc(this.configDoc, details, { merge: true });
-    this.log('System', 'Config Update', 'Hotel details updated.');
+  addMaintenanceRequest(req: Omit<MaintenanceRequest, 'id'>) {
+    const newReq = { ...req, id: crypto.randomUUID() };
+    setDoc(doc(this.firestore, 'maintenance', newReq.id), newReq);
+    return newReq;
   }
 
-  /*
-  private seedData() {
-    // Only seed if empty
-    if (this.rooms().length > 0) return;
-
-    const rooms: Room[] = [
-      { id: '101', number: '101', type: 'Single', price: 120, status: 'Occupied', amenities: ['Wifi', 'TV'] },
-      { id: '102', number: '102', type: 'Double', price: 180, status: 'Available', amenities: ['Wifi', 'TV', 'Mini-bar'] },
-      { id: '201', number: '201', type: 'Suite', price: 350, status: 'Maintenance', amenities: ['Wifi', 'TV', 'Jacuzzi', 'View'] },
-      { id: '305', number: '305', type: 'Single', price: 110, status: 'Available', amenities: ['Wifi'] },
-    ];
-    rooms.forEach(r => setDoc(doc(this.firestore, 'rooms', r.id), r));
-
-    const guestId = 'g1';
-    const stayId = 's1';
-
-    const guests: Guest[] = [
-      {
-        id: guestId,
-        name: 'John Doe',
-        email: 'john@example.com',
-        phone: '555-0123',
-        currentStayId: stayId,
-        history: [],
-        notes: 'VIP Guest'
-      }
-    ];
-    guests.forEach(g => setDoc(doc(this.firestore, 'guests', g.id), g));
-
-    const stays: Stay[] = [
-      {
-        id: stayId,
-        guestId: guestId,
-        roomId: '101',
-        checkIn: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        checkOutProjected: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-        ratePerNight: 120,
-        totalPaid: 200,
-        status: 'Active'
-      }
-    ];
-    stays.forEach(s => setDoc(doc(this.firestore, 'stays', s.id), s));
-
-    // Seed an initial document
-    this.createDocument('Invoice', stayId, guestId, 'John Doe', [
-      { description: 'Room Charge (5 nights)', quantity: 5, unitPrice: 120, total: 600 }
-    ], 'Initial Stay Invoice');
-
-    this.log('System', 'System initialized with seed data', 'System');
+  updateMaintenanceRequest(id: string, data: Partial<MaintenanceRequest> | string) {
+    if (typeof data === 'string') {
+      updateDoc(doc(this.firestore, 'maintenance', id), { status: data });
+    } else {
+      updateDoc(doc(this.firestore, 'maintenance', id), data);
+    }
   }
-  */
 
-  private seedStaff() {
-    if (this.staff().length > 0) return;
+  addStaff(staff: Omit<Staff, 'id'>) {
+    const newStaff = { ...staff, id: crypto.randomUUID() };
+    setDoc(doc(this.firestore, 'staff', newStaff.id), newStaff);
+  }
 
-    const staff: Staff[] = [
-      { id: 'st1', name: 'Alice Manager', role: 'Manager', pin: '1234', status: 'Active', currentStatus: 'Clocked Out' },
-      { id: 'st2', name: 'Bob Reception', role: 'Reception', pin: '0000', status: 'Active', currentStatus: 'Clocked Out' },
-      { id: 'st3', name: 'Charlie Clean', role: 'Housekeeping', pin: '1111', status: 'Active', currentStatus: 'Clocked Out' },
-      { id: 'st4', name: 'Mike Fixit', role: 'Maintenance', pin: '2222', status: 'Active', currentStatus: 'Clocked Out' },
-    ];
-    staff.forEach(s => setDoc(doc(this.firestore, 'staff', s.id), s));
+  uploadDocument(docData: Omit<StoredDocument, 'id' | 'uploadedAt'>) {
+    const newDoc: StoredDocument = {
+      ...docData,
+      id: crypto.randomUUID(),
+      uploadedAt: new Date().toISOString()
+    };
+    setDoc(doc(this.firestore, 'storedDocuments', newDoc.id), newDoc);
+    this.log('Document', 'Upload', `Document ${newDoc.title} uploaded.`);
+    return newDoc;
+  }
+
+  deleteDocument(id: string) {
+    deleteDoc(doc(this.firestore, 'storedDocuments', id));
+    this.log('Document', 'Delete', `Document deleted.`);
+  }
+
+  updateDocument(id: string, data: Partial<StoredDocument>) {
+    updateDoc(doc(this.firestore, 'storedDocuments', id), data);
+    this.log('Document', 'Update', `Document updated.`);
   }
 
   importData(jsonString: string): boolean {
