@@ -8,6 +8,5 @@ schema:
       database: "gen-lang-client-0073207940-database"
       cloudSql:
         instanceId: "gen-lang-client-0073207940-instance"
-        # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
-        # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
+        schemaValidation: "STRICT"
 connectorDirs: ["./example"]
