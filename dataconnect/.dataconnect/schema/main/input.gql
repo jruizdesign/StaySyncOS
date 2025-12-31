@@ -1,0 +1,2174 @@
+"""
+✨ `Booking_KeyOutput` returns the primary key fields of table type `Booking`.
+
+It has the same format as `Booking_Key`, but is only used as mutation return value.
+"""
+scalar Booking_KeyOutput
+"""
+✨ `Guest_KeyOutput` returns the primary key fields of table type `Guest`.
+
+It has the same format as `Guest_Key`, but is only used as mutation return value.
+"""
+scalar Guest_KeyOutput
+"""
+✨ `Hotel_KeyOutput` returns the primary key fields of table type `Hotel`.
+
+It has the same format as `Hotel_Key`, but is only used as mutation return value.
+"""
+scalar Hotel_KeyOutput
+"""
+✨ `MaintenanceRequest_KeyOutput` returns the primary key fields of table type `MaintenanceRequest`.
+
+It has the same format as `MaintenanceRequest_Key`, but is only used as mutation return value.
+"""
+scalar MaintenanceRequest_KeyOutput
+"""
+✨ `Room_KeyOutput` returns the primary key fields of table type `Room`.
+
+It has the same format as `Room_Key`, but is only used as mutation return value.
+"""
+scalar Room_KeyOutput
+"""
+✨ `Staff_KeyOutput` returns the primary key fields of table type `Staff`.
+
+It has the same format as `Staff_Key`, but is only used as mutation return value.
+"""
+scalar Staff_KeyOutput
+"""
+✨ Generated data input type for table 'Booking'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Booking_Data {
+  """
+  ✨ Generated from Field `Booking`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Booking`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Booking`.`guestId` of type `UUID!`
+  """
+  guestId: UUID
+  """
+  ✨ `_expr` server value variant of `guestId` (✨ Generated from Field `Booking`.`guestId` of type `UUID!`)
+  """
+  guestId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Booking`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `Booking`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Booking`.`roomId` of type `UUID`
+  """
+  roomId: UUID
+  """
+  ✨ `_expr` server value variant of `roomId` (✨ Generated from Field `Booking`.`roomId` of type `UUID`)
+  """
+  roomId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Booking`.`guest` of type `Guest!`
+  """
+  guest: Guest_Key
+  """
+  ✨ Generated from Field `Booking`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `Booking`.`room` of type `Room`
+  """
+  room: Room_Key
+  """
+  ✨ Generated from Field `Booking`.`bookingStatus` of type `String!`
+  """
+  bookingStatus: String
+  """
+  ✨ `_expr` server value variant of `bookingStatus` (✨ Generated from Field `Booking`.`bookingStatus` of type `String!`)
+  """
+  bookingStatus_expr: String_Expr
+  """
+  ✨ Generated from Field `Booking`.`checkInDate` of type `Date!`
+  """
+  checkInDate: Date
+  """
+  ✨ `_date` server value variant of `checkInDate` (✨ Generated from Field `Booking`.`checkInDate` of type `Date!`)
+  """
+  checkInDate_date: Date_Relative
+  """
+  ✨ `_expr` server value variant of `checkInDate` (✨ Generated from Field `Booking`.`checkInDate` of type `Date!`)
+  """
+  checkInDate_expr: Date_Expr
+  """
+  ✨ `_update` server value variant of `checkInDate` (✨ Generated from Field `Booking`.`checkInDate` of type `Date!`)
+  """
+  checkInDate_update: [Date_Update!]
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`
+  """
+  checkOutDate: Date
+  """
+  ✨ `_date` server value variant of `checkOutDate` (✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`)
+  """
+  checkOutDate_date: Date_Relative
+  """
+  ✨ `_expr` server value variant of `checkOutDate` (✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`)
+  """
+  checkOutDate_expr: Date_Expr
+  """
+  ✨ `_update` server value variant of `checkOutDate` (✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`)
+  """
+  checkOutDate_update: [Date_Update!]
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests` of type `Int`
+  """
+  numberOfGuests: Int
+  """
+  ✨ `_expr` server value variant of `numberOfGuests` (✨ Generated from Field `Booking`.`numberOfGuests` of type `Int`)
+  """
+  numberOfGuests_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `numberOfGuests` (✨ Generated from Field `Booking`.`numberOfGuests` of type `Int`)
+  """
+  numberOfGuests_update: [Int_Update!]
+  """
+  ✨ Generated from Field `Booking`.`specialRequests` of type `String`
+  """
+  specialRequests: String
+  """
+  ✨ `_expr` server value variant of `specialRequests` (✨ Generated from Field `Booking`.`specialRequests` of type `String`)
+  """
+  specialRequests_expr: String_Expr
+  """
+  ✨ Generated from Field `Booking`.`totalAmount` of type `Float`
+  """
+  totalAmount: Float
+  """
+  ✨ `_expr` server value variant of `totalAmount` (✨ Generated from Field `Booking`.`totalAmount` of type `Float`)
+  """
+  totalAmount_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `totalAmount` (✨ Generated from Field `Booking`.`totalAmount` of type `Float`)
+  """
+  totalAmount_update: [Float_Update!]
+}
+"""
+✨ Generated filter input type for table 'Booking'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Booking_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Booking_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Booking_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Booking_Filter!]
+  """
+  ✨ Generated from Field `Booking`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Booking`.`guestId` of type `UUID!`
+  """
+  guestId: UUID_Filter
+  """
+  ✨ Generated from Field `Booking`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `Booking`.`roomId` of type `UUID`
+  """
+  roomId: UUID_Filter
+  """
+  ✨ Generated from Field `Booking`.`guest` of type `Guest!`
+  """
+  guest: Guest_Filter
+  """
+  ✨ Generated from Field `Booking`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `Booking`.`room` of type `Room`
+  """
+  room: Room_Filter
+  """
+  ✨ Generated from Field `Booking`.`bookingStatus` of type `String!`
+  """
+  bookingStatus: String_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkInDate` of type `Date!`
+  """
+  checkInDate: Date_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`
+  """
+  checkOutDate: Date_Filter
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests` of type `Int`
+  """
+  numberOfGuests: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`specialRequests` of type `String`
+  """
+  specialRequests: String_Filter
+  """
+  ✨ Generated from Field `Booking`.`totalAmount` of type `Float`
+  """
+  totalAmount: Float_Filter
+}
+"""
+✨ Generated first-row input type for table 'Booking'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Booking_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Booking_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Booking_Filter
+}
+"""
+✨ Generated having input type for table 'Booking'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Booking_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Booking_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Booking_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Booking_Having!]
+  """
+  ✨ Generated from Field `Booking`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`bookingStatus_count` of type `Int!`
+  """
+  bookingStatus_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkInDate_count` of type `Int!`
+  """
+  checkInDate_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate_count` of type `Int!`
+  """
+  checkOutDate_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`guestId_count` of type `Int!`
+  """
+  guestId_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests_count` of type `Int!`
+  """
+  numberOfGuests_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`roomId_count` of type `Int!`
+  """
+  roomId_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`specialRequests_count` of type `Int!`
+  """
+  specialRequests_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`totalAmount_count` of type `Int!`
+  """
+  totalAmount_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests_sum` of type `Int`
+  """
+  numberOfGuests_sum: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`totalAmount_sum` of type `Float`
+  """
+  totalAmount_sum: Float_Filter
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests_avg` of type `Float`
+  """
+  numberOfGuests_avg: Float_Filter
+  """
+  ✨ Generated from Field `Booking`.`totalAmount_avg` of type `Float`
+  """
+  totalAmount_avg: Float_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkInDate_min` of type `Date`
+  """
+  checkInDate_min: Date_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate_min` of type `Date`
+  """
+  checkOutDate_min: Date_Filter
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests_min` of type `Int`
+  """
+  numberOfGuests_min: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`totalAmount_min` of type `Float`
+  """
+  totalAmount_min: Float_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkInDate_max` of type `Date`
+  """
+  checkInDate_max: Date_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate_max` of type `Date`
+  """
+  checkOutDate_max: Date_Filter
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests_max` of type `Int`
+  """
+  numberOfGuests_max: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`totalAmount_max` of type `Float`
+  """
+  totalAmount_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'Booking'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Booking_Key {
+  """
+  ✨ Generated from Field `Booking`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Booking`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Booking'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Booking_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Booking_Filter
+}
+"""
+✨ Generated order input type for table 'Booking'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Booking_Order {
+  """
+  ✨ Generated from Field `Booking`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`guestId` of type `UUID!`
+  """
+  guestId: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`roomId` of type `UUID`
+  """
+  roomId: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`guest` of type `Guest!`
+  """
+  guest: Guest_Order
+  """
+  ✨ Generated from Field `Booking`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `Booking`.`room` of type `Room`
+  """
+  room: Room_Order
+  """
+  ✨ Generated from Field `Booking`.`bookingStatus` of type `String!`
+  """
+  bookingStatus: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkInDate` of type `Date!`
+  """
+  checkInDate: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`
+  """
+  checkOutDate: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests` of type `Int`
+  """
+  numberOfGuests: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`specialRequests` of type `String`
+  """
+  specialRequests: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`totalAmount` of type `Float`
+  """
+  totalAmount: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`bookingStatus_count` of type `Int!`
+  """
+  bookingStatus_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkInDate_count` of type `Int!`
+  """
+  checkInDate_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate_count` of type `Int!`
+  """
+  checkOutDate_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`guestId_count` of type `Int!`
+  """
+  guestId_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests_count` of type `Int!`
+  """
+  numberOfGuests_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`roomId_count` of type `Int!`
+  """
+  roomId_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`specialRequests_count` of type `Int!`
+  """
+  specialRequests_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`totalAmount_count` of type `Int!`
+  """
+  totalAmount_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests_sum` of type `Int`
+  """
+  numberOfGuests_sum: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`totalAmount_sum` of type `Float`
+  """
+  totalAmount_sum: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests_avg` of type `Float`
+  """
+  numberOfGuests_avg: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`totalAmount_avg` of type `Float`
+  """
+  totalAmount_avg: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkInDate_min` of type `Date`
+  """
+  checkInDate_min: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate_min` of type `Date`
+  """
+  checkOutDate_min: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests_min` of type `Int`
+  """
+  numberOfGuests_min: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`totalAmount_min` of type `Float`
+  """
+  totalAmount_min: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkInDate_max` of type `Date`
+  """
+  checkInDate_max: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate_max` of type `Date`
+  """
+  checkOutDate_max: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`numberOfGuests_max` of type `Int`
+  """
+  numberOfGuests_max: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`totalAmount_max` of type `Float`
+  """
+  totalAmount_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Guest'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Guest_Data {
+  """
+  ✨ Generated from Field `Guest`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Guest`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Guest`.`address` of type `String`
+  """
+  address: String
+  """
+  ✨ `_expr` server value variant of `address` (✨ Generated from Field `Guest`.`address` of type `String`)
+  """
+  address_expr: String_Expr
+  """
+  ✨ Generated from Field `Guest`.`email` of type `String!`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `Guest`.`email` of type `String!`)
+  """
+  email_expr: String_Expr
+  """
+  ✨ Generated from Field `Guest`.`firstName` of type `String!`
+  """
+  firstName: String
+  """
+  ✨ `_expr` server value variant of `firstName` (✨ Generated from Field `Guest`.`firstName` of type `String!`)
+  """
+  firstName_expr: String_Expr
+  """
+  ✨ Generated from Field `Guest`.`lastName` of type `String!`
+  """
+  lastName: String
+  """
+  ✨ `_expr` server value variant of `lastName` (✨ Generated from Field `Guest`.`lastName` of type `String!`)
+  """
+  lastName_expr: String_Expr
+  """
+  ✨ Generated from Field `Guest`.`loyaltyProgramMember` of type `Boolean`
+  """
+  loyaltyProgramMember: Boolean
+  """
+  ✨ `_expr` server value variant of `loyaltyProgramMember` (✨ Generated from Field `Guest`.`loyaltyProgramMember` of type `Boolean`)
+  """
+  loyaltyProgramMember_expr: Boolean_Expr
+  """
+  ✨ Generated from Field `Guest`.`phoneNumber` of type `String`
+  """
+  phoneNumber: String
+  """
+  ✨ `_expr` server value variant of `phoneNumber` (✨ Generated from Field `Guest`.`phoneNumber` of type `String`)
+  """
+  phoneNumber_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Guest'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Guest_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Guest_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Guest_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Guest_Filter!]
+  """
+  ✨ Generated from Field `Guest`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Guest`.`address` of type `String`
+  """
+  address: String_Filter
+  """
+  ✨ Generated from Field `Guest`.`email` of type `String!`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `Guest`.`firstName` of type `String!`
+  """
+  firstName: String_Filter
+  """
+  ✨ Generated from Field `Guest`.`lastName` of type `String!`
+  """
+  lastName: String_Filter
+  """
+  ✨ Generated from Field `Guest`.`loyaltyProgramMember` of type `Boolean`
+  """
+  loyaltyProgramMember: Boolean_Filter
+  """
+  ✨ Generated from Field `Guest`.`phoneNumber` of type `String`
+  """
+  phoneNumber: String_Filter
+  """
+  ✨ Generated from Field `Guest`.`bookings_on_guest` of type `[Booking!]!`
+  """
+  bookings_on_guest: Booking_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Guest'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Guest_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Guest_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Guest_Filter
+}
+"""
+✨ Generated having input type for table 'Guest'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Guest_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Guest_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Guest_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Guest_Having!]
+  """
+  ✨ Generated from Field `Guest`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Guest`.`address_count` of type `Int!`
+  """
+  address_count: Int_Filter
+  """
+  ✨ Generated from Field `Guest`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `Guest`.`firstName_count` of type `Int!`
+  """
+  firstName_count: Int_Filter
+  """
+  ✨ Generated from Field `Guest`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Guest`.`lastName_count` of type `Int!`
+  """
+  lastName_count: Int_Filter
+  """
+  ✨ Generated from Field `Guest`.`loyaltyProgramMember_count` of type `Int!`
+  """
+  loyaltyProgramMember_count: Int_Filter
+  """
+  ✨ Generated from Field `Guest`.`phoneNumber_count` of type `Int!`
+  """
+  phoneNumber_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Guest'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Guest_Key {
+  """
+  ✨ Generated from Field `Guest`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Guest`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Guest'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Guest_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Guest_Filter
+}
+"""
+✨ Generated order input type for table 'Guest'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Guest_Order {
+  """
+  ✨ Generated from Field `Guest`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`address` of type `String`
+  """
+  address: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`email` of type `String!`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`firstName` of type `String!`
+  """
+  firstName: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`lastName` of type `String!`
+  """
+  lastName: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`loyaltyProgramMember` of type `Boolean`
+  """
+  loyaltyProgramMember: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`phoneNumber` of type `String`
+  """
+  phoneNumber: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`address_count` of type `Int!`
+  """
+  address_count: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`firstName_count` of type `Int!`
+  """
+  firstName_count: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`lastName_count` of type `Int!`
+  """
+  lastName_count: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`loyaltyProgramMember_count` of type `Int!`
+  """
+  loyaltyProgramMember_count: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`phoneNumber_count` of type `Int!`
+  """
+  phoneNumber_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Hotel'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Hotel_Data {
+  """
+  ✨ Generated from Field `Hotel`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Hotel`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Hotel`.`address` of type `String!`
+  """
+  address: String
+  """
+  ✨ `_expr` server value variant of `address` (✨ Generated from Field `Hotel`.`address` of type `String!`)
+  """
+  address_expr: String_Expr
+  """
+  ✨ Generated from Field `Hotel`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Hotel`.`description` of type `String`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `Hotel`.`email` of type `String`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `Hotel`.`email` of type `String`)
+  """
+  email_expr: String_Expr
+  """
+  ✨ Generated from Field `Hotel`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Hotel`.`name` of type `String!`)
+  """
+  name_expr: String_Expr
+  """
+  ✨ Generated from Field `Hotel`.`phoneNumber` of type `String`
+  """
+  phoneNumber: String
+  """
+  ✨ `_expr` server value variant of `phoneNumber` (✨ Generated from Field `Hotel`.`phoneNumber` of type `String`)
+  """
+  phoneNumber_expr: String_Expr
+  """
+  ✨ Generated from Field `Hotel`.`propertyId` of type `String!`
+  """
+  propertyId: String
+  """
+  ✨ `_expr` server value variant of `propertyId` (✨ Generated from Field `Hotel`.`propertyId` of type `String!`)
+  """
+  propertyId_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Hotel'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Hotel_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Hotel_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Hotel_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Hotel_Filter!]
+  """
+  ✨ Generated from Field `Hotel`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Hotel`.`address` of type `String!`
+  """
+  address: String_Filter
+  """
+  ✨ Generated from Field `Hotel`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Hotel`.`email` of type `String`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `Hotel`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Hotel`.`phoneNumber` of type `String`
+  """
+  phoneNumber: String_Filter
+  """
+  ✨ Generated from Field `Hotel`.`propertyId` of type `String!`
+  """
+  propertyId: String_Filter
+  """
+  ✨ Generated from Field `Hotel`.`bookings_on_hotel` of type `[Booking!]!`
+  """
+  bookings_on_hotel: Booking_ListFilter
+  """
+  ✨ Generated from Field `Hotel`.`maintenanceRequests_on_hotel` of type `[MaintenanceRequest!]!`
+  """
+  maintenanceRequests_on_hotel: MaintenanceRequest_ListFilter
+  """
+  ✨ Generated from Field `Hotel`.`rooms_on_hotel` of type `[Room!]!`
+  """
+  rooms_on_hotel: Room_ListFilter
+  """
+  ✨ Generated from Field `Hotel`.`staffs_on_hotel` of type `[Staff!]!`
+  """
+  staffs_on_hotel: Staff_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Hotel'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Hotel_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Hotel_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Hotel_Filter
+}
+"""
+✨ Generated having input type for table 'Hotel'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Hotel_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Hotel_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Hotel_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Hotel_Having!]
+  """
+  ✨ Generated from Field `Hotel`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Hotel`.`address_count` of type `Int!`
+  """
+  address_count: Int_Filter
+  """
+  ✨ Generated from Field `Hotel`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Hotel`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `Hotel`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Hotel`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Hotel`.`phoneNumber_count` of type `Int!`
+  """
+  phoneNumber_count: Int_Filter
+  """
+  ✨ Generated from Field `Hotel`.`propertyId_count` of type `Int!`
+  """
+  propertyId_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Hotel'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Hotel_Key {
+  """
+  ✨ Generated from Field `Hotel`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Hotel`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Hotel'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Hotel_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Hotel_Filter
+}
+"""
+✨ Generated order input type for table 'Hotel'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Hotel_Order {
+  """
+  ✨ Generated from Field `Hotel`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`address` of type `String!`
+  """
+  address: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`email` of type `String`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`phoneNumber` of type `String`
+  """
+  phoneNumber: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`propertyId` of type `String!`
+  """
+  propertyId: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`address_count` of type `Int!`
+  """
+  address_count: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`phoneNumber_count` of type `Int!`
+  """
+  phoneNumber_count: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`propertyId_count` of type `Int!`
+  """
+  propertyId_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'MaintenanceRequest'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input MaintenanceRequest_Data {
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `MaintenanceRequest`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId` of type `UUID`
+  """
+  assignedToStaffId: UUID
+  """
+  ✨ `_expr` server value variant of `assignedToStaffId` (✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId` of type `UUID`)
+  """
+  assignedToStaffId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `MaintenanceRequest`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`roomId` of type `UUID!`
+  """
+  roomId: UUID
+  """
+  ✨ `_expr` server value variant of `roomId` (✨ Generated from Field `MaintenanceRequest`.`roomId` of type `UUID!`)
+  """
+  roomId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaff` of type `Staff`
+  """
+  assignedToStaff: Staff_Key
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`room` of type `Room!`
+  """
+  room: Room_Key
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`
+  """
+  completionDate: Date
+  """
+  ✨ `_date` server value variant of `completionDate` (✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`)
+  """
+  completionDate_date: Date_Relative
+  """
+  ✨ `_expr` server value variant of `completionDate` (✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`)
+  """
+  completionDate_expr: Date_Expr
+  """
+  ✨ `_update` server value variant of `completionDate` (✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`)
+  """
+  completionDate_update: [Date_Update!]
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`description` of type `String!`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `MaintenanceRequest`.`description` of type `String!`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`
+  """
+  requestDate: Date
+  """
+  ✨ `_date` server value variant of `requestDate` (✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`)
+  """
+  requestDate_date: Date_Relative
+  """
+  ✨ `_expr` server value variant of `requestDate` (✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`)
+  """
+  requestDate_expr: Date_Expr
+  """
+  ✨ `_update` server value variant of `requestDate` (✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`)
+  """
+  requestDate_update: [Date_Update!]
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`status` of type `String!`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `MaintenanceRequest`.`status` of type `String!`)
+  """
+  status_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'MaintenanceRequest'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input MaintenanceRequest_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [MaintenanceRequest_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: MaintenanceRequest_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [MaintenanceRequest_Filter!]
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId` of type `UUID`
+  """
+  assignedToStaffId: UUID_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`roomId` of type `UUID!`
+  """
+  roomId: UUID_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaff` of type `Staff`
+  """
+  assignedToStaff: Staff_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`room` of type `Room!`
+  """
+  room: Room_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`
+  """
+  completionDate: Date_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`description` of type `String!`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`
+  """
+  requestDate: Date_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`status` of type `String!`
+  """
+  status: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'MaintenanceRequest'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input MaintenanceRequest_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [MaintenanceRequest_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: MaintenanceRequest_Filter
+}
+"""
+✨ Generated having input type for table 'MaintenanceRequest'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input MaintenanceRequest_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [MaintenanceRequest_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: MaintenanceRequest_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [MaintenanceRequest_Having!]
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId_count` of type `Int!`
+  """
+  assignedToStaffId_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completionDate_count` of type `Int!`
+  """
+  completionDate_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`requestDate_count` of type `Int!`
+  """
+  requestDate_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`roomId_count` of type `Int!`
+  """
+  roomId_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completionDate_min` of type `Date`
+  """
+  completionDate_min: Date_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`requestDate_min` of type `Date`
+  """
+  requestDate_min: Date_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completionDate_max` of type `Date`
+  """
+  completionDate_max: Date_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`requestDate_max` of type `Date`
+  """
+  requestDate_max: Date_Filter
+}
+"""
+✨ Generated key input type for table 'MaintenanceRequest'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input MaintenanceRequest_Key {
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `MaintenanceRequest`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'MaintenanceRequest'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input MaintenanceRequest_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: MaintenanceRequest_Filter
+}
+"""
+✨ Generated order input type for table 'MaintenanceRequest'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input MaintenanceRequest_Order {
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId` of type `UUID`
+  """
+  assignedToStaffId: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`roomId` of type `UUID!`
+  """
+  roomId: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaff` of type `Staff`
+  """
+  assignedToStaff: Staff_Order
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`room` of type `Room!`
+  """
+  room: Room_Order
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`
+  """
+  completionDate: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`description` of type `String!`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`
+  """
+  requestDate: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`status` of type `String!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId_count` of type `Int!`
+  """
+  assignedToStaffId_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completionDate_count` of type `Int!`
+  """
+  completionDate_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`requestDate_count` of type `Int!`
+  """
+  requestDate_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`roomId_count` of type `Int!`
+  """
+  roomId_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completionDate_min` of type `Date`
+  """
+  completionDate_min: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`requestDate_min` of type `Date`
+  """
+  requestDate_min: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completionDate_max` of type `Date`
+  """
+  completionDate_max: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`requestDate_max` of type `Date`
+  """
+  requestDate_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Room'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Room_Data {
+  """
+  ✨ Generated from Field `Room`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Room`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Room`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `Room`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Room`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `Room`.`capacity` of type `Int`
+  """
+  capacity: Int
+  """
+  ✨ `_expr` server value variant of `capacity` (✨ Generated from Field `Room`.`capacity` of type `Int`)
+  """
+  capacity_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `capacity` (✨ Generated from Field `Room`.`capacity` of type `Int`)
+  """
+  capacity_update: [Int_Update!]
+  """
+  ✨ Generated from Field `Room`.`dailyRate` of type `Float`
+  """
+  dailyRate: Float
+  """
+  ✨ `_expr` server value variant of `dailyRate` (✨ Generated from Field `Room`.`dailyRate` of type `Float`)
+  """
+  dailyRate_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `dailyRate` (✨ Generated from Field `Room`.`dailyRate` of type `Float`)
+  """
+  dailyRate_update: [Float_Update!]
+  """
+  ✨ Generated from Field `Room`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Room`.`description` of type `String`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `Room`.`roomNumber` of type `String!`
+  """
+  roomNumber: String
+  """
+  ✨ `_expr` server value variant of `roomNumber` (✨ Generated from Field `Room`.`roomNumber` of type `String!`)
+  """
+  roomNumber_expr: String_Expr
+  """
+  ✨ Generated from Field `Room`.`roomType` of type `String!`
+  """
+  roomType: String
+  """
+  ✨ `_expr` server value variant of `roomType` (✨ Generated from Field `Room`.`roomType` of type `String!`)
+  """
+  roomType_expr: String_Expr
+  """
+  ✨ Generated from Field `Room`.`status` of type `String!`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Room`.`status` of type `String!`)
+  """
+  status_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Room'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Room_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Room_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Room_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Room_Filter!]
+  """
+  ✨ Generated from Field `Room`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Room`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `Room`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `Room`.`capacity` of type `Int`
+  """
+  capacity: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`dailyRate` of type `Float`
+  """
+  dailyRate: Float_Filter
+  """
+  ✨ Generated from Field `Room`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Room`.`roomNumber` of type `String!`
+  """
+  roomNumber: String_Filter
+  """
+  ✨ Generated from Field `Room`.`roomType` of type `String!`
+  """
+  roomType: String_Filter
+  """
+  ✨ Generated from Field `Room`.`status` of type `String!`
+  """
+  status: String_Filter
+  """
+  ✨ Generated from Field `Room`.`bookings_on_room` of type `[Booking!]!`
+  """
+  bookings_on_room: Booking_ListFilter
+  """
+  ✨ Generated from Field `Room`.`maintenanceRequests_on_room` of type `[MaintenanceRequest!]!`
+  """
+  maintenanceRequests_on_room: MaintenanceRequest_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Room'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Room_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Room_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Room_Filter
+}
+"""
+✨ Generated having input type for table 'Room'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Room_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Room_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Room_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Room_Having!]
+  """
+  ✨ Generated from Field `Room`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`capacity_count` of type `Int!`
+  """
+  capacity_count: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`dailyRate_count` of type `Int!`
+  """
+  dailyRate_count: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`roomNumber_count` of type `Int!`
+  """
+  roomNumber_count: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`roomType_count` of type `Int!`
+  """
+  roomType_count: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`capacity_sum` of type `Int`
+  """
+  capacity_sum: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`dailyRate_sum` of type `Float`
+  """
+  dailyRate_sum: Float_Filter
+  """
+  ✨ Generated from Field `Room`.`capacity_avg` of type `Float`
+  """
+  capacity_avg: Float_Filter
+  """
+  ✨ Generated from Field `Room`.`dailyRate_avg` of type `Float`
+  """
+  dailyRate_avg: Float_Filter
+  """
+  ✨ Generated from Field `Room`.`capacity_min` of type `Int`
+  """
+  capacity_min: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`dailyRate_min` of type `Float`
+  """
+  dailyRate_min: Float_Filter
+  """
+  ✨ Generated from Field `Room`.`capacity_max` of type `Int`
+  """
+  capacity_max: Int_Filter
+  """
+  ✨ Generated from Field `Room`.`dailyRate_max` of type `Float`
+  """
+  dailyRate_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'Room'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Room_Key {
+  """
+  ✨ Generated from Field `Room`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Room`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Room'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Room_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Room_Filter
+}
+"""
+✨ Generated order input type for table 'Room'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Room_Order {
+  """
+  ✨ Generated from Field `Room`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `Room`.`capacity` of type `Int`
+  """
+  capacity: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`dailyRate` of type `Float`
+  """
+  dailyRate: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`roomNumber` of type `String!`
+  """
+  roomNumber: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`roomType` of type `String!`
+  """
+  roomType: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`status` of type `String!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`capacity_count` of type `Int!`
+  """
+  capacity_count: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`dailyRate_count` of type `Int!`
+  """
+  dailyRate_count: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`roomNumber_count` of type `Int!`
+  """
+  roomNumber_count: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`roomType_count` of type `Int!`
+  """
+  roomType_count: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`capacity_sum` of type `Int`
+  """
+  capacity_sum: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`dailyRate_sum` of type `Float`
+  """
+  dailyRate_sum: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`capacity_avg` of type `Float`
+  """
+  capacity_avg: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`dailyRate_avg` of type `Float`
+  """
+  dailyRate_avg: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`capacity_min` of type `Int`
+  """
+  capacity_min: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`dailyRate_min` of type `Float`
+  """
+  dailyRate_min: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`capacity_max` of type `Int`
+  """
+  capacity_max: OrderDirection
+  """
+  ✨ Generated from Field `Room`.`dailyRate_max` of type `Float`
+  """
+  dailyRate_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Staff'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Staff_Data {
+  """
+  ✨ Generated from Field `Staff`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Staff`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Staff`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `Staff`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Staff`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `Staff`.`department` of type `String`
+  """
+  department: String
+  """
+  ✨ `_expr` server value variant of `department` (✨ Generated from Field `Staff`.`department` of type `String`)
+  """
+  department_expr: String_Expr
+  """
+  ✨ Generated from Field `Staff`.`email` of type `String`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `Staff`.`email` of type `String`)
+  """
+  email_expr: String_Expr
+  """
+  ✨ Generated from Field `Staff`.`firstName` of type `String!`
+  """
+  firstName: String
+  """
+  ✨ `_expr` server value variant of `firstName` (✨ Generated from Field `Staff`.`firstName` of type `String!`)
+  """
+  firstName_expr: String_Expr
+  """
+  ✨ Generated from Field `Staff`.`lastName` of type `String!`
+  """
+  lastName: String
+  """
+  ✨ `_expr` server value variant of `lastName` (✨ Generated from Field `Staff`.`lastName` of type `String!`)
+  """
+  lastName_expr: String_Expr
+  """
+  ✨ Generated from Field `Staff`.`passwordHash` of type `String!`
+  """
+  passwordHash: String
+  """
+  ✨ `_expr` server value variant of `passwordHash` (✨ Generated from Field `Staff`.`passwordHash` of type `String!`)
+  """
+  passwordHash_expr: String_Expr
+  """
+  ✨ Generated from Field `Staff`.`phoneNumber` of type `String`
+  """
+  phoneNumber: String
+  """
+  ✨ `_expr` server value variant of `phoneNumber` (✨ Generated from Field `Staff`.`phoneNumber` of type `String`)
+  """
+  phoneNumber_expr: String_Expr
+  """
+  ✨ Generated from Field `Staff`.`role` of type `String!`
+  """
+  role: String
+  """
+  ✨ `_expr` server value variant of `role` (✨ Generated from Field `Staff`.`role` of type `String!`)
+  """
+  role_expr: String_Expr
+  """
+  ✨ Generated from Field `Staff`.`username` of type `String!`
+  """
+  username: String
+  """
+  ✨ `_expr` server value variant of `username` (✨ Generated from Field `Staff`.`username` of type `String!`)
+  """
+  username_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Staff'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Staff_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Staff_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Staff_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Staff_Filter!]
+  """
+  ✨ Generated from Field `Staff`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Staff`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `Staff`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `Staff`.`department` of type `String`
+  """
+  department: String_Filter
+  """
+  ✨ Generated from Field `Staff`.`email` of type `String`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `Staff`.`firstName` of type `String!`
+  """
+  firstName: String_Filter
+  """
+  ✨ Generated from Field `Staff`.`lastName` of type `String!`
+  """
+  lastName: String_Filter
+  """
+  ✨ Generated from Field `Staff`.`passwordHash` of type `String!`
+  """
+  passwordHash: String_Filter
+  """
+  ✨ Generated from Field `Staff`.`phoneNumber` of type `String`
+  """
+  phoneNumber: String_Filter
+  """
+  ✨ Generated from Field `Staff`.`role` of type `String!`
+  """
+  role: String_Filter
+  """
+  ✨ Generated from Field `Staff`.`username` of type `String!`
+  """
+  username: String_Filter
+  """
+  ✨ Generated from Field `Staff`.`maintenanceRequests_on_assignedToStaff` of type `[MaintenanceRequest!]!`
+  """
+  maintenanceRequests_on_assignedToStaff: MaintenanceRequest_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Staff'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Staff_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Staff_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Staff_Filter
+}
+"""
+✨ Generated having input type for table 'Staff'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Staff_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Staff_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Staff_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Staff_Having!]
+  """
+  ✨ Generated from Field `Staff`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`department_count` of type `Int!`
+  """
+  department_count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`firstName_count` of type `Int!`
+  """
+  firstName_count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`lastName_count` of type `Int!`
+  """
+  lastName_count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`passwordHash_count` of type `Int!`
+  """
+  passwordHash_count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`phoneNumber_count` of type `Int!`
+  """
+  phoneNumber_count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`role_count` of type `Int!`
+  """
+  role_count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`username_count` of type `Int!`
+  """
+  username_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Staff'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Staff_Key {
+  """
+  ✨ Generated from Field `Staff`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Staff`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Staff'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Staff_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Staff_Filter
+}
+"""
+✨ Generated order input type for table 'Staff'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Staff_Order {
+  """
+  ✨ Generated from Field `Staff`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `Staff`.`department` of type `String`
+  """
+  department: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`email` of type `String`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`firstName` of type `String!`
+  """
+  firstName: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`lastName` of type `String!`
+  """
+  lastName: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`passwordHash` of type `String!`
+  """
+  passwordHash: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`phoneNumber` of type `String`
+  """
+  phoneNumber: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`role` of type `String!`
+  """
+  role: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`username` of type `String!`
+  """
+  username: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`department_count` of type `Int!`
+  """
+  department_count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`firstName_count` of type `Int!`
+  """
+  firstName_count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`lastName_count` of type `Int!`
+  """
+  lastName_count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`passwordHash_count` of type `Int!`
+  """
+  passwordHash_count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`phoneNumber_count` of type `Int!`
+  """
+  phoneNumber_count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`role_count` of type `Int!`
+  """
+  role_count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`username_count` of type `Int!`
+  """
+  username_count: OrderDirection
+}

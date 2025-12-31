@@ -1,0 +1,27 @@
+mutation CreateNewGuest @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  guest_insert(data: {firstName: "John", lastName: "Doe", email: "john.doe@example.com"})
+}
+
+query ListAvailableRooms @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  rooms(where: {status: {eq: "available"}}) {
+    id
+    roomNumber
+    roomType
+    capacity
+    dailyRate
+  }
+}
+
+mutation CreateMaintenanceRequest($roomId: UUID!, $hotelId: UUID!, $description: String!, $requestDate: Date!) @auth(level: USER, insecureReason: "This operation is safe to expose to all logged in users.") {
+  maintenanceRequest_insert(data: {roomId: $roomId, hotelId: $hotelId, description: $description, requestDate: $requestDate, status: "open"})
+}
+
+query GetHotelStaff($hotelId: UUID!) @auth(level: USER) {
+  staffs(where: {hotelId: {eq: $hotelId}}) {
+    id
+    firstName
+    lastName
+    email
+    role
+  }
+}

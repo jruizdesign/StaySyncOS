@@ -1,0 +1,942 @@
+extend type Booking {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Booking", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Booking` table.
+  """
+  _count: Int! @fdc_generated(from: "Booking.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Booking` table where the `bookingStatus` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  bookingStatus_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Booking.bookingStatus", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Booking` table where the `checkInDate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  checkInDate_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Booking.checkInDate", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Booking` table where the `checkOutDate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  checkOutDate_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Booking.checkOutDate", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Booking` table where the `guestId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  guestId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Booking.guestId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Booking` table where the `hotelId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  hotelId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Booking.hotelId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Booking` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Booking.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Booking` table where the `numberOfGuests` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  numberOfGuests_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Booking.numberOfGuests", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Booking` table where the `roomId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  roomId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Booking.roomId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Booking` table where the `specialRequests` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  specialRequests_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Booking.specialRequests", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Booking` table where the `totalAmount` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  totalAmount_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Booking.totalAmount", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `numberOfGuests` field in the `Booking` table.
+  """
+  numberOfGuests_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "Booking.numberOfGuests", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `totalAmount` field in the `Booking` table.
+  """
+  totalAmount_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Booking.totalAmount", purpose: QUERY_SUM)
+  """
+  ✨ Average the `numberOfGuests` field in the `Booking` table.
+  """
+  numberOfGuests_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Booking.numberOfGuests", purpose: QUERY_AVG)
+  """
+  ✨ Average the `totalAmount` field in the `Booking` table.
+  """
+  totalAmount_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Booking.totalAmount", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `checkInDate` field in the `Booking` table.
+  """
+  checkInDate_min: Date @fdc_generated(from: "Booking.checkInDate", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `checkOutDate` field in the `Booking` table.
+  """
+  checkOutDate_min: Date @fdc_generated(from: "Booking.checkOutDate", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `numberOfGuests` field in the `Booking` table.
+  """
+  numberOfGuests_min: Int @fdc_generated(from: "Booking.numberOfGuests", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `totalAmount` field in the `Booking` table.
+  """
+  totalAmount_min: Float @fdc_generated(from: "Booking.totalAmount", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `checkInDate` field in the `Booking` table.
+  """
+  checkInDate_max: Date @fdc_generated(from: "Booking.checkInDate", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `checkOutDate` field in the `Booking` table.
+  """
+  checkOutDate_max: Date @fdc_generated(from: "Booking.checkOutDate", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `numberOfGuests` field in the `Booking` table.
+  """
+  numberOfGuests_max: Int @fdc_generated(from: "Booking.numberOfGuests", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `totalAmount` field in the `Booking` table.
+  """
+  totalAmount_max: Float @fdc_generated(from: "Booking.totalAmount", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Booking.id", purpose: GLOBAL_ID)
+}
+extend type Guest {
+  """
+  ✨ List `Booking` objects in a one-to-many relationship (where `Booking`.`guest` is this object).
+  """
+  bookings_on_guest(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Booking_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Booking_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Booking_Having
+  ): [Booking!]! @fdc_generated(from: "Booking.guest", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Guest", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Guest` table.
+  """
+  _count: Int! @fdc_generated(from: "Guest.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Guest` table where the `address` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  address_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Guest.address", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Guest` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Guest.email", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Guest` table where the `firstName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  firstName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Guest.firstName", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Guest` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Guest.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Guest` table where the `lastName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  lastName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Guest.lastName", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Guest` table where the `loyaltyProgramMember` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  loyaltyProgramMember_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Guest.loyaltyProgramMember", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Guest` table where the `phoneNumber` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  phoneNumber_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Guest.phoneNumber", purpose: QUERY_COUNT)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Guest.id", purpose: GLOBAL_ID)
+}
+extend type Hotel {
+  """
+  ✨ List `Booking` objects in a one-to-many relationship (where `Booking`.`hotel` is this object).
+  """
+  bookings_on_hotel(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Booking_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Booking_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Booking_Having
+  ): [Booking!]! @fdc_generated(from: "Booking.hotel", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `MaintenanceRequest` objects in a one-to-many relationship (where `MaintenanceRequest`.`hotel` is this object).
+  """
+  maintenanceRequests_on_hotel(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: MaintenanceRequest_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [MaintenanceRequest_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: MaintenanceRequest_Having
+  ): [MaintenanceRequest!]! @fdc_generated(from: "MaintenanceRequest.hotel", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `Room` objects in a one-to-many relationship (where `Room`.`hotel` is this object).
+  """
+  rooms_on_hotel(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Room_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Room_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Room_Having
+  ): [Room!]! @fdc_generated(from: "Room.hotel", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `Staff` objects in a one-to-many relationship (where `Staff`.`hotel` is this object).
+  """
+  staffs_on_hotel(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Staff_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Staff_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Staff_Having
+  ): [Staff!]! @fdc_generated(from: "Staff.hotel", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Hotel", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Hotel` table.
+  """
+  _count: Int! @fdc_generated(from: "Hotel.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Hotel` table where the `address` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  address_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Hotel.address", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Hotel` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Hotel.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Hotel` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Hotel.email", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Hotel` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Hotel.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Hotel` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Hotel.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Hotel` table where the `phoneNumber` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  phoneNumber_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Hotel.phoneNumber", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Hotel` table where the `propertyId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  propertyId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Hotel.propertyId", purpose: QUERY_COUNT)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Hotel.id", purpose: GLOBAL_ID)
+}
+extend type MaintenanceRequest {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "MaintenanceRequest", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `MaintenanceRequest` table.
+  """
+  _count: Int! @fdc_generated(from: "MaintenanceRequest.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `MaintenanceRequest` table where the `assignedToStaffId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  assignedToStaffId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "MaintenanceRequest.assignedToStaffId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `MaintenanceRequest` table where the `completionDate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  completionDate_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "MaintenanceRequest.completionDate", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `MaintenanceRequest` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "MaintenanceRequest.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `MaintenanceRequest` table where the `hotelId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  hotelId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "MaintenanceRequest.hotelId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `MaintenanceRequest` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "MaintenanceRequest.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `MaintenanceRequest` table where the `requestDate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  requestDate_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "MaintenanceRequest.requestDate", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `MaintenanceRequest` table where the `roomId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  roomId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "MaintenanceRequest.roomId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `MaintenanceRequest` table where the `status` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  status_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "MaintenanceRequest.status", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `completionDate` field in the `MaintenanceRequest` table.
+  """
+  completionDate_min: Date @fdc_generated(from: "MaintenanceRequest.completionDate", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `requestDate` field in the `MaintenanceRequest` table.
+  """
+  requestDate_min: Date @fdc_generated(from: "MaintenanceRequest.requestDate", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `completionDate` field in the `MaintenanceRequest` table.
+  """
+  completionDate_max: Date @fdc_generated(from: "MaintenanceRequest.completionDate", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `requestDate` field in the `MaintenanceRequest` table.
+  """
+  requestDate_max: Date @fdc_generated(from: "MaintenanceRequest.requestDate", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "MaintenanceRequest.id", purpose: GLOBAL_ID)
+}
+extend type Room {
+  """
+  ✨ List `Booking` objects in a one-to-many relationship (where `Booking`.`room` is this object).
+  """
+  bookings_on_room(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Booking_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Booking_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Booking_Having
+  ): [Booking!]! @fdc_generated(from: "Booking.room", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `MaintenanceRequest` objects in a one-to-many relationship (where `MaintenanceRequest`.`room` is this object).
+  """
+  maintenanceRequests_on_room(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: MaintenanceRequest_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [MaintenanceRequest_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: MaintenanceRequest_Having
+  ): [MaintenanceRequest!]! @fdc_generated(from: "MaintenanceRequest.room", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Room", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Room` table.
+  """
+  _count: Int! @fdc_generated(from: "Room.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Room` table where the `capacity` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  capacity_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Room.capacity", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Room` table where the `dailyRate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  dailyRate_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Room.dailyRate", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Room` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Room.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Room` table where the `hotelId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  hotelId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Room.hotelId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Room` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Room.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Room` table where the `roomNumber` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  roomNumber_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Room.roomNumber", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Room` table where the `roomType` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  roomType_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Room.roomType", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Room` table where the `status` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  status_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Room.status", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `capacity` field in the `Room` table.
+  """
+  capacity_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "Room.capacity", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `dailyRate` field in the `Room` table.
+  """
+  dailyRate_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Room.dailyRate", purpose: QUERY_SUM)
+  """
+  ✨ Average the `capacity` field in the `Room` table.
+  """
+  capacity_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Room.capacity", purpose: QUERY_AVG)
+  """
+  ✨ Average the `dailyRate` field in the `Room` table.
+  """
+  dailyRate_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Room.dailyRate", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `capacity` field in the `Room` table.
+  """
+  capacity_min: Int @fdc_generated(from: "Room.capacity", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `dailyRate` field in the `Room` table.
+  """
+  dailyRate_min: Float @fdc_generated(from: "Room.dailyRate", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `capacity` field in the `Room` table.
+  """
+  capacity_max: Int @fdc_generated(from: "Room.capacity", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `dailyRate` field in the `Room` table.
+  """
+  dailyRate_max: Float @fdc_generated(from: "Room.dailyRate", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Room.id", purpose: GLOBAL_ID)
+}
+extend type Staff {
+  """
+  ✨ List `MaintenanceRequest` objects in a one-to-many relationship (where `MaintenanceRequest`.`assignedToStaff` is this object).
+  """
+  maintenanceRequests_on_assignedToStaff(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: MaintenanceRequest_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [MaintenanceRequest_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: MaintenanceRequest_Having
+  ): [MaintenanceRequest!]! @fdc_generated(from: "MaintenanceRequest.assignedToStaff", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Staff", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Staff` table.
+  """
+  _count: Int! @fdc_generated(from: "Staff.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Staff` table where the `department` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  department_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Staff.department", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Staff` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Staff.email", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Staff` table where the `firstName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  firstName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Staff.firstName", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Staff` table where the `hotelId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  hotelId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Staff.hotelId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Staff` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Staff.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Staff` table where the `lastName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  lastName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Staff.lastName", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Staff` table where the `passwordHash` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  passwordHash_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Staff.passwordHash", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Staff` table where the `phoneNumber` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  phoneNumber_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Staff.phoneNumber", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Staff` table where the `role` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  role_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Staff.role", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Staff` table where the `username` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  username_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Staff.username", purpose: QUERY_COUNT)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Staff.id", purpose: GLOBAL_ID)
+}

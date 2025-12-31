@@ -1,0 +1,68 @@
+extend type Booking {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Booking", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Booking`.`guest`. It must match the value of `Guest`.`id`. See `@ref` for how to customize it.
+  """
+  guestId: UUID! @fdc_generated(from: "Booking.guest", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Booking`.`hotel`. It must match the value of `Hotel`.`id`. See `@ref` for how to customize it.
+  """
+  hotelId: UUID! @fdc_generated(from: "Booking.hotel", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Booking`.`room`. It must match the value of `Room`.`id`. See `@ref` for how to customize it.
+  """
+  roomId: UUID @fdc_generated(from: "Booking.room", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Guest {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Guest", purpose: IMPLICIT_KEY_FIELD)
+}
+extend type Hotel {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Hotel", purpose: IMPLICIT_KEY_FIELD)
+}
+extend type MaintenanceRequest {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "MaintenanceRequest", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `MaintenanceRequest`.`assignedToStaff`. It must match the value of `Staff`.`id`. See `@ref` for how to customize it.
+  """
+  assignedToStaffId: UUID @fdc_generated(from: "MaintenanceRequest.assignedToStaff", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `MaintenanceRequest`.`hotel`. It must match the value of `Hotel`.`id`. See `@ref` for how to customize it.
+  """
+  hotelId: UUID! @fdc_generated(from: "MaintenanceRequest.hotel", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `MaintenanceRequest`.`room`. It must match the value of `Room`.`id`. See `@ref` for how to customize it.
+  """
+  roomId: UUID! @fdc_generated(from: "MaintenanceRequest.room", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Room {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Room", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Room`.`hotel`. It must match the value of `Hotel`.`id`. See `@ref` for how to customize it.
+  """
+  hotelId: UUID! @fdc_generated(from: "Room.hotel", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Staff {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Staff", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Staff`.`hotel`. It must match the value of `Hotel`.`id`. See `@ref` for how to customize it.
+  """
+  hotelId: UUID! @fdc_generated(from: "Staff.hotel", purpose: IMPLICIT_REF_FIELD)
+}

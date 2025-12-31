@@ -1,0 +1,61 @@
+type Hotel @table {
+  name: String!
+  address: String!
+  propertyId: String!
+  phoneNumber: String
+  email: String
+  description: String
+}
+
+type Room @table {
+  hotel: Hotel!
+  roomNumber: String!
+  roomType: String!
+  status: String!
+  capacity: Int
+  dailyRate: Float
+  description: String
+}
+
+type Guest @table {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phoneNumber: String
+  address: String
+  loyaltyProgramMember: Boolean
+}
+
+type Booking @table {
+  guest: Guest!
+  room: Room
+  checkInDate: Date!
+  checkOutDate: Date!
+  bookingStatus: String!
+  hotel: Hotel!
+  specialRequests: String
+  numberOfGuests: Int
+  totalAmount: Float
+}
+
+type Staff @table {
+  hotel: Hotel!
+  firstName: String!
+  lastName: String!
+  role: String!
+  username: String!
+  passwordHash: String!
+  email: String
+  phoneNumber: String
+  department: String
+}
+
+type MaintenanceRequest @table {
+  room: Room!
+  description: String!
+  requestDate: Date!
+  status: String!
+  hotel: Hotel!
+  assignedToStaff: Staff
+  completionDate: Date
+}
