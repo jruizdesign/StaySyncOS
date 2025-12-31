@@ -20,41 +20,13 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { provideFunctions, getFunctions } from '@angular/fire/functions';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
-import { provideDataConnect } from '@angular/fire/data-connect';
+import { provideDataConnect, getDataConnect } from '@angular/fire/data-connect';
 import { firebaseConfig } from './src/firebase-config';
 import { connectorConfig } from './src/dataconnect-generated';
 import { provideAppCheck, initializeAppCheck, ReCaptchaEnterpriseProvider } from '@angular/fire/app-check';
 
 const authGuard: CanActivateFn = () => {
-  const auth = inject(AuthService);
-  const router = inject(Router);
-  if (auth.isLoggedIn()) {
-    return true;
-  }
-  return router.parseUrl('/login');
-};
-const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  {
-    path: '',
-    canActivate: [authGuard],
-    children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'overview', component: DailyOverviewComponent },
-      { path: 'rooms', component: RoomManagerComponent },
-      { path: 'guests', component: GuestManagerComponent },
-      { path: 'staff', component: StaffManagerComponent },
-      { path: 'maintenance', component: MaintenanceComponent },
-      { path: 'accounting', component: AccountingComponent },
-      { path: 'documents', component: DocumentCenterComponent },
-      { path: 'logs', component: LogsComponent },
-      { path: 'settings', component: SettingsComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
-    ]
-  },
-  { path: '**', redirectTo: 'dashboard' }
-];
-
+...
 bootstrapApplication(AppComponent, {
   providers: [
     provideZonelessChangeDetection(),
@@ -64,7 +36,11 @@ bootstrapApplication(AppComponent, {
     provideStorage(() => getStorage()),
     provideFunctions(() => getFunctions()),
     provideFirestore(() => getFirestore()),
-    provideDataConnect(connectorConfig),
+    provideDataConnect(injector => {
+      const dc = getDataConnect(injector);
+      Object.assign(dc, connectorConfig);
+      return dc;
+    }),
     provideAppCheck(() => initializeAppCheck(undefined, {
       provider: new ReCaptchaEnterpriseProvider('6Ldk8TssAAAAAHmIfBZ4GDSaaeR772oXEPSoVtfC'),
       isTokenAutoRefreshEnabled: true

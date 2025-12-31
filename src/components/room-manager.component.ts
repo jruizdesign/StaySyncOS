@@ -37,7 +37,7 @@ import { DataService, Room, Guest, Stay } from '../services/data.service';
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Room Number</label>
-                    <input formControlName="number" type="text" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. 404">
+                    <input formControlName="roomNumber" type="text" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. 404">
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Floor</label>
@@ -45,7 +45,7 @@ import { DataService, Room, Guest, Stay } from '../services/data.service';
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Base Price ($/night)</label>
-                    <input formControlName="price" type="number" class="w-full border border-gray-300 rounded-lg p-2 outline-none" placeholder="0.00">
+                    <input formControlName="dailyRate" type="number" class="w-full border border-gray-300 rounded-lg p-2 outline-none" placeholder="0.00">
                   </div>
                 </div>
               }
@@ -53,7 +53,7 @@ import { DataService, Room, Guest, Stay } from '../services/data.service';
                 <div class="space-y-4">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
-                    <select formControlName="type" class="w-full border border-gray-300 rounded-lg p-2 outline-none bg-white">
+                    <select formControlName="roomType" class="w-full border border-gray-300 rounded-lg p-2 outline-none bg-white">
                       <option value="Single">Single</option>
                       <option value="Double">Double</option>
                       <option value="Suite">Suite</option>
@@ -69,9 +69,9 @@ import { DataService, Room, Guest, Stay } from '../services/data.service';
               @case (3) {
                 <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                   <h3 class="font-medium text-gray-900 mb-2">Summary</h3>
-                  <p class="text-sm text-gray-600">Room: <span class="font-semibold">{{ roomForm.get('number')?.value }}</span></p>
-                  <p class="text-sm text-gray-600">Type: <span class="font-semibold">{{ roomForm.get('type')?.value }}</span></p>
-                  <p class="text-sm text-gray-600">Price: <span class="font-semibold">\${{ roomForm.get('price')?.value }}</span></p>
+                  <p class="text-sm text-gray-600">Room: <span class="font-semibold">{{ roomForm.get('roomNumber')?.value }}</span></p>
+                  <p class="text-sm text-gray-600">Type: <span class="font-semibold">{{ roomForm.get('roomType')?.value }}</span></p>
+                  <p class="text-sm text-gray-600">Price: <span class="font-semibold">\${{ roomForm.get('dailyRate')?.value }}</span></p>
                 </div>
               }
             }
@@ -236,16 +236,16 @@ export class RoomManagerComponent {
   showFullDetails = signal(false);
 
   roomForm: FormGroup = this.fb.group({
-    number: ['', Validators.required],
-    type: ['Single', Validators.required],
-    price: [100, [Validators.required, Validators.min(0)]],
+    roomNumber: ['', Validators.required],
+    roomType: ['Single', Validators.required],
+    dailyRate: [100, [Validators.required, Validators.min(0)]],
     amenities: ['']
   });
 
   toggleWizard() {
     this.showWizard.update(v => !v);
     this.step.set(1);
-    this.roomForm.reset({ type: 'Single', price: 100 });
+    this.roomForm.reset({ roomType: 'Single', dailyRate: 100 });
   }
 
   nextStep() {
