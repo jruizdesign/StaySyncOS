@@ -137,7 +137,7 @@ import { DocumentViewerComponent } from './document-viewer.component';
 export class AccountingComponent {
   data = inject(DataService);
   fb = inject(FormBuilder);
-  
+
   selectedDoc = signal<FinancialDocument | null>(null);
   showPaymentModal = signal(false);
 
@@ -163,19 +163,19 @@ export class AccountingComponent {
   }
 
   openPaymentModal() {
-      this.paymentForm.reset({ stayId: '', amount: '' });
-      this.showPaymentModal.set(true);
+    this.paymentForm.reset({ stayId: '', amount: '' });
+    this.showPaymentModal.set(true);
   }
 
-  submitPayment() {
-      if (this.paymentForm.valid) {
-          const { stayId, amount } = this.paymentForm.value;
-          const doc = this.data.makePayment(stayId, parseFloat(amount));
-          
-          this.showPaymentModal.set(false);
-          if (doc) {
-              this.selectedDoc.set(doc);
-          }
+  async submitPayment() {
+    if (this.paymentForm.valid) {
+      const { stayId, amount } = this.paymentForm.value;
+      const doc = await this.data.makePayment(stayId, parseFloat(amount));
+
+      this.showPaymentModal.set(false);
+      if (doc) {
+        this.selectedDoc.set(doc);
       }
+    }
   }
 }

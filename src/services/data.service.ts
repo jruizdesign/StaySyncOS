@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, effect, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Firestore, collection, collectionData, doc, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { AiService } from './ai.service';
 
@@ -137,230 +137,370 @@ export interface HotelConfig {
 })
 export class DataService {
   ai = inject(AiService);
+  firestore = inject(Firestore);
 
-  // Simulating Firestore Collections
-  hotelConfig = signal<HotelConfig>({
-    name: 'StaySyncOS Demo Hotel',
-    address: '123 Luxury Blvd, Metropolis, NY',
-    email: 'contact@staysyncos.com',
-    phone: '(555) 019-2834',
-    demoMode: true,
-    maintenanceEmail: 'maintenance@staysyncos.com'
+  // Firestore Collections as Signals with Explicit Casting
+  rooms = toSignal(collectionData(collection(this.firestore, 'rooms'), { idField: 'id' }) as Observable<Room[]>, { initialValue: [] as Room[] });
+  guests = toSignal(collectionData(collection(this.firestore, 'guests'), { idField: 'id' }) as Observable<Guest[]>, { initialValue: [] as Guest[] });
+  stays = toSignal(collectionData(collection(this.firestore, 'stays'), { idField: 'id' }) as Observable<Stay[]>, { initialValue: [] as Stay[] });
+  logs = toSignal(collectionData(query(collection(this.firestore, 'logs'), orderBy('timestamp', 'desc')), { idField: 'id' }) as Observable<LogEntry[]>, { initialValue: [] as LogEntry[] });
+  documents = toSignal(collectionData(collection(this.firestore, 'documents'), { idField: 'id' }) as Observable<FinancialDocument[]>, { initialValue: [] as FinancialDocument[] });
+
+  staff = toSignal(collectionData(collection(this.firestore, 'staff'), { idField: 'id' }) as Observable<Staff[]>, { initialValue: [] as Staff[] });
+  timeLogs = toSignal(collectionData(collection(this.firestore, 'timeLogs'), { idField: 'id' }) as Observable<TimeLog[]>, { initialValue: [] as TimeLog[] });
+  shifts = toSignal(collectionData(collection(this.firestore, 'shifts'), { idField: 'id' }) as Observable<Shift[]>, { initialValue: [] as Shift[] });
+
+  maintenanceRequests = toSignal(collectionData(collection(this.firestore, 'maintenance'), { idField: 'id' }) as Observable<MaintenanceRequest[]>, { initialValue: [] as MaintenanceRequest[] });
+  storedDocuments = toSignal(collectionData(collection(this.firestore, 'storedDocuments'), { idField: 'id' }) as Observable<StoredDocument[]>, { initialValue: [] as StoredDocument[] });
+
+  // Config - Using a specific document 'config/main'
+  private configDoc = doc(this.firestore, 'config/main');
+  hotelConfigSignal = toSignal(docData(this.configDoc) as Observable<HotelConfig>, { initialValue: null });
+
+  // Computed wrapper to provide default if config is missing (or not loaded yet)
+  hotelConfig = computed(() => {
+    const c = this.hotelConfigSignal();
+    return c || {
+      name: 'StaySyncOS Demo Hotel',
+      address: '123 Luxury Blvd, Metropolis, NY',
+      email: 'contact@staysyncos.com',
+      phone: '(555) 019-2834',
+      demoMode: true,
+      maintenanceEmail: 'maintenance@staysyncos.com'
+    };
   });
 
-  rooms = signal<Room[]>([]);
-  guests = signal<Guest[]>([]);
-  stays = signal<Stay[]>([]);
-  logs = signal<LogEntry[]>([]);
-  documents = signal<FinancialDocument[]>([]);
+  constructor() { }
 
-  // Staff Signals
-  staff = signal<Staff[]>([]);
-  timeLogs = signal<TimeLog[]>([]);
-  shifts = signal<Shift[]>([]);
-
-  // Maintenance Signals
-  maintenanceRequests = signal<MaintenanceRequest[]>([]);
-
-  // Document Center Signals
-  storedDocuments = signal<StoredDocument[]>([]);
-
-  constructor() {
-    this.loadFromStorage();
-    // Only seed if absolutely empty (first run)
-    if (this.rooms().length === 0 && this.hotelConfig().demoMode) this.seedData();
-    if (this.staff().length === 0 && this.hotelConfig().demoMode) this.seedStaff();
-
-    // Auto-save effect
-    effect(() => {
-      localStorage.setItem('nexus_config', JSON.stringify(this.hotelConfig()));
-      localStorage.setItem('nexus_rooms', JSON.stringify(this.rooms()));
-      localStorage.setItem('nexus_guests', JSON.stringify(this.guests()));
-      localStorage.setItem('nexus_stays', JSON.stringify(this.stays()));
-      localStorage.setItem('nexus_logs', JSON.stringify(this.logs()));
-      localStorage.setItem('nexus_docs', JSON.stringify(this.documents()));
-      localStorage.setItem('nexus_staff', JSON.stringify(this.staff()));
-      localStorage.setItem('nexus_timelogs', JSON.stringify(this.timeLogs()));
-      localStorage.setItem('nexus_shifts', JSON.stringify(this.shifts()));
-      localStorage.setItem('nexus_maintenance', JSON.stringify(this.maintenanceRequests()));
-      localStorage.setItem('nexus_stored_docs', JSON.stringify(this.storedDocuments()));
-    });
+  // Helper to get collections references (internal use)
+  private col(name: string) {
+    return collection(this.firestore, name);
   }
 
-  private loadFromStorage() {
-    try {
-      const config = localStorage.getItem('nexus_config');
-      if (config) this.hotelConfig.set(JSON.parse(config));
+  // --- Actions ---
 
-      this.rooms.set(JSON.parse(localStorage.getItem('nexus_rooms') || '[]'));
-      this.guests.set(JSON.parse(localStorage.getItem('nexus_guests') || '[]'));
-      this.stays.set(JSON.parse(localStorage.getItem('nexus_stays') || '[]'));
-      this.logs.set(JSON.parse(localStorage.getItem('nexus_logs') || '[]'));
-      this.documents.set(JSON.parse(localStorage.getItem('nexus_docs') || '[]'));
-      this.staff.set(JSON.parse(localStorage.getItem('nexus_staff') || '[]'));
-      this.timeLogs.set(JSON.parse(localStorage.getItem('nexus_timelogs') || '[]'));
-      this.shifts.set(JSON.parse(localStorage.getItem('nexus_shifts') || '[]'));
-      this.maintenanceRequests.set(JSON.parse(localStorage.getItem('nexus_maintenance') || '[]'));
-      this.storedDocuments.set(JSON.parse(localStorage.getItem('nexus_stored_docs') || '[]'));
-    } catch (e) {
-      console.error('Failed to load data', e);
-    }
-  }
-
-  // --- Global Data Management ---
-
-  getExportData(): string {
-    const data = {
-      version: '1.0',
+  log(category: LogEntry['category'], action: string, details: string) {
+    const newLog: LogEntry = {
+      id: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
-      config: this.hotelConfig(),
-      rooms: this.rooms(),
-      guests: this.guests(),
-      stays: this.stays(),
-      logs: this.logs(),
-      documents: this.documents(),
-      staff: this.staff(),
-      timeLogs: this.timeLogs(),
-      shifts: this.shifts(),
-      maintenance: this.maintenanceRequests(),
-      storedDocuments: this.storedDocuments()
+      user: 'System',
+      category,
+      action,
+      details
     };
-    return JSON.stringify(data, null, 2);
+    addDoc(this.col('logs'), newLog);
   }
 
-  importData(jsonString: string): boolean {
-    try {
-      const data = JSON.parse(jsonString);
-      if (!data.version || !data.config) throw new Error("Invalid Backup File");
-
-      this.hotelConfig.set(data.config);
-      this.rooms.set(data.rooms || []);
-      this.guests.set(data.guests || []);
-      this.stays.set(data.stays || []);
-      this.logs.set(data.logs || []);
-      this.documents.set(data.documents || []);
-      this.staff.set(data.staff || []);
-      this.timeLogs.set(data.timeLogs || []);
-      this.shifts.set(data.shifts || []);
-      this.maintenanceRequests.set(data.maintenance || []);
-      this.storedDocuments.set(data.storedDocuments || []);
-
-      this.log('System', 'Data Restore', 'System restored from backup file.');
-      return true;
-    } catch (e) {
-      console.error(e);
-      return false;
-    }
+  addRoom(room: Omit<Room, 'id' | 'status'>) {
+    const newRoom: Room = { ...room, id: crypto.randomUUID(), status: 'Available' };
+    setDoc(doc(this.firestore, 'rooms', newRoom.id), newRoom);
+    this.log('Room', 'Room Created', `Room ${room.number} added.`);
   }
 
-  factoryReset(seedDemoData: boolean) {
-    // Clear all signals
-    this.rooms.set([]);
-    this.guests.set([]);
-    this.stays.set([]);
-    this.logs.set([]);
-    this.documents.set([]);
-    this.staff.set([]);
-    this.timeLogs.set([]);
-    this.shifts.set([]);
-    this.maintenanceRequests.set([]);
-    this.storedDocuments.set([]);
+  addRoomsBulk(roomsData: Omit<Room, 'id' | 'status'>[]) {
+    roomsData.forEach(r => {
+      this.addRoom(r);
+    });
+    this.log('System', 'Bulk Action', `Created ${roomsData.length} rooms via Wizard.`);
+  }
 
-    // Update config
-    this.hotelConfig.update(c => ({ ...c, demoMode: seedDemoData }));
+  updateRoomStatus(roomId: string, status: Room['status']) {
+    updateDoc(doc(this.firestore, 'rooms', roomId), { status });
+    this.log('Room', 'Status Change', `Room ${roomId} status set to ${status}`);
+  }
 
-    if (seedDemoData) {
-      this.seedData();
-      this.seedStaff();
-      this.log('System', 'Factory Reset', 'System reset to Demo Mode.');
+  // --- Guest Actions ---
+  addGuest(guest: Omit<Guest, 'id'>) {
+    const newGuest: Guest = {
+      ...guest,
+      id: crypto.randomUUID()
+    };
+    setDoc(doc(this.firestore, 'guests', newGuest.id), newGuest);
+    this.log('Guest', 'Guest Created', `Added guest: ${newGuest.name}`);
+    return newGuest;
+  }
+
+  updateGuest(id: string, updates: Partial<Guest>) {
+    updateDoc(doc(this.firestore, 'guests', id), updates);
+    this.log('Guest', 'Update', `Guest ${id} updated.`);
+  }
+
+  deleteGuest(id: string) {
+    deleteDoc(doc(this.firestore, 'guests', id));
+    this.log('Guest', 'Delete', `Guest ${id} deleted.`);
+  }
+
+  // --- Stay Actions ---
+
+  createStay(guest: Guest, roomId: string, nights: number) {
+    const checkIn = new Date();
+    const checkOut = new Date(checkIn);
+    checkOut.setDate(checkOut.getDate() + nights);
+    return this.bookStay(guest, roomId, checkIn.toISOString(), checkOut.toISOString());
+  }
+
+  async bookStay(guest: Guest, roomId: string, checkInDate: string, checkOutDate?: string) {
+    const room = this.rooms().find(r => r.id === roomId);
+    if (!room || room.status !== 'Available') return;
+
+    const stayId = crypto.randomUUID();
+    const rate = room.price;
+
+    const checkInTime = new Date(checkInDate).getTime();
+    let nights = 1;
+    let isIndefinite = false;
+
+    if (checkOutDate) {
+      const checkOutTime = new Date(checkOutDate).getTime();
+      nights = Math.max(1, Math.ceil((checkOutTime - checkInTime) / (1000 * 60 * 60 * 24)));
     } else {
-      this.log('System', 'Factory Reset', 'System reset to clean slate for new property.');
+      isIndefinite = true;
+      nights = 1;
+    }
+
+    const totalProjected = rate * nights;
+    const projectedDate = checkOutDate
+      ? new Date(checkOutDate).toISOString()
+      : new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString();
+
+    const newStay: Stay = {
+      id: stayId,
+      guestId: guest.id,
+      roomId: roomId,
+      checkIn: new Date(checkInDate).toISOString(),
+      checkOutProjected: projectedDate,
+      ratePerNight: rate,
+      totalPaid: 0,
+      status: 'Active',
+      isIndefinite: isIndefinite
+    };
+
+    await setDoc(doc(this.firestore, 'stays', stayId), newStay);
+    await updateDoc(doc(this.firestore, 'rooms', roomId), { status: 'Occupied' });
+
+    await updateDoc(doc(this.firestore, 'guests', guest.id), { currentStayId: stayId });
+
+
+    const desc = isIndefinite
+      ? `Room Deposit (Indefinite Stay) - ${room.type}`
+      : `Room Charge (${nights} nights) - ${room.type}`;
+
+    this.createDocument('Invoice', stayId, guest.id, guest.name, [
+      { description: desc, quantity: nights, unitPrice: rate, total: totalProjected }
+    ], 'Check-in Invoice');
+
+    this.log('Guest', 'Check In', `${guest.name} booked Room ${room.number}${isIndefinite ? ' (Indefinite)' : ''}`);
+  }
+
+  async makePayment(stayId: string, amount: number) {
+    const stay = this.stays().find(s => s.id === stayId);
+    if (!stay) return null;
+
+    await updateDoc(doc(this.firestore, 'stays', stayId), { totalPaid: stay.totalPaid + amount });
+
+    const guest = this.guests().find(g => g.id === stay.guestId);
+    let docRef = null;
+
+    if (guest) {
+      docRef = this.createDocument('Receipt', stayId, guest.id, guest.name, [
+        { description: 'Payment Received', quantity: 1, unitPrice: amount, total: amount }
+      ], 'Payment Thank You');
+    }
+
+    this.log('Finance', 'Payment Received', `Payment of $${amount} for stay ${stayId}`);
+    return docRef;
+  }
+
+  async checkOut(stayId: string) {
+    const stay = this.stays().find(s => s.id === stayId);
+    if (!stay || stay.status !== 'Active') return;
+
+    const guest = this.guests().find(g => g.id === stay.guestId);
+    if (!guest) return;
+
+    const checkInTime = new Date(stay.checkIn).getTime();
+    const nowTime = Date.now();
+    const daysStayed = Math.max(1, Math.ceil((nowTime - checkInTime) / (1000 * 60 * 60 * 24)));
+    const totalCost = daysStayed * stay.ratePerNight;
+    const debt = totalCost - stay.totalPaid;
+
+    // Update Stay
+    await updateDoc(doc(this.firestore, 'stays', stayId), {
+      status: 'Completed',
+      checkOutActual: new Date().toISOString()
+    });
+
+    // Update Room
+    await updateDoc(doc(this.firestore, 'rooms', stay.roomId), { status: 'Dirty' });
+
+    // Update Guest
+    await updateDoc(doc(this.firestore, 'guests', guest.id), { currentStayId: null });
+
+    if (debt > 0) {
+      this.createDocument('Invoice', stayId, guest.id, guest.name, [
+        { description: `Final Adjustment (${daysStayed} nights total)`, quantity: 1, unitPrice: debt, total: debt }
+      ], 'Final Balance Due on Checkout');
+      this.log('Guest', 'Check Out', `${guest.name} checked out with outstanding balance: $${debt}`);
+    } else {
+      this.createDocument('Receipt', stayId, guest.id, guest.name, [
+        { description: 'Final Statement - Balance Cleared', quantity: 1, unitPrice: 0, total: 0 }
+      ], 'Checkout Complete');
+      this.log('Guest', 'Check Out', `${guest.name} checked out successfully.`);
     }
   }
 
-  updateHotelDetails(details: Partial<HotelConfig>) {
-    this.hotelConfig.update(current => ({ ...current, ...details }));
-    this.log('System', 'Config Update', 'Hotel details updated.');
+  addMaintenanceRequest(req: Omit<MaintenanceRequest, 'id' | 'reportedAt' | 'cost' | 'status' | 'roomNumber'>) {
+    const room = this.rooms().find(r => r.id === req.roomId);
+    if (!room) return null;
+
+    const newReq: MaintenanceRequest = {
+      ...req,
+      id: crypto.randomUUID(),
+      roomNumber: room.number,
+      reportedAt: new Date().toISOString(),
+      status: 'Pending',
+      cost: 0
+    };
+
+    setDoc(doc(this.firestore, 'maintenance', newReq.id), newReq);
+    this.updateRoomStatus(req.roomId, 'Maintenance');
+    this.log('Maintenance', 'Request Created', `Issue reported in Room ${room.number}: ${req.description}`);
+
+    return newReq;
   }
 
-  private seedData() {
-    // Initial Seed
-    this.rooms.set([
-      { id: '101', number: '101', type: 'Single', price: 120, status: 'Occupied', amenities: ['Wifi', 'TV'] },
-      { id: '102', number: '102', type: 'Double', price: 180, status: 'Available', amenities: ['Wifi', 'TV', 'Mini-bar'] },
-      { id: '201', number: '201', type: 'Suite', price: 350, status: 'Maintenance', amenities: ['Wifi', 'TV', 'Jacuzzi', 'View'] },
-      { id: '305', number: '305', type: 'Single', price: 110, status: 'Available', amenities: ['Wifi'] },
-    ]);
+  updateMaintenanceRequest(id: string, updates: Partial<MaintenanceRequest>) {
+    updateDoc(doc(this.firestore, 'maintenance', id), updates);
 
-    const guestId = 'g1';
-    const stayId = 's1';
-
-    this.guests.set([
-      {
-        id: guestId,
-        name: 'John Doe',
-        email: 'john@example.com',
-        phone: '555-0123',
-        currentStayId: stayId,
-        history: [],
-        notes: 'VIP Guest'
+    if (updates.status === 'Completed') {
+      const req = this.maintenanceRequests().find(r => r.id === id);
+      if (req) {
+        this.updateRoomStatus(req.roomId, 'Available');
+        this.log('Maintenance', 'Issue Resolved', `Maintenance completed.`);
       }
-    ]);
-
-    this.stays.set([
-      {
-        id: stayId,
-        guestId: guestId,
-        roomId: '101',
-        checkIn: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
-        checkOutProjected: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // in 2 days
-        ratePerNight: 120,
-        totalPaid: 200, // Partial payment
-        status: 'Active'
-      }
-    ]);
-
-    // Seed Maintenance
-    this.maintenanceRequests.set([
-      {
-        id: 'm1',
-        roomId: '201',
-        roomNumber: '201',
-        description: 'Jacuzzi drain clogged',
-        priority: 'High',
-        status: 'In Progress',
-        reportedBy: 'Charlie Clean',
-        reportedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        cost: 0,
-        notes: 'Plumber contacted'
-      }
-    ]);
-
-    // Seed an initial document
-    this.createDocument('Invoice', stayId, guestId, 'John Doe', [
-      { description: 'Room Charge (5 nights)', quantity: 5, unitPrice: 120, total: 600 }
-    ], 'Initial Stay Invoice');
-
-    this.log('System', 'System initialized with seed data', 'System');
+    } else {
+      this.log('Maintenance', 'Update', `Request ${id.substring(0, 6)} updated.`);
+    }
   }
 
-  private seedStaff() {
-    this.staff.set([
-      { id: 'st1', name: 'Alice Manager', role: 'Manager', pin: '1234', status: 'Active', currentStatus: 'Clocked Out' },
-      { id: 'st2', name: 'Bob Reception', role: 'Reception', pin: '0000', status: 'Active', currentStatus: 'Clocked Out' },
-      { id: 'st3', name: 'Charlie Clean', role: 'Housekeeping', pin: '1111', status: 'Active', currentStatus: 'Clocked Out' },
-      { id: 'st4', name: 'Mike Fixit', role: 'Maintenance', pin: '2222', status: 'Active', currentStatus: 'Clocked Out' },
-    ]);
+  uploadDocument(docData: Omit<StoredDocument, 'id' | 'uploadedAt'>): StoredDocument {
+    const newDoc: StoredDocument = {
+      ...docData,
+      id: crypto.randomUUID(),
+      uploadedAt: new Date().toISOString()
+    };
+    setDoc(doc(this.firestore, 'storedDocuments', newDoc.id), newDoc);
+    this.log('Document', 'Upload', `Document uploaded: ${newDoc.title}`);
+    return newDoc;
+  }
 
-    // Seed Shifts for today and tomorrow
-    const today = new Date().toISOString().split('T')[0];
-    const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+  updateDocument(id: string, updates: Partial<StoredDocument>) {
+    updateDoc(doc(this.firestore, 'storedDocuments', id), updates);
+    this.log('Document', 'Update', `Document updated: ${id.substring(0, 6)}`);
+  }
 
-    this.shifts.set([
-      { id: 'sh1', staffId: 'st1', date: today, startTime: '09:00', endTime: '17:00', type: 'Regular' },
-      { id: 'sh2', staffId: 'st2', date: today, startTime: '07:00', endTime: '15:00', type: 'Regular' },
-      { id: 'sh3', staffId: 'st3', date: tomorrow, startTime: '08:00', endTime: '16:00', type: 'Regular' },
-    ]);
+  deleteDocument(id: string) {
+    deleteDoc(doc(this.firestore, 'storedDocuments', id));
+    this.log('Document', 'Delete', `Document deleted`);
+  }
+
+  addStaff(staffData: Omit<Staff, 'id' | 'status' | 'currentStatus'>) {
+    const newStaff: Staff = {
+      ...staffData,
+      id: crypto.randomUUID(),
+      status: 'Active',
+      currentStatus: 'Clocked Out'
+    };
+    setDoc(doc(this.firestore, 'staff', newStaff.id), newStaff);
+    this.log('Staff', 'Staff Created', `Added ${newStaff.name} to team.`);
+  }
+
+  clockIn(staffId: string) {
+    const s = this.staff().find(u => u.id === staffId);
+    if (!s || s.currentStatus !== 'Clocked Out') return;
+
+    const newLog: TimeLog = {
+      id: crypto.randomUUID(),
+      staffId,
+      staffName: s.name,
+      date: new Date().toISOString().split('T')[0],
+      startTime: new Date().toISOString(),
+      breaks: [],
+      totalHours: 0,
+      status: 'Open'
+    };
+
+    setDoc(doc(this.firestore, 'timeLogs', newLog.id), newLog);
+    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
+    this.log('Staff', 'Clock In', `${s.name} started shift.`);
+  }
+
+  clockOut(staffId: string) {
+    const s = this.staff().find(u => u.id === staffId);
+    if (!s || s.currentStatus === 'Clocked Out') return;
+
+    // Find open log
+    const openLog = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
+    if (openLog) {
+      const endTime = new Date().toISOString();
+      const updatedBreaks = openLog.breaks.map(b => !b.end ? { ...b, end: endTime } : b);
+
+      updateDoc(doc(this.firestore, 'timeLogs', openLog.id), {
+        endTime,
+        breaks: updatedBreaks,
+        status: 'Closed',
+        totalHours: this.calculateHours(openLog.startTime, endTime, updatedBreaks)
+      });
+    }
+
+    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked Out' });
+    this.log('Staff', 'Clock Out', `${s.name} ended shift.`);
+  }
+
+  startBreak(staffId: string) {
+    const s = this.staff().find(u => u.id === staffId);
+    if (!s || s.currentStatus !== 'Clocked In') return;
+
+    const openLog = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
+    if (openLog) {
+      const newBreaks = [...openLog.breaks, { start: new Date().toISOString() }];
+      updateDoc(doc(this.firestore, 'timeLogs', openLog.id), { breaks: newBreaks });
+    }
+
+    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'On Break' });
+    this.log('Staff', 'Break Start', `${s.name} went on break.`);
+  }
+
+  endBreak(staffId: string) {
+    const s = this.staff().find(u => u.id === staffId);
+    if (!s || s.currentStatus !== 'On Break') return;
+
+    const openLog = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
+    if (openLog) {
+      const updatedBreaks = openLog.breaks.map(b => !b.end ? { ...b, end: new Date().toISOString() } : b);
+      updateDoc(doc(this.firestore, 'timeLogs', openLog.id), { breaks: updatedBreaks });
+    }
+
+    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
+    this.log('Staff', 'Break End', `${s.name} returned from break.`);
+  }
+
+  updateTimeLog(updatedLog: TimeLog) {
+    if (updatedLog.endTime) {
+      updatedLog.totalHours = this.calculateHours(updatedLog.startTime, updatedLog.endTime, updatedLog.breaks);
+    }
+    setDoc(doc(this.firestore, 'timeLogs', updatedLog.id), updatedLog);
+    this.log('Staff', 'Log Edit', `Time log updated manually for ${updatedLog.staffName}`);
+  }
+
+  addShift(shift: Omit<Shift, 'id'>) {
+    const newShift: Shift = { ...shift, id: crypto.randomUUID() };
+    setDoc(doc(this.firestore, 'shifts', newShift.id), newShift);
+    this.log('Staff', 'Shift Added', `Shift scheduled for staff ${shift.staffId} on ${shift.date}`);
+  }
+
+  deleteShift(shiftId: string) {
+    deleteDoc(doc(this.firestore, 'shifts', shiftId));
   }
 
   // --- Document Helpers ---
@@ -392,391 +532,18 @@ export class DataService {
       notes
     };
 
-    this.documents.update(docs => [newDoc, ...docs]);
+    setDoc(doc(this.firestore, 'documents', newDoc.id), newDoc);
 
     // Async AI Analysis for System Docs
     this.ai.analyzeSystemDocument(newDoc).then(res => {
       if (res.tags || res.summary) {
-        this.documents.update(docs => docs.map(d => d.id === newDoc.id ? { ...d, ...res } : d));
+        updateDoc(doc(this.firestore, 'documents', newDoc.id), { ...res });
       }
     });
 
     return newDoc;
   }
 
-  // --- Actions ---
-
-  log(category: LogEntry['category'], action: string, details: string) {
-    const newLog: LogEntry = {
-      id: crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
-      user: 'System', // Could be dynamic
-      category,
-      action,
-      details
-    };
-    this.logs.update(l => [newLog, ...l]);
-  }
-
-  addRoom(room: Omit<Room, 'id' | 'status'>) {
-    const newRoom: Room = { ...room, id: crypto.randomUUID(), status: 'Available' };
-    this.rooms.update(r => [...r, newRoom]);
-    this.log('Room', 'Room Created', `Room ${room.number} added.`);
-  }
-
-  addRoomsBulk(roomsData: Omit<Room, 'id' | 'status'>[]) {
-    const newRooms: Room[] = roomsData.map(r => ({
-      ...r,
-      id: crypto.randomUUID(),
-      status: 'Available'
-    }));
-    this.rooms.update(current => [...current, ...newRooms]);
-    this.log('System', 'Bulk Action', `Created ${newRooms.length} rooms via Wizard.`);
-  }
-
-  updateRoomStatus(roomId: string, status: Room['status']) {
-    this.rooms.update(rooms => rooms.map(r => r.id === roomId ? { ...r, status } : r));
-    const room = this.rooms().find(r => r.id === roomId);
-    if (room) {
-      this.log('Room', 'Status Change', `Room ${room.number} status set to ${status}`);
-    }
-  }
-
-  createStay(guest: Guest, roomId: string, nights: number) {
-    // Legacy helper wrapper for bookStay
-    const checkIn = new Date();
-    const checkOut = new Date(checkIn);
-    checkOut.setDate(checkOut.getDate() + nights);
-
-    return this.bookStay(guest, roomId, checkIn.toISOString(), checkOut.toISOString());
-  }
-
-  bookStay(guest: Guest, roomId: string, checkInDate: string, checkOutDate?: string) {
-    const room = this.rooms().find(r => r.id === roomId);
-    if (!room || room.status !== 'Available') return;
-
-    const stayId = crypto.randomUUID();
-    const rate = room.price;
-
-    const checkInTime = new Date(checkInDate).getTime();
-    let nights = 1;
-    let isIndefinite = false;
-
-    if (checkOutDate) {
-      const checkOutTime = new Date(checkOutDate).getTime();
-      nights = Math.max(1, Math.ceil((checkOutTime - checkInTime) / (1000 * 60 * 60 * 24)));
-    } else {
-      isIndefinite = true;
-      // For indefinite, we just estimate 1 night for now to start, or charge a deposit
-      nights = 1;
-    }
-
-    const totalProjected = rate * nights;
-
-    // If indefinite, set projected to far future so stats don't think it's ending today, 
-    // but UI will know it's indefinite
-    const projectedDate = checkOutDate
-      ? new Date(checkOutDate).toISOString()
-      : new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(); // 1 year out placeholder
-
-    const newStay: Stay = {
-      id: stayId,
-      guestId: guest.id,
-      roomId: roomId,
-      checkIn: new Date(checkInDate).toISOString(),
-      checkOutProjected: projectedDate,
-      ratePerNight: rate,
-      totalPaid: 0,
-      status: 'Active',
-      isIndefinite: isIndefinite
-    };
-
-    this.stays.update(s => [...s, newStay]);
-    this.rooms.update(rooms => rooms.map(r => r.id === roomId ? { ...r, status: 'Occupied' } : r));
-    this.guests.update(guests => guests.map(g => g.id === guest.id ? { ...g, currentStayId: stayId } : g));
-
-    // Initial Invoice
-    // If Indefinite, maybe only charge 1 night deposit or similar. We'll do simple logic:
-    const desc = isIndefinite
-      ? `Room Deposit (Indefinite Stay) - ${room.type}`
-      : `Room Charge (${nights} nights) - ${room.type}`;
-
-    this.createDocument('Invoice', stayId, guest.id, guest.name, [
-      { description: desc, quantity: nights, unitPrice: rate, total: totalProjected }
-    ], 'Check-in Invoice');
-
-    this.log('Guest', 'Check In', `${guest.name} booked Room ${room.number}${isIndefinite ? ' (Indefinite)' : ''}`);
-  }
-
-  makePayment(stayId: string, amount: number) {
-    let guestName = 'Unknown Guest';
-    let guestId = '';
-
-    this.stays.update(stays => stays.map(s => {
-      if (s.id === stayId) {
-        const guest = this.guests().find(g => g.id === s.guestId);
-        if (guest) {
-          guestName = guest.name;
-          guestId = guest.id;
-        }
-        return { ...s, totalPaid: s.totalPaid + amount };
-      }
-      return s;
-    }));
-
-    let doc: FinancialDocument | null = null;
-    if (guestId) {
-      doc = this.createDocument('Receipt', stayId, guestId, guestName, [
-        { description: 'Payment Received', quantity: 1, unitPrice: amount, total: amount }
-      ], 'Payment Thank You');
-    }
-
-    this.log('Finance', 'Payment Received', `Payment of $${amount} for stay ${stayId}`);
-    return doc;
-  }
-
-  checkOut(stayId: string) {
-    const stay = this.stays().find(s => s.id === stayId);
-    if (!stay || stay.status !== 'Active') return;
-
-    const guest = this.guests().find(g => g.id === stay.guestId);
-    if (!guest) return;
-
-    // Calculate Final Cost based on Actual time
-    const checkInTime = new Date(stay.checkIn).getTime();
-    const nowTime = Date.now();
-    const daysStayed = Math.max(1, Math.ceil((nowTime - checkInTime) / (1000 * 60 * 60 * 24)));
-    const totalCost = daysStayed * stay.ratePerNight;
-    const debt = totalCost - stay.totalPaid;
-
-    // Update Stay
-    this.stays.update(stays => stays.map(s => {
-      if (s.id === stayId) {
-        return {
-          ...s,
-          status: 'Completed',
-          checkOutActual: new Date().toISOString()
-        };
-      }
-      return s;
-    }));
-
-    // Update Room to Dirty
-    this.rooms.update(rooms => rooms.map(r => r.id === stay.roomId ? { ...r, status: 'Dirty' } : r));
-
-    // Update Guest
-    this.guests.update(guests => guests.map(g => {
-      if (g.id === stay.guestId) {
-        return {
-          ...g,
-          currentStayId: null,
-          history: [...g.history, { ...stay, status: 'Completed', checkOutActual: new Date().toISOString() }]
-        };
-      }
-      return g;
-    }));
-
-    // Generate Final Document
-    if (debt > 0) {
-      this.createDocument('Invoice', stayId, guest.id, guest.name, [
-        { description: `Final Adjustment (${daysStayed} nights total)`, quantity: 1, unitPrice: debt, total: debt }
-      ], 'Final Balance Due on Checkout');
-      this.log('Guest', 'Check Out', `${guest.name} checked out with outstanding balance: $${debt}`);
-    } else {
-      this.createDocument('Receipt', stayId, guest.id, guest.name, [
-        { description: 'Final Statement - Balance Cleared', quantity: 1, unitPrice: 0, total: 0 }
-      ], 'Checkout Complete');
-      this.log('Guest', 'Check Out', `${guest.name} checked out successfully.`);
-    }
-  }
-
-  // --- Maintenance Logic ---
-
-  addMaintenanceRequest(req: Omit<MaintenanceRequest, 'id' | 'reportedAt' | 'cost' | 'status' | 'roomNumber'>) {
-    const room = this.rooms().find(r => r.id === req.roomId);
-    if (!room) return null;
-
-    const newReq: MaintenanceRequest = {
-      ...req,
-      id: crypto.randomUUID(),
-      roomNumber: room.number,
-      reportedAt: new Date().toISOString(),
-      status: 'Pending',
-      cost: 0
-    };
-
-    this.maintenanceRequests.update(curr => [newReq, ...curr]);
-    this.updateRoomStatus(req.roomId, 'Maintenance');
-    this.log('Maintenance', 'Request Created', `Issue reported in Room ${room.number}: ${req.description}`);
-
-    return newReq;
-  }
-
-  updateMaintenanceRequest(id: string, updates: Partial<MaintenanceRequest>) {
-    this.maintenanceRequests.update(reqs => reqs.map(r => r.id === id ? { ...r, ...updates } : r));
-
-    const req = this.maintenanceRequests().find(r => r.id === id);
-    if (req) {
-      if (updates.status === 'Completed') {
-        this.updateRoomStatus(req.roomId, 'Available');
-        this.log('Maintenance', 'Issue Resolved', `Maintenance completed for Room ${req.roomNumber}. Total Cost: $${updates.cost || req.cost}`);
-      } else {
-        this.log('Maintenance', 'Update', `Request ${id.substring(0, 6)} updated.`);
-      }
-    }
-  }
-
-  // --- Document Center Logic ---
-  uploadDocument(docData: Omit<StoredDocument, 'id' | 'uploadedAt'>): StoredDocument {
-    const newDoc: StoredDocument = {
-      ...docData,
-      id: crypto.randomUUID(),
-      uploadedAt: new Date().toISOString()
-    };
-    this.storedDocuments.update(docs => [newDoc, ...docs]);
-    this.log('Document', 'Upload', `Document uploaded: ${newDoc.title}`);
-    return newDoc;
-  }
-
-  updateDocument(id: string, updates: Partial<StoredDocument>) {
-    this.storedDocuments.update(docs => docs.map(d => d.id === id ? { ...d, ...updates } : d));
-    this.log('Document', 'Update', `Document AI analysis completed: ${id.substring(0, 6)}`);
-  }
-
-  deleteDocument(id: string) {
-    const doc = this.storedDocuments().find(d => d.id === id);
-    if (doc) {
-      this.storedDocuments.update(docs => docs.filter(d => d.id !== id));
-      this.log('Document', 'Delete', `Document deleted: ${doc.title}`);
-    }
-  }
-
-  // --- Staff & Time Logic ---
-
-  addStaff(staffData: Omit<Staff, 'id' | 'status' | 'currentStatus'>) {
-    const newStaff: Staff = {
-      ...staffData,
-      id: crypto.randomUUID(),
-      status: 'Active',
-      currentStatus: 'Clocked Out'
-    };
-    this.staff.update(s => [...s, newStaff]);
-    this.log('Staff', 'Staff Created', `Added ${newStaff.name} to team.`);
-  }
-
-  clockIn(staffId: string) {
-    const s = this.staff().find(u => u.id === staffId);
-    if (!s || s.currentStatus !== 'Clocked Out') return;
-
-    const newLog: TimeLog = {
-      id: crypto.randomUUID(),
-      staffId,
-      staffName: s.name,
-      date: new Date().toISOString().split('T')[0],
-      startTime: new Date().toISOString(),
-      breaks: [],
-      totalHours: 0,
-      status: 'Open'
-    };
-
-    this.timeLogs.update(logs => [newLog, ...logs]);
-    this.updateStaffStatus(staffId, 'Clocked In');
-    this.log('Staff', 'Clock In', `${s.name} started shift.`);
-  }
-
-  clockOut(staffId: string) {
-    const s = this.staff().find(u => u.id === staffId);
-    if (!s || s.currentStatus === 'Clocked Out') return;
-
-    // Find open log
-    this.timeLogs.update(logs => logs.map(l => {
-      if (l.staffId === staffId && l.status === 'Open') {
-        const endTime = new Date().toISOString();
-        // Close any open break implicitly
-        const updatedBreaks = l.breaks.map(b => !b.end ? { ...b, end: endTime } : b);
-
-        return {
-          ...l,
-          endTime,
-          breaks: updatedBreaks,
-          status: 'Closed',
-          totalHours: this.calculateHours(l.startTime, endTime, updatedBreaks)
-        };
-      }
-      return l;
-    }));
-
-    this.updateStaffStatus(staffId, 'Clocked Out');
-    this.log('Staff', 'Clock Out', `${s.name} ended shift.`);
-  }
-
-  startBreak(staffId: string) {
-    const s = this.staff().find(u => u.id === staffId);
-    if (!s || s.currentStatus !== 'Clocked In') return;
-
-    this.timeLogs.update(logs => logs.map(l => {
-      if (l.staffId === staffId && l.status === 'Open') {
-        return { ...l, breaks: [...l.breaks, { start: new Date().toISOString() }] };
-      }
-      return l;
-    }));
-
-    this.updateStaffStatus(staffId, 'On Break');
-    this.log('Staff', 'Break Start', `${s.name} went on break.`);
-  }
-
-  endBreak(staffId: string) {
-    const s = this.staff().find(u => u.id === staffId);
-    if (!s || s.currentStatus !== 'On Break') return;
-
-    this.timeLogs.update(logs => logs.map(l => {
-      if (l.staffId === staffId && l.status === 'Open') {
-        const updatedBreaks = l.breaks.map(b => !b.end ? { ...b, end: new Date().toISOString() } : b);
-        return { ...l, breaks: updatedBreaks };
-      }
-      return l;
-    }));
-
-    this.updateStaffStatus(staffId, 'Clocked In');
-    this.log('Staff', 'Break End', `${s.name} returned from break.`);
-  }
-
-  updateTimeLog(updatedLog: TimeLog) {
-    // Recalculate hours if edited manually
-    if (updatedLog.endTime) {
-      updatedLog.totalHours = this.calculateHours(updatedLog.startTime, updatedLog.endTime, updatedLog.breaks);
-    }
-    this.timeLogs.update(logs => logs.map(l => l.id === updatedLog.id ? updatedLog : l));
-    this.log('Staff', 'Log Edit', `Time log updated manually for ${updatedLog.staffName}`);
-  }
-
-  // --- Schedule/Shift Logic ---
-  addShift(shift: Omit<Shift, 'id'>) {
-    const newShift: Shift = { ...shift, id: crypto.randomUUID() };
-    this.shifts.update(s => [...s, newShift]);
-    this.log('Staff', 'Shift Added', `Shift scheduled for staff ${shift.staffId} on ${shift.date}`);
-  }
-
-  deleteShift(shiftId: string) {
-    this.shifts.update(s => s.filter(shift => shift.id !== shiftId));
-  }
-
-  private updateStaffStatus(staffId: string, status: Staff['currentStatus']) {
-    this.staff.update(list => list.map(s => s.id === staffId ? { ...s, currentStatus: status } : s));
-  }
-
-  private calculateHours(start: string, end: string, breaks: TimeBreak[]): number {
-    let duration = new Date(end).getTime() - new Date(start).getTime();
-
-    // Subtract breaks
-    breaks.forEach(b => {
-      if (b.end) {
-        duration -= (new Date(b.end).getTime() - new Date(b.start).getTime());
-      }
-    });
-
-    return Math.max(0, duration / (1000 * 60 * 60)); // Return in hours
-  }
 
   // --- Computed Views ---
 
@@ -826,4 +593,105 @@ export class DataService {
       recentActivityCount: this.logs().length
     };
   });
+
+  // --- Utils ---
+  private calculateHours(start: string, end: string, breaks: TimeBreak[]): number {
+    let duration = new Date(end).getTime() - new Date(start).getTime();
+
+    // Subtract breaks
+    breaks.forEach(b => {
+      if (b.end) {
+        duration -= (new Date(b.end).getTime() - new Date(b.start).getTime());
+      }
+    });
+
+    return Math.max(0, duration / (1000 * 60 * 60)); // Return in hours
+  }
+
+  // --- Maintenance / Admin ---
+  factoryReset(seedDemoData: boolean) {
+    if (seedDemoData) {
+      this.seedData();
+      this.seedStaff();
+    }
+  }
+
+  updateHotelDetails(details: Partial<HotelConfig>) {
+    setDoc(this.configDoc, details, { merge: true });
+    this.log('System', 'Config Update', 'Hotel details updated.');
+  }
+
+  private seedData() {
+    // Only seed if empty
+    if (this.rooms().length > 0) return;
+
+    const rooms: Room[] = [
+      { id: '101', number: '101', type: 'Single', price: 120, status: 'Occupied', amenities: ['Wifi', 'TV'] },
+      { id: '102', number: '102', type: 'Double', price: 180, status: 'Available', amenities: ['Wifi', 'TV', 'Mini-bar'] },
+      { id: '201', number: '201', type: 'Suite', price: 350, status: 'Maintenance', amenities: ['Wifi', 'TV', 'Jacuzzi', 'View'] },
+      { id: '305', number: '305', type: 'Single', price: 110, status: 'Available', amenities: ['Wifi'] },
+    ];
+    rooms.forEach(r => setDoc(doc(this.firestore, 'rooms', r.id), r));
+
+    const guestId = 'g1';
+    const stayId = 's1';
+
+    const guests: Guest[] = [
+      {
+        id: guestId,
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '555-0123',
+        currentStayId: stayId,
+        history: [],
+        notes: 'VIP Guest'
+      }
+    ];
+    guests.forEach(g => setDoc(doc(this.firestore, 'guests', g.id), g));
+
+    const stays: Stay[] = [
+      {
+        id: stayId,
+        guestId: guestId,
+        roomId: '101',
+        checkIn: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        checkOutProjected: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+        ratePerNight: 120,
+        totalPaid: 200,
+        status: 'Active'
+      }
+    ];
+    stays.forEach(s => setDoc(doc(this.firestore, 'stays', s.id), s));
+
+    // Seed an initial document
+    this.createDocument('Invoice', stayId, guestId, 'John Doe', [
+      { description: 'Room Charge (5 nights)', quantity: 5, unitPrice: 120, total: 600 }
+    ], 'Initial Stay Invoice');
+
+    this.log('System', 'System initialized with seed data', 'System');
+  }
+
+  private seedStaff() {
+    if (this.staff().length > 0) return;
+
+    const staff: Staff[] = [
+      { id: 'st1', name: 'Alice Manager', role: 'Manager', pin: '1234', status: 'Active', currentStatus: 'Clocked Out' },
+      { id: 'st2', name: 'Bob Reception', role: 'Reception', pin: '0000', status: 'Active', currentStatus: 'Clocked Out' },
+      { id: 'st3', name: 'Charlie Clean', role: 'Housekeeping', pin: '1111', status: 'Active', currentStatus: 'Clocked Out' },
+      { id: 'st4', name: 'Mike Fixit', role: 'Maintenance', pin: '2222', status: 'Active', currentStatus: 'Clocked Out' },
+    ];
+    staff.forEach(s => setDoc(doc(this.firestore, 'staff', s.id), s));
+  }
+
+  importData(jsonString: string): boolean {
+    // Import not supported in cloud mode for now (complex to overwrite relationships)
+    return false;
+  }
+
+  getExportData(): string {
+    return JSON.stringify({
+      rooms: this.rooms(),
+      guests: this.guests(),
+    });
+  }
 }

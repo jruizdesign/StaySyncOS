@@ -6,10 +6,10 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormsModule } 
 import { DocumentViewerComponent } from './document-viewer.component';
 
 @Component({
-  selector: 'app-guest-manager',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DocumentViewerComponent, FormsModule],
-  template: `
+    selector: 'app-guest-manager',
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, DocumentViewerComponent, FormsModule],
+    template: `
     <div class="p-6 h-full flex flex-col">
       <!-- Header -->
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -328,173 +328,173 @@ import { DocumentViewerComponent } from './document-viewer.component';
   `
 })
 export class GuestManagerComponent {
-  data = inject(DataService);
-  ai = inject(AiService);
-  fb = inject(FormBuilder);
+    data = inject(DataService);
+    ai = inject(AiService);
+    fb = inject(FormBuilder);
 
-  // States
-  showAddModal = signal(false);
-  showBookingModal = signal(false);
-  selectedGuest = signal<Guest | null>(null);
-  activeTab = signal<'docs' | 'history'>('docs');
-  viewDoc = signal<FinancialDocument | null>(null);
-  
-  // Helpers
-  createdDoc = signal<FinancialDocument | null>(null);
-  preSelectedGuest = signal<Guest | null>(null);
+    // States
+    showAddModal = signal(false);
+    showBookingModal = signal(false);
+    selectedGuest = signal<Guest | null>(null);
+    activeTab = signal<'docs' | 'history'>('docs');
+    viewDoc = signal<FinancialDocument | null>(null);
 
-  // Forms
-  guestForm = this.fb.group({
-    name: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    phone: ['', Validators.required]
-  });
+    // Helpers
+    createdDoc = signal<FinancialDocument | null>(null);
+    preSelectedGuest = signal<Guest | null>(null);
 
-  bookingForm: FormGroup;
+    // Forms
+    guestForm = this.fb.group({
+        name: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        phone: ['', Validators.required]
+    });
 
-  constructor() {
-      // Booking Form Init
-      const today = new Date().toISOString().split('T')[0];
-      this.bookingForm = this.fb.group({
-          guestId: ['', Validators.required],
-          roomId: ['', Validators.required],
-          checkIn: [today, Validators.required],
-          checkOut: [''],
-          isIndefinite: [false]
-      });
+    bookingForm: FormGroup;
 
-      // Validations
-      // If not indefinite, checkOut is required
-      this.bookingForm.get('isIndefinite')?.valueChanges.subscribe(val => {
-          const co = this.bookingForm.get('checkOut');
-          if (val) {
-              co?.clearValidators();
-              co?.setValue('');
-              co?.disable();
-          } else {
-              co?.setValidators([Validators.required]);
-              co?.enable();
-          }
-          co?.updateValueAndValidity();
-      });
-  }
+    constructor() {
+        // Booking Form Init
+        const today = new Date().toISOString().split('T')[0];
+        this.bookingForm = this.fb.group({
+            guestId: ['', Validators.required],
+            roomId: ['', Validators.required],
+            checkIn: [today, Validators.required],
+            checkOut: [''],
+            isIndefinite: [false]
+        });
 
-  // --- Computed ---
-  availableRooms = computed(() => this.data.rooms().filter(r => r.status === 'Available'));
-  isIndefinite = computed(() => this.bookingForm.get('isIndefinite')?.value);
-
-  // --- Guest Actions ---
-  saveGuest() {
-    if (this.guestForm.valid) {
-      const val = this.guestForm.value;
-      const newGuest: Guest = {
-        id: crypto.randomUUID(),
-        name: val.name!,
-        email: val.email!,
-        phone: val.phone!,
-        history: [],
-        notes: '',
-        currentStayId: null
-      };
-      
-      this.data.guests.update(g => [...g, newGuest]);
-      this.data.log('Guest', 'Guest Registered', `New profile: ${newGuest.name}`);
-      this.showAddModal.set(false);
-      this.guestForm.reset();
+        // Validations
+        // If not indefinite, checkOut is required
+        this.bookingForm.get('isIndefinite')?.valueChanges.subscribe(val => {
+            const co = this.bookingForm.get('checkOut');
+            if (val) {
+                co?.clearValidators();
+                co?.setValue('');
+                co?.disable();
+            } else {
+                co?.setValidators([Validators.required]);
+                co?.enable();
+            }
+            co?.updateValueAndValidity();
+        });
     }
-  }
 
-  viewGuestDetails(guest: Guest) {
-      this.selectedGuest.set(guest);
-      this.activeTab.set('docs');
-  }
+    // --- Computed ---
+    availableRooms = computed(() => this.data.rooms().filter(r => r.status === 'Available'));
+    isIndefinite = computed(() => this.bookingForm.get('isIndefinite')?.value);
 
-  getGuestDocs(guestId: string) {
-      return this.data.documents().filter(d => d.guestId === guestId);
-  }
+    // --- Guest Actions ---
+    saveGuest() {
+        if (this.guestForm.valid) {
+            const val = this.guestForm.value;
+            const newGuest: Guest = {
+                id: crypto.randomUUID(),
+                name: val.name!,
+                email: val.email!,
+                phone: val.phone!,
+                history: [],
+                notes: '',
+                currentStayId: null
+            };
 
-  getRoomNumber(stayId?: string | null) {
-      if (!stayId) return 'Unknown';
-      const stay = this.data.stays().find(s => s.id === stayId);
-      const room = this.data.rooms().find(r => r.id === stay?.roomId);
-      return room?.number || 'Unknown';
-  }
-
-  getRoomNumberByStay(stay: any) {
-      // For history items, roomId is stored in stay object
-      const room = this.data.rooms().find(r => r.id === stay.roomId);
-      return room ? room.number : 'Unknown'; // Might be deleted room, etc.
-  }
-
-  viewDocument(doc: FinancialDocument) {
-      this.viewDoc.set(doc);
-  }
-
-  // --- Booking Actions ---
-  openBookingModal(guest?: Guest) {
-      this.selectedGuest.set(null); // Close detail view if open to focus on booking
-      this.showBookingModal.set(true);
-      this.bookingForm.reset({
-          checkIn: new Date().toISOString().split('T')[0],
-          isIndefinite: false
-      });
-      
-      if (guest) {
-          this.preSelectedGuest.set(guest);
-          this.bookingForm.patchValue({ guestId: guest.id });
-          this.bookingForm.get('guestId')?.disable();
-      } else {
-          this.preSelectedGuest.set(null);
-          this.bookingForm.get('guestId')?.enable();
-      }
-  }
-
-  openAddGuestModal() {
-      this.showAddModal.set(true);
-  }
-
-  clearPreSelectedGuest() {
-      this.preSelectedGuest.set(null);
-      this.bookingForm.get('guestId')?.enable();
-      this.bookingForm.get('guestId')?.setValue('');
-  }
-
-  submitBooking() {
-      // Re-enable to get value if disabled
-      this.bookingForm.get('guestId')?.enable();
-      
-      if (this.bookingForm.valid) {
-          const val = this.bookingForm.value;
-          const guest = this.data.guests().find(g => g.id === val.guestId);
-          
-          if (guest) {
-              this.data.bookStay(
-                  guest, 
-                  val.roomId, 
-                  val.checkIn, 
-                  val.isIndefinite ? undefined : val.checkOut
-              );
-              
-              this.showBookingModal.set(false);
-              
-              // Show the invoice generated
-              const latestDoc = this.data.documents()[0];
-              if (latestDoc) this.createdDoc.set(latestDoc);
-          }
-      }
-  }
-
-  checkOut(guest: Guest) {
-    if (confirm(`Are you sure you want to check out ${guest.name}? This will generate the final invoice/receipt.`)) {
-        if (guest.currentStayId) {
-            this.data.checkOut(guest.currentStayId);
-            const latestDoc = this.data.documents()[0];
-            if (latestDoc) this.createdDoc.set(latestDoc);
-            
-            // If details view was open, refresh it (close and reopen logic handled by reactivity generally, 
-            // but let's just close it to be safe or update local ref if needed. 
-            // Since signals are reactive, selectedGuest() will update automatically with new data from service.)
+            this.data.addGuest(newGuest);
+            this.data.log('Guest', 'Guest Registered', `New profile: ${newGuest.name}`);
+            this.showAddModal.set(false);
+            this.guestForm.reset();
         }
     }
-  }
+
+    viewGuestDetails(guest: Guest) {
+        this.selectedGuest.set(guest);
+        this.activeTab.set('docs');
+    }
+
+    getGuestDocs(guestId: string) {
+        return this.data.documents().filter(d => d.guestId === guestId);
+    }
+
+    getRoomNumber(stayId?: string | null) {
+        if (!stayId) return 'Unknown';
+        const stay = this.data.stays().find(s => s.id === stayId);
+        const room = this.data.rooms().find(r => r.id === stay?.roomId);
+        return room?.number || 'Unknown';
+    }
+
+    getRoomNumberByStay(stay: any) {
+        // For history items, roomId is stored in stay object
+        const room = this.data.rooms().find(r => r.id === stay.roomId);
+        return room ? room.number : 'Unknown'; // Might be deleted room, etc.
+    }
+
+    viewDocument(doc: FinancialDocument) {
+        this.viewDoc.set(doc);
+    }
+
+    // --- Booking Actions ---
+    openBookingModal(guest?: Guest) {
+        this.selectedGuest.set(null); // Close detail view if open to focus on booking
+        this.showBookingModal.set(true);
+        this.bookingForm.reset({
+            checkIn: new Date().toISOString().split('T')[0],
+            isIndefinite: false
+        });
+
+        if (guest) {
+            this.preSelectedGuest.set(guest);
+            this.bookingForm.patchValue({ guestId: guest.id });
+            this.bookingForm.get('guestId')?.disable();
+        } else {
+            this.preSelectedGuest.set(null);
+            this.bookingForm.get('guestId')?.enable();
+        }
+    }
+
+    openAddGuestModal() {
+        this.showAddModal.set(true);
+    }
+
+    clearPreSelectedGuest() {
+        this.preSelectedGuest.set(null);
+        this.bookingForm.get('guestId')?.enable();
+        this.bookingForm.get('guestId')?.setValue('');
+    }
+
+    submitBooking() {
+        // Re-enable to get value if disabled
+        this.bookingForm.get('guestId')?.enable();
+
+        if (this.bookingForm.valid) {
+            const val = this.bookingForm.value;
+            const guest = this.data.guests().find(g => g.id === val.guestId);
+
+            if (guest) {
+                this.data.bookStay(
+                    guest,
+                    val.roomId,
+                    val.checkIn,
+                    val.isIndefinite ? undefined : val.checkOut
+                );
+
+                this.showBookingModal.set(false);
+
+                // Show the invoice generated
+                const latestDoc = this.data.documents()[0];
+                if (latestDoc) this.createdDoc.set(latestDoc);
+            }
+        }
+    }
+
+    checkOut(guest: Guest) {
+        if (confirm(`Are you sure you want to check out ${guest.name}? This will generate the final invoice/receipt.`)) {
+            if (guest.currentStayId) {
+                this.data.checkOut(guest.currentStayId);
+                const latestDoc = this.data.documents()[0];
+                if (latestDoc) this.createdDoc.set(latestDoc);
+
+                // If details view was open, refresh it (close and reopen logic handled by reactivity generally, 
+                // but let's just close it to be safe or update local ref if needed. 
+                // Since signals are reactive, selectedGuest() will update automatically with new data from service.)
+            }
+        }
+    }
 }
