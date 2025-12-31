@@ -3,7 +3,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { AiService } from './ai.service';
+import { injectListAvailableRooms } from '../dataconnect-generated/angular';
+import { ListAvailableRoomsData } from '../dataconnect-generated';
 
+/*
 export interface Room {
   id: string;
   number: string;
@@ -12,6 +15,8 @@ export interface Room {
   status: 'Available' | 'Occupied' | 'Maintenance' | 'Dirty';
   amenities: string[];
 }
+*/
+export type Room = ListAvailableRoomsData['rooms'][0];
 
 export interface Guest {
   id: string;
@@ -140,7 +145,8 @@ export class DataService {
   firestore = inject(Firestore);
 
   // Firestore Collections as Signals with Explicit Casting
-  rooms = toSignal(collectionData(collection(this.firestore, 'rooms'), { idField: 'id' }) as Observable<Room[]>, { initialValue: [] as Room[] });
+  roomsQuery = injectListAvailableRooms();
+  rooms = computed(() => this.roomsQuery.data()?.rooms ?? []);
   guests = toSignal(collectionData(collection(this.firestore, 'guests'), { idField: 'id' }) as Observable<Guest[]>, { initialValue: [] as Guest[] });
   stays = toSignal(collectionData(collection(this.firestore, 'stays'), { idField: 'id' }) as Observable<Stay[]>, { initialValue: [] as Stay[] });
   logs = toSignal(collectionData(query(collection(this.firestore, 'logs'), orderBy('timestamp', 'desc')), { idField: 'id' }) as Observable<LogEntry[]>, { initialValue: [] as LogEntry[] });
@@ -191,6 +197,7 @@ export class DataService {
     addDoc(this.col('logs'), newLog);
   }
 
+  /*
   addRoom(room: Omit<Room, 'id' | 'status'>) {
     const newRoom: Room = { ...room, id: crypto.randomUUID(), status: 'Available' };
     setDoc(doc(this.firestore, 'rooms', newRoom.id), newRoom);
@@ -208,6 +215,7 @@ export class DataService {
     updateDoc(doc(this.firestore, 'rooms', roomId), { status });
     this.log('Room', 'Status Change', `Room ${roomId} status set to ${status}`);
   }
+  */
 
   // --- Guest Actions ---
   addGuest(guest: Omit<Guest, 'id'>) {
@@ -244,7 +252,7 @@ export class DataService {
     if (!room || room.status !== 'Available') return;
 
     const stayId = crypto.randomUUID();
-    const rate = room.price;
+    const rate = room.dailyRate;
 
     const checkInTime = new Date(checkInDate).getTime();
     let nights = 1;
@@ -276,20 +284,21 @@ export class DataService {
     };
 
     await setDoc(doc(this.firestore, 'stays', stayId), newStay);
-    await updateDoc(doc(this.firestore, 'rooms', roomId), { status: 'Occupied' });
+    // TODO: Re-enable when mutations are available
+    // await updateDoc(doc(this.firestore, 'rooms', roomId), { status: 'Occupied' });
 
     await updateDoc(doc(this.firestore, 'guests', guest.id), { currentStayId: stayId });
 
 
     const desc = isIndefinite
-      ? `Room Deposit (Indefinite Stay) - ${room.type}`
-      : `Room Charge (${nights} nights) - ${room.type}`;
+      ? `Room Deposit (Indefinite Stay) - ${room.roomType}`
+      : `Room Charge (${nights} nights) - ${room.roomType}`;
 
     this.createDocument('Invoice', stayId, guest.id, guest.name, [
       { description: desc, quantity: nights, unitPrice: rate, total: totalProjected }
     ], 'Check-in Invoice');
 
-    this.log('Guest', 'Check In', `${guest.name} booked Room ${room.number}${isIndefinite ? ' (Indefinite)' : ''}`);
+    this.log('Guest', 'Check In', `${guest.name} booked Room ${room.roomNumber}${isIndefinite ? ' (Indefinite)' : ''}`);
   }
 
   async makePayment(stayId: string, amount: number) {
@@ -318,10 +327,13 @@ export class DataService {
     const guest = this.guests().find(g => g.id === stay.guestId);
     if (!guest) return;
 
+    const room = this.rooms().find(r => r.id === stay.roomId);
+    if (!room) return;
+
     const checkInTime = new Date(stay.checkIn).getTime();
     const nowTime = Date.now();
     const daysStayed = Math.max(1, Math.ceil((nowTime - checkInTime) / (1000 * 60 * 60 * 24)));
-    const totalCost = daysStayed * stay.ratePerNight;
+    const totalCost = daysStayed * room.dailyRate;
     const debt = totalCost - stay.totalPaid;
 
     // Update Stay
@@ -331,7 +343,8 @@ export class DataService {
     });
 
     // Update Room
-    await updateDoc(doc(this.firestore, 'rooms', stay.roomId), { status: 'Dirty' });
+    // TODO: Re-enable when mutations are available
+    // await updateDoc(doc(this.firestore, 'rooms', stay.roomId), { status: 'Dirty' });
 
     // Update Guest
     await updateDoc(doc(this.firestore, 'guests', guest.id), { currentStayId: null });
@@ -356,15 +369,15 @@ export class DataService {
     const newReq: MaintenanceRequest = {
       ...req,
       id: crypto.randomUUID(),
-      roomNumber: room.number,
+      roomNumber: room.roomNumber,
       reportedAt: new Date().toISOString(),
       status: 'Pending',
       cost: 0
     };
 
     setDoc(doc(this.firestore, 'maintenance', newReq.id), newReq);
-    this.updateRoomStatus(req.roomId, 'Maintenance');
-    this.log('Maintenance', 'Request Created', `Issue reported in Room ${room.number}: ${req.description}`);
+    // this.updateRoomStatus(req.roomId, 'Maintenance');
+    this.log('Maintenance', 'Request Created', `Issue reported in Room ${room.roomNumber}: ${req.description}`);
 
     return newReq;
   }
@@ -375,7 +388,7 @@ export class DataService {
     if (updates.status === 'Completed') {
       const req = this.maintenanceRequests().find(r => r.id === id);
       if (req) {
-        this.updateRoomStatus(req.roomId, 'Available');
+        // this.updateRoomStatus(req.roomId, 'Available');
         this.log('Maintenance', 'Issue Resolved', `Maintenance completed.`);
       }
     } else {
@@ -557,7 +570,7 @@ export class DataService {
         const checkInTime = new Date(stay.checkIn).getTime();
         const nowTime = Date.now();
         const daysStayed = Math.max(1, Math.ceil((nowTime - checkInTime) / (1000 * 60 * 60 * 24)));
-        const totalCostSoFar = daysStayed * stay.ratePerNight;
+        const totalCostSoFar = daysStayed * room.dailyRate;
         const debt = totalCostSoFar - stay.totalPaid;
 
         return {
@@ -621,6 +634,7 @@ export class DataService {
     this.log('System', 'Config Update', 'Hotel details updated.');
   }
 
+  /*
   private seedData() {
     // Only seed if empty
     if (this.rooms().length > 0) return;
@@ -670,6 +684,7 @@ export class DataService {
 
     this.log('System', 'System initialized with seed data', 'System');
   }
+  */
 
   private seedStaff() {
     if (this.staff().length > 0) return;

@@ -14,7 +14,7 @@ import { DataService, Room, Guest, Stay } from '../services/data.service';
           <h1 class="text-2xl font-bold text-gray-800">Room Management</h1>
           <p class="text-gray-500 text-sm">Configure hotel inventory</p>
         </div>
-        <button (click)="toggleWizard()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow transition-colors">
+        <button (click)="toggleWizard()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow transition-colors" disabled>
           {{ showWizard() ? 'Cancel Creation' : '+ New Room' }}
         </button>
       </div>
@@ -102,7 +102,7 @@ import { DataService, Room, Guest, Stay } from '../services/data.service';
             [class.border-l-gray-500]="room.status === 'Dirty'">
             
             <div class="flex justify-between items-start mb-2">
-              <h3 class="text-xl font-bold text-gray-800">{{ room.number }}</h3>
+              <h3 class="text-xl font-bold text-gray-800">{{ room.roomNumber }}</h3>
               <span class="text-xs font-semibold px-2 py-1 rounded-full"
                 [class.bg-emerald-100]="room.status === 'Available'" [class.text-emerald-700]="room.status === 'Available'"
                 [class.bg-rose-100]="room.status === 'Occupied'" [class.text-rose-700]="room.status === 'Occupied'"
@@ -112,12 +112,9 @@ import { DataService, Room, Guest, Stay } from '../services/data.service';
               </span>
             </div>
             
-            <div class="text-sm text-gray-500 mb-4">{{ room.type }} • \${{ room.price }}/night</div>
+            <div class="text-sm text-gray-500 mb-4">{{ room.roomType }} • \${{ room.dailyRate }}/night</div>
             
             <div class="flex flex-wrap gap-1 mb-4 h-6 overflow-hidden">
-              @for (am of room.amenities; track am) {
-                <span class="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{{ am }}</span>
-              }
             </div>
 
             <!-- Action / Status Update -->
@@ -164,7 +161,7 @@ import { DataService, Room, Guest, Stay } from '../services/data.service';
                   <div class="pt-10 pb-6 px-6">
                       <h2 class="text-xl font-bold text-gray-800">{{ selectedGlance()?.guest?.name }}</h2>
                       <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
-                           <span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-xs font-bold">Room {{ selectedGlance()?.room?.number }}</span>
+                           <span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-xs font-bold">Room {{ selectedGlance()?.room?.roomNumber }}</span>
                            <span>•</span>
                            <span>{{ selectedGlance()?.guest?.email }}</span>
                       </div>
@@ -260,22 +257,11 @@ export class RoomManagerComponent {
   }
 
   submitRoom() {
-    if (this.roomForm.valid) {
-      const raw = this.roomForm.value;
-      this.data.addRoom({
-        number: raw.number,
-        type: raw.type,
-        price: raw.price,
-        amenities: raw.amenities ? raw.amenities.split(',').map((s: string) => s.trim()) : []
-      });
-      this.toggleWizard();
-    }
+    // TODO: Re-enable when mutations are available
   }
 
   updateStatus(roomId: string, event: Event) {
-    const select = event.target as HTMLSelectElement;
-    const status = select.value as Room['status'];
-    this.data.updateRoomStatus(roomId, status);
+    // TODO: Re-enable when mutations are available
   }
 
   handleRoomClick(room: Room) {
