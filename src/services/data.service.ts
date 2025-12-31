@@ -501,7 +501,7 @@ export class DataService {
     setDoc(doc(this.firestore, 'timeLogs', log.id), log);
   }
 
-  // --- Missing Methods Implementation ---
+  /* Financial methods already implemented above */
 
   bookStay(guest: Guest, roomId: string, checkIn: string, checkOut?: string) {
     const stay: Stay = {
@@ -551,8 +551,21 @@ export class DataService {
     }
   }
 
-  addMaintenanceRequest(req: Omit<MaintenanceRequest, 'id'>) {
-    const newReq = { ...req, id: crypto.randomUUID() };
+  // Update addMaintenanceRequest to be flexible
+  addMaintenanceRequest(req: Partial<MaintenanceRequest> & { roomId: string, description: string }) {
+    const room = this.rooms().find(r => r.id === req.roomId);
+    const newReq: MaintenanceRequest = {
+      id: crypto.randomUUID(),
+      roomId: req.roomId,
+      roomNumber: room?.roomNumber || '?',
+      description: req.description,
+      priority: req.priority || 'Medium',
+      status: 'Pending',
+      reportedBy: req.reportedBy || 'System',
+      reportedAt: new Date().toISOString(),
+      cost: req.cost || 0,
+      notes: req.notes || ''
+    };
     setDoc(doc(this.firestore, 'maintenance', newReq.id), newReq);
     return newReq;
   }

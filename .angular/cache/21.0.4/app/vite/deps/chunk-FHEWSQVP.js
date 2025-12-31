@@ -1,4 +1,7 @@
 import {
+  openDB
+} from "./chunk-JS7UPFDT.js";
+import {
   pendingUntilEvent
 } from "./chunk-OLSPUTAR.js";
 import {
@@ -37,10 +40,6 @@ import {
   subscribeOn,
   timer
 } from "./chunk-MUD6KAHP.js";
-import {
-  __spreadProps,
-  __spreadValues
-} from "./chunk-GOMI4DH3.js";
 
 // node_modules/@angular/fire/node_modules/@firebase/util/dist/postinstall.mjs
 var getDefaultsFromPostinstall = () => void 0;
@@ -589,6 +588,20 @@ function isMobileCordova() {
   // just to deal with this case would probably be a bad idea.
   !!(window["cordova"] || window["phonegap"] || window["PhoneGap"]) && /ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(getUA());
 }
+function isNode() {
+  var _a;
+  const forceEnvironment = (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.forceEnvironment;
+  if (forceEnvironment === "node") {
+    return true;
+  } else if (forceEnvironment === "browser") {
+    return false;
+  }
+  try {
+    return Object.prototype.toString.call(global.process) === "[object process]";
+  } catch (e) {
+    return false;
+  }
+}
 function isBrowser() {
   return typeof window !== "undefined" || isWebWorker();
 }
@@ -608,6 +621,12 @@ function isReactNative() {
 function isIE() {
   const ua = getUA();
   return ua.indexOf("MSIE ") >= 0 || ua.indexOf("Trident/") >= 0;
+}
+function isSafari() {
+  return !isNode() && !!navigator.userAgent && navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome");
+}
+function isSafariOrWebkit() {
+  return !isNode() && !!navigator.userAgent && (navigator.userAgent.includes("Safari") || navigator.userAgent.includes("WebKit")) && !navigator.userAgent.includes("Chrome");
 }
 function isIndexedDBAvailable() {
   try {
@@ -677,6 +696,34 @@ function replaceTemplate(template, data) {
   });
 }
 var PATTERN = /\{\$([^}]+)}/g;
+function jsonEval(str) {
+  return JSON.parse(str);
+}
+var decode = function(token) {
+  let header = {}, claims = {}, data = {}, signature = "";
+  try {
+    const parts = token.split(".");
+    header = jsonEval(base64Decode(parts[0]) || "");
+    claims = jsonEval(base64Decode(parts[1]) || "");
+    signature = parts[2];
+    data = claims["d"] || {};
+    delete claims["d"];
+  } catch (e) {
+  }
+  return {
+    header,
+    claims,
+    data,
+    signature
+  };
+};
+var issuedAtTime = function(token) {
+  const claims = decode(token).claims;
+  if (typeof claims === "object" && claims.hasOwnProperty("iat")) {
+    return claims["iat"];
+  }
+  return null;
+};
 function isEmpty(obj) {
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -900,7 +947,21 @@ function implementsAnyMethods(obj, methods) {
 }
 function noop() {
 }
+var DEFAULT_INTERVAL_MILLIS = 1e3;
+var DEFAULT_BACKOFF_FACTOR = 2;
 var MAX_VALUE_MILLIS = 4 * 60 * 60 * 1e3;
+var RANDOM_FACTOR = 0.5;
+function calculateBackoffMillis(backoffCount, intervalMillis = DEFAULT_INTERVAL_MILLIS, backoffFactor = DEFAULT_BACKOFF_FACTOR) {
+  const currBaseValue = intervalMillis * Math.pow(backoffFactor, backoffCount);
+  const randomWait = Math.round(
+    // A fraction of the backoff value to add/subtract.
+    // Deviation: changes multiplication order to improve readability.
+    RANDOM_FACTOR * currBaseValue * // A random float (rounded to int by Math.round above) in the range [-1, 1]. Determines
+    // if we add or subtract.
+    (Math.random() - 0.5) * 2
+  );
+  return Math.min(MAX_VALUE_MILLIS, currBaseValue + randomWait);
+}
 function getModularInstance(service) {
   if (service && service._delegate) {
     return service._delegate;
@@ -1347,212 +1408,6 @@ function setUserLogHandler(logCallback, options) {
     }
   }
 }
-
-// node_modules/idb/build/wrap-idb-value.js
-var instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
-var idbProxyableTypes;
-var cursorAdvanceMethods;
-function getIdbProxyableTypes() {
-  return idbProxyableTypes || (idbProxyableTypes = [
-    IDBDatabase,
-    IDBObjectStore,
-    IDBIndex,
-    IDBCursor,
-    IDBTransaction
-  ]);
-}
-function getCursorAdvanceMethods() {
-  return cursorAdvanceMethods || (cursorAdvanceMethods = [
-    IDBCursor.prototype.advance,
-    IDBCursor.prototype.continue,
-    IDBCursor.prototype.continuePrimaryKey
-  ]);
-}
-var cursorRequestMap = /* @__PURE__ */ new WeakMap();
-var transactionDoneMap = /* @__PURE__ */ new WeakMap();
-var transactionStoreNamesMap = /* @__PURE__ */ new WeakMap();
-var transformCache = /* @__PURE__ */ new WeakMap();
-var reverseTransformCache = /* @__PURE__ */ new WeakMap();
-function promisifyRequest(request) {
-  const promise = new Promise((resolve, reject) => {
-    const unlisten = () => {
-      request.removeEventListener("success", success);
-      request.removeEventListener("error", error);
-    };
-    const success = () => {
-      resolve(wrap(request.result));
-      unlisten();
-    };
-    const error = () => {
-      reject(request.error);
-      unlisten();
-    };
-    request.addEventListener("success", success);
-    request.addEventListener("error", error);
-  });
-  promise.then((value) => {
-    if (value instanceof IDBCursor) {
-      cursorRequestMap.set(value, request);
-    }
-  }).catch(() => {
-  });
-  reverseTransformCache.set(promise, request);
-  return promise;
-}
-function cacheDonePromiseForTransaction(tx) {
-  if (transactionDoneMap.has(tx))
-    return;
-  const done = new Promise((resolve, reject) => {
-    const unlisten = () => {
-      tx.removeEventListener("complete", complete);
-      tx.removeEventListener("error", error);
-      tx.removeEventListener("abort", error);
-    };
-    const complete = () => {
-      resolve();
-      unlisten();
-    };
-    const error = () => {
-      reject(tx.error || new DOMException("AbortError", "AbortError"));
-      unlisten();
-    };
-    tx.addEventListener("complete", complete);
-    tx.addEventListener("error", error);
-    tx.addEventListener("abort", error);
-  });
-  transactionDoneMap.set(tx, done);
-}
-var idbProxyTraps = {
-  get(target, prop, receiver) {
-    if (target instanceof IDBTransaction) {
-      if (prop === "done")
-        return transactionDoneMap.get(target);
-      if (prop === "objectStoreNames") {
-        return target.objectStoreNames || transactionStoreNamesMap.get(target);
-      }
-      if (prop === "store") {
-        return receiver.objectStoreNames[1] ? void 0 : receiver.objectStore(receiver.objectStoreNames[0]);
-      }
-    }
-    return wrap(target[prop]);
-  },
-  set(target, prop, value) {
-    target[prop] = value;
-    return true;
-  },
-  has(target, prop) {
-    if (target instanceof IDBTransaction && (prop === "done" || prop === "store")) {
-      return true;
-    }
-    return prop in target;
-  }
-};
-function replaceTraps(callback) {
-  idbProxyTraps = callback(idbProxyTraps);
-}
-function wrapFunction(func) {
-  if (func === IDBDatabase.prototype.transaction && !("objectStoreNames" in IDBTransaction.prototype)) {
-    return function(storeNames, ...args) {
-      const tx = func.call(unwrap(this), storeNames, ...args);
-      transactionStoreNamesMap.set(tx, storeNames.sort ? storeNames.sort() : [storeNames]);
-      return wrap(tx);
-    };
-  }
-  if (getCursorAdvanceMethods().includes(func)) {
-    return function(...args) {
-      func.apply(unwrap(this), args);
-      return wrap(cursorRequestMap.get(this));
-    };
-  }
-  return function(...args) {
-    return wrap(func.apply(unwrap(this), args));
-  };
-}
-function transformCachableValue(value) {
-  if (typeof value === "function")
-    return wrapFunction(value);
-  if (value instanceof IDBTransaction)
-    cacheDonePromiseForTransaction(value);
-  if (instanceOfAny(value, getIdbProxyableTypes()))
-    return new Proxy(value, idbProxyTraps);
-  return value;
-}
-function wrap(value) {
-  if (value instanceof IDBRequest)
-    return promisifyRequest(value);
-  if (transformCache.has(value))
-    return transformCache.get(value);
-  const newValue = transformCachableValue(value);
-  if (newValue !== value) {
-    transformCache.set(value, newValue);
-    reverseTransformCache.set(newValue, value);
-  }
-  return newValue;
-}
-var unwrap = (value) => reverseTransformCache.get(value);
-
-// node_modules/idb/build/index.js
-function openDB(name3, version3, { blocked, upgrade, blocking, terminated } = {}) {
-  const request = indexedDB.open(name3, version3);
-  const openPromise = wrap(request);
-  if (upgrade) {
-    request.addEventListener("upgradeneeded", (event) => {
-      upgrade(wrap(request.result), event.oldVersion, event.newVersion, wrap(request.transaction), event);
-    });
-  }
-  if (blocked) {
-    request.addEventListener("blocked", (event) => blocked(
-      // Casting due to https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1405
-      event.oldVersion,
-      event.newVersion,
-      event
-    ));
-  }
-  openPromise.then((db) => {
-    if (terminated)
-      db.addEventListener("close", () => terminated());
-    if (blocking) {
-      db.addEventListener("versionchange", (event) => blocking(event.oldVersion, event.newVersion, event));
-    }
-  }).catch(() => {
-  });
-  return openPromise;
-}
-var readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"];
-var writeMethods = ["put", "add", "delete", "clear"];
-var cachedMethods = /* @__PURE__ */ new Map();
-function getMethod(target, prop) {
-  if (!(target instanceof IDBDatabase && !(prop in target) && typeof prop === "string")) {
-    return;
-  }
-  if (cachedMethods.get(prop))
-    return cachedMethods.get(prop);
-  const targetFuncName = prop.replace(/FromIndex$/, "");
-  const useIndex = prop !== targetFuncName;
-  const isWrite = writeMethods.includes(targetFuncName);
-  if (
-    // Bail if the target doesn't exist on the target. Eg, getAll isn't in Edge.
-    !(targetFuncName in (useIndex ? IDBIndex : IDBObjectStore).prototype) || !(isWrite || readMethods.includes(targetFuncName))
-  ) {
-    return;
-  }
-  const method = async function(storeName, ...args) {
-    const tx = this.transaction(storeName, isWrite ? "readwrite" : "readonly");
-    let target2 = tx.store;
-    if (useIndex)
-      target2 = target2.index(args.shift());
-    return (await Promise.all([
-      target2[targetFuncName](...args),
-      isWrite && tx.done
-    ]))[0];
-  };
-  cachedMethods.set(prop, method);
-  return method;
-}
-replaceTraps((oldTraps) => __spreadProps(__spreadValues({}, oldTraps), {
-  get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver),
-  has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
-}));
 
 // node_modules/@angular/fire/node_modules/@firebase/app/dist/esm/index.esm2017.js
 var PlatformLoggerServiceImpl = class {
@@ -2611,20 +2466,23 @@ export {
   isBrowserExtension,
   isReactNative,
   isIE,
+  isSafari,
+  isSafariOrWebkit,
   isIndexedDBAvailable,
   FirebaseError,
   ErrorFactory,
+  issuedAtTime,
   isEmpty,
   deepEqual,
   querystring,
   querystringDecode,
   extractQuerystring,
   createSubscribe,
+  calculateBackoffMillis,
   getModularInstance,
   Component,
   LogLevel,
   Logger,
-  openDB,
   DEFAULT_ENTRY_NAME2 as DEFAULT_ENTRY_NAME,
   _apps,
   _serverApps,
@@ -2659,4 +2517,4 @@ export {
   registerVersion2,
   setLogLevel3 as setLogLevel
 };
-//# sourceMappingURL=chunk-VFO7DLYL.js.map
+//# sourceMappingURL=chunk-FHEWSQVP.js.map

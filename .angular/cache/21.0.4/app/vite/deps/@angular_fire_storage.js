@@ -1,13 +1,18 @@
 import {
-  AppCheckInstances,
-  AuthInstances,
+  AuthInstances
+} from "./chunk-WK444IE2.js";
+import {
   Component as Component2,
   FirebaseError as FirebaseError2,
   SDK_VERSION as SDK_VERSION2,
   _isFirebaseServerApp as _isFirebaseServerApp2,
   _registerComponent as _registerComponent2,
   registerVersion as registerVersion2
-} from "./chunk-QUEJUQ76.js";
+} from "./chunk-MWLDWBR4.js";
+import {
+  AppCheckInstances
+} from "./chunk-AGDJZY3W.js";
+import "./chunk-ICD67JMF.js";
 import {
   Component,
   FirebaseApp,
@@ -30,9 +35,9 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-VFO7DLYL.js";
+} from "./chunk-FHEWSQVP.js";
+import "./chunk-JS7UPFDT.js";
 import "./chunk-OLSPUTAR.js";
-import "./chunk-ICD67JMF.js";
 import {
   NgModule,
   Optional,
