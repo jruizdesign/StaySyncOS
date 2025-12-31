@@ -7,13 +7,17 @@ import { MaintenanceRequest, FinancialDocument } from './data.service';
 })
 export class AiService {
   private ai: GoogleGenAI;
+  private apiKey: string = '';
 
   constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env['API_KEY'] || '' });
+    // Safe API Key retrieval (placeholder for now)
+    const key = ''; // TODO: Configure via environment.ts or similar
+    this.apiKey = key;
+    this.ai = new GoogleGenAI({ apiKey: key });
   }
 
   async generateDailyReport(logs: string, debts: string): Promise<string> {
-    if (!process.env['API_KEY']) return "API Key not configured. Unable to generate AI report.";
+    if (!this.apiKey) return "API Key not configured. Unable to generate AI report.";
 
     try {
       const prompt = `
@@ -41,16 +45,16 @@ export class AiService {
   }
 
   async draftPaymentReminder(guestName: string, amount: number): Promise<string> {
-    if (!process.env['API_KEY']) return "API Key missing.";
-    
+    if (!this.apiKey) return "API Key missing.";
+
     try {
       const prompt = `Draft a polite but firm email to guest ${guestName} regarding an outstanding balance of $${amount}. Keep it professional and under 100 words.`;
-      
+
       const response = await this.ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt
       });
-      
+
       return response.text || "Could not generate draft.";
     } catch (e) {
       return "Error generating draft.";
@@ -58,10 +62,10 @@ export class AiService {
   }
 
   async draftMaintenanceAlert(req: MaintenanceRequest): Promise<string> {
-    if (!process.env['API_KEY']) return `Maintenance Request for Room ${req.roomNumber}: ${req.description}`;
+    if (!this.apiKey) return `Maintenance Request for Room ${req.roomNumber}: ${req.description}`;
 
     try {
-        const prompt = `
+      const prompt = `
             Write a formal internal maintenance work order email.
             Details:
             - Room: ${req.roomNumber}
@@ -72,25 +76,25 @@ export class AiService {
             Keep it actionable and concise.
         `;
 
-        const response = await this.ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt
-        });
+      const response = await this.ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt
+      });
 
-        return response.text || "New Work Order Generated.";
+      return response.text || "New Work Order Generated.";
     } catch (e) {
-        return "New Maintenance Work Order";
+      return "New Maintenance Work Order";
     }
   }
 
   async analyzeDocument(base64DataUrl: string): Promise<{ title?: string, category?: string, tags?: string[], summary?: string }> {
-    if (!process.env['API_KEY']) return {};
+    if (!this.apiKey) return {};
 
     try {
       // Extract mime and data
       const matches = base64DataUrl.match(/^data:(.+);base64,(.+)$/);
       if (!matches) return {};
-      
+
       const mimeType = matches[1];
       const data = matches[2];
 
@@ -109,19 +113,19 @@ export class AiService {
           ]
         },
         config: {
-            responseMimeType: 'application/json',
-            responseSchema: {
-                type: Type.OBJECT,
-                properties: {
-                    title: { type: Type.STRING },
-                    category: { type: Type.STRING, enum: ['ID', 'Contract', 'Invoice', 'Report', 'Other'] },
-                    tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-                    summary: { type: Type.STRING }
-                }
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              category: { type: Type.STRING, enum: ['ID', 'Contract', 'Invoice', 'Report', 'Other'] },
+              tags: { type: Type.ARRAY, items: { type: Type.STRING } },
+              summary: { type: Type.STRING }
             }
+          }
         }
       });
-      
+
       const result = JSON.parse(response.text || '{}');
       return result;
     } catch (e) {
@@ -131,14 +135,14 @@ export class AiService {
   }
 
   async analyzeSystemDocument(doc: FinancialDocument): Promise<{ tags?: string[], summary?: string }> {
-    if (!process.env['API_KEY']) return {};
+    if (!this.apiKey) return {};
 
     const docStr = JSON.stringify({
-        type: doc.type,
-        guest: doc.guestName,
-        items: doc.items,
-        total: doc.totalAmount,
-        notes: doc.notes
+      type: doc.type,
+      guest: doc.guestName,
+      items: doc.items,
+      total: doc.totalAmount,
+      notes: doc.notes
     });
 
     const prompt = `
@@ -151,25 +155,25 @@ export class AiService {
     `;
 
     try {
-        const response = await this.ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-            config: {
-                responseMimeType: 'application/json',
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-                        summary: { type: Type.STRING }
-                    }
-                }
+      const response = await this.ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              tags: { type: Type.ARRAY, items: { type: Type.STRING } },
+              summary: { type: Type.STRING }
             }
-        });
-        
-        return JSON.parse(response.text || '{}');
+          }
+        }
+      });
+
+      return JSON.parse(response.text || '{}');
     } catch (e) {
-        console.error('System Doc Analysis Failed', e);
-        return {};
+      console.error('System Doc Analysis Failed', e);
+      return {};
     }
   }
 }
