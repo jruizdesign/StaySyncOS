@@ -113,6 +113,13 @@ export class LoginComponent {
         await this.auth.login(this.email, this.password);
       }
 
+      // Wait for auth state to propagate (fix for race condition)
+      let attempts = 0;
+      while (!this.auth.currentUser() && attempts < 10) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+      }
+
       // Force data refresh to ensure guards have fresh data
       try {
         await this.data.currentHotelQuery.refetch();
