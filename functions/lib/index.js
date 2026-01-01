@@ -25,7 +25,7 @@ const recaptcha_enterprise_1 = require("@google-cloud/recaptcha-enterprise");
 //     }
 // );
 let client = null;
-exports.verifyRecaptcha = (0, https_1.onCall)(async (request) => {
+exports.verifyRecaptcha = (0, https_1.onCall)({ cors: ["https://www.staysync.space"] }, async (request) => {
     var _a, _b, _c, _d;
     if (!client) {
         client = new recaptcha_enterprise_1.RecaptchaEnterpriseServiceClient();

@@ -27,7 +27,7 @@ import { RecaptchaEnterpriseServiceClient } from "@google-cloud/recaptcha-enterp
 
 let client: RecaptchaEnterpriseServiceClient | null = null;
 
-export const verifyRecaptcha = onCall(async (request) => {
+export const verifyRecaptcha = onCall({ cors: ["https://www.staysync.space"] }, async (request) => {
     if (!client) {
         client = new RecaptchaEnterpriseServiceClient();
     }
