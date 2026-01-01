@@ -18,6 +18,7 @@ import { filter, map, take } from 'rxjs/operators';
 import { LoginComponent } from './src/components/login.component';
 import { DocumentCenterComponent } from './src/components/document-center.component';
 import { AuthService } from './src/services/auth.service';
+import { DataService } from './src/services/data.service';
 import { provideFirebaseApp, initializeApp, getApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideStorage, getStorage } from '@angular/fire/storage';
@@ -63,7 +64,7 @@ const setupGuard: CanActivateFn = () => {
   return toObservable(data.firstHotelQuery.data).pipe(
     filter(d => d !== undefined),
     take(1),
-    map(d => {
+    map((d: any) => {
       const hasHotel = (d?.hotels?.length || 0) > 0;
       if (hasHotel) {
         return true;
@@ -73,8 +74,10 @@ const setupGuard: CanActivateFn = () => {
   );
 };
 
+import { LandingComponent } from './src/components/landing.component';
+
 const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', component: LandingComponent, pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
   { path: 'setup', component: SetupComponent, canActivate: [authGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard, setupGuard] },
