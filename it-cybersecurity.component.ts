@@ -3,10 +3,10 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-it-cybersecurity',
-    standalone: true,
-    imports: [CommonModule, RouterLink],
-    template: `
+  selector: 'app-it-cybersecurity',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  template: `
     <nav class="navbar">
       <div class="container">
         <a routerLink="/" class="logo">StaySyncOS</a>
@@ -64,7 +64,17 @@ import { CommonModule } from '@angular/common';
       </div>
     </footer>
   `,
-    styles: [`
+  styles: [`
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    .navbar { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 1rem 0; }
+    .navbar .container { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.5rem; font-weight: 700; color: #111827; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; margin: 0; padding: 0; }
+    .nav-links a { text-decoration: none; color: #4b5563; font-weight: 500; }
+    .nav-links a:hover { color: #111827; }
+    .btn-primary { background: #4f46e5; color: #fff !important; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; }
+    .btn-primary:hover { background: #4338ca; }
+
     .page-header {
       background: #111827;
       color: #fff;

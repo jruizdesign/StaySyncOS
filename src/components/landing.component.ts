@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
-    selector: 'app-landing',
-    standalone: true,
-    imports: [CommonModule, RouterLink],
-    template: `
+  selector: 'app-landing',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  template: `
     <div class="landing-container">
       <!-- Navigation -->
       <nav class="navbar">
@@ -15,6 +15,7 @@ import { RouterLink } from '@angular/router';
           <span class="logo-text">StaySync OS</span>
         </div>
         <div class="nav-links">
+          <a routerLink="/it-cybersecurity" class="btn-link">IT & Cybersecurity</a>
           <!-- Link to existing app login -->
           <a routerLink="/login" class="btn-login">Login to Property</a>
         </div>
@@ -80,7 +81,7 @@ import { RouterLink } from '@angular/router';
       </footer>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host {
       display: block;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -144,6 +145,16 @@ import { RouterLink } from '@angular/router';
     .btn-login:hover {
       background-color: #4338ca;
       transform: translateY(-1px);
+    }
+    
+    .btn-link {
+        color: #4b5563;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .btn-link:hover {
+        color: #4f46e5;
     }
 
     /* Hero */
