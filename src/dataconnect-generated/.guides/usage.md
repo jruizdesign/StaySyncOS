@@ -11,7 +11,7 @@ The generated SDK creates injectable wrapper functions.
 
 Here's an example:
 ```
-import { injectGetFirstHotel, injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectUpdateRoomStatus, injectCreateGuest, injectCreateBooking } from '@dataconnect/generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectUpdateRoomStatus, injectCreateGuest, injectCreateBooking, injectGetFirstHotel } from '@dataconnect/generated/angular';
 
 @Component({
   selector: 'my-component',
@@ -19,13 +19,13 @@ import { injectGetFirstHotel, injectListAvailableRooms, injectCreateRoom, inject
 })
 class MyComponent {
   // The types of these injectors are available in angular/index.d.ts
-  private readonly GetFirstHotelOperation = injectGetFirstHotel();
   private readonly ListAvailableRoomsOperation = injectListAvailableRooms();
   private readonly CreateRoomOperation = injectCreateRoom(createRoomVars);
   private readonly CreateHotelOperation = injectCreateHotel(createHotelVars);
   private readonly UpdateRoomStatusOperation = injectUpdateRoomStatus(updateRoomStatusVars);
   private readonly CreateGuestOperation = injectCreateGuest(createGuestVars);
   private readonly CreateBookingOperation = injectCreateBooking(createBookingVars);
+  private readonly GetFirstHotelOperation = injectGetFirstHotel();
   }
 ```
 
@@ -68,11 +68,8 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { getFirstHotel, listAvailableRooms, createRoom, createHotel, updateRoomStatus, createGuest, createBooking } from '@dataconnect/generated';
+import { listAvailableRooms, createRoom, createHotel, updateRoomStatus, createGuest, createBooking, getFirstHotel } from '@dataconnect/generated';
 
-
-// Operation GetFirstHotel: 
-const { data } = await GetFirstHotel(dataConnect);
 
 // Operation ListAvailableRooms: 
 const { data } = await ListAvailableRooms(dataConnect);
@@ -91,6 +88,9 @@ const { data } = await CreateGuest(dataConnect, createGuestVars);
 
 // Operation CreateBooking:  For variables, look at type CreateBookingVars in ../index.d.ts
 const { data } = await CreateBooking(dataConnect, createBookingVars);
+
+// Operation GetFirstHotel: 
+const { data } = await GetFirstHotel(dataConnect);
 
 
 ```

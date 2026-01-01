@@ -10,8 +10,8 @@ This README will guide you through the process of using the generated JavaScript
 - [**Accessing the connector**](#accessing-the-connector)
   - [*Connecting to the local Emulator*](#connecting-to-the-local-emulator)
 - [**Queries**](#queries)
-  - [*GetFirstHotel*](#getfirsthotel)
   - [*ListAvailableRooms*](#listavailablerooms)
+  - [*GetFirstHotel*](#getfirsthotel)
 - [**Mutations**](#mutations)
   - [*CreateRoom*](#createroom)
   - [*CreateHotel*](#createhotel)
@@ -63,99 +63,6 @@ The following is true for both the action shortcut function and the `QueryRef` f
 - Both functions can be called with or without passing in a `DataConnect` instance as an argument. If no `DataConnect` argument is passed in, then the generated SDK will call `getDataConnect(connectorConfig)` behind the scenes for you.
 
 Below are examples of how to use the `default` connector's generated functions to execute each query. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#using-queries).
-
-## GetFirstHotel
-You can execute the `GetFirstHotel` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
-```typescript
-getFirstHotel(): QueryPromise<GetFirstHotelData, undefined>;
-
-interface GetFirstHotelRef {
-  ...
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<GetFirstHotelData, undefined>;
-}
-export const getFirstHotelRef: GetFirstHotelRef;
-```
-You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
-```typescript
-getFirstHotel(dc: DataConnect): QueryPromise<GetFirstHotelData, undefined>;
-
-interface GetFirstHotelRef {
-  ...
-  (dc: DataConnect): QueryRef<GetFirstHotelData, undefined>;
-}
-export const getFirstHotelRef: GetFirstHotelRef;
-```
-
-If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getFirstHotelRef:
-```typescript
-const name = getFirstHotelRef.operationName;
-console.log(name);
-```
-
-### Variables
-The `GetFirstHotel` query has no variables.
-### Return Type
-Recall that executing the `GetFirstHotel` query returns a `QueryPromise` that resolves to an object with a `data` property.
-
-The `data` property is an object of type `GetFirstHotelData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
-```typescript
-export interface GetFirstHotelData {
-  hotels: ({
-    name: string;
-  })[];
-}
-```
-### Using `GetFirstHotel`'s action shortcut function
-
-```typescript
-import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, getFirstHotel } from '@dataconnect/generated';
-
-
-// Call the `getFirstHotel()` function to execute the query.
-// You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await getFirstHotel();
-
-// You can also pass in a `DataConnect` instance to the action shortcut function.
-const dataConnect = getDataConnect(connectorConfig);
-const { data } = await getFirstHotel(dataConnect);
-
-console.log(data.hotels);
-
-// Or, you can use the `Promise` API.
-getFirstHotel().then((response) => {
-  const data = response.data;
-  console.log(data.hotels);
-});
-```
-
-### Using `GetFirstHotel`'s `QueryRef` function
-
-```typescript
-import { getDataConnect, executeQuery } from 'firebase/data-connect';
-import { connectorConfig, getFirstHotelRef } from '@dataconnect/generated';
-
-
-// Call the `getFirstHotelRef()` function to get a reference to the query.
-const ref = getFirstHotelRef();
-
-// You can also pass in a `DataConnect` instance to the `QueryRef` function.
-const dataConnect = getDataConnect(connectorConfig);
-const ref = getFirstHotelRef(dataConnect);
-
-// Call `executeQuery()` on the reference to execute the query.
-// You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await executeQuery(ref);
-
-console.log(data.hotels);
-
-// Or, you can use the `Promise` API.
-executeQuery(ref).then((response) => {
-  const data = response.data;
-  console.log(data.hotels);
-});
-```
 
 ## ListAvailableRooms
 You can execute the `ListAvailableRooms` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
@@ -256,6 +163,100 @@ console.log(data.rooms);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.rooms);
+});
+```
+
+## GetFirstHotel
+You can execute the `GetFirstHotel` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getFirstHotel(): QueryPromise<GetFirstHotelData, undefined>;
+
+interface GetFirstHotelRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetFirstHotelData, undefined>;
+}
+export const getFirstHotelRef: GetFirstHotelRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getFirstHotel(dc: DataConnect): QueryPromise<GetFirstHotelData, undefined>;
+
+interface GetFirstHotelRef {
+  ...
+  (dc: DataConnect): QueryRef<GetFirstHotelData, undefined>;
+}
+export const getFirstHotelRef: GetFirstHotelRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getFirstHotelRef:
+```typescript
+const name = getFirstHotelRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetFirstHotel` query has no variables.
+### Return Type
+Recall that executing the `GetFirstHotel` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetFirstHotelData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetFirstHotelData {
+  hotels: ({
+    id: UUIDString;
+    name: string;
+  } & Hotel_Key)[];
+}
+```
+### Using `GetFirstHotel`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getFirstHotel } from '@dataconnect/generated';
+
+
+// Call the `getFirstHotel()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getFirstHotel();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getFirstHotel(dataConnect);
+
+console.log(data.hotels);
+
+// Or, you can use the `Promise` API.
+getFirstHotel().then((response) => {
+  const data = response.data;
+  console.log(data.hotels);
+});
+```
+
+### Using `GetFirstHotel`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getFirstHotelRef } from '@dataconnect/generated';
+
+
+// Call the `getFirstHotelRef()` function to get a reference to the query.
+const ref = getFirstHotelRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getFirstHotelRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.hotels);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.hotels);
 });
 ```
 

@@ -1,5 +1,0 @@
-query GetFirstHotel @auth(level: PUBLIC, insecureReason: "Init") {
-    hotels(limit: 1) {
-        name
-    }
-}

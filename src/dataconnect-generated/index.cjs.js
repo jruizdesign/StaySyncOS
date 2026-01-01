@@ -7,18 +7,6 @@ const connectorConfig = {
 };
 exports.connectorConfig = connectorConfig;
 
-const getFirstHotelRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
-  dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'GetFirstHotel');
-}
-getFirstHotelRef.operationName = 'GetFirstHotel';
-exports.getFirstHotelRef = getFirstHotelRef;
-
-exports.getFirstHotel = function getFirstHotel(dc) {
-  return executeQuery(getFirstHotelRef(dc));
-};
-
 const listAvailableRoomsRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
@@ -89,4 +77,16 @@ exports.createBookingRef = createBookingRef;
 
 exports.createBooking = function createBooking(dcOrVars, vars) {
   return executeMutation(createBookingRef(dcOrVars, vars));
+};
+
+const getFirstHotelRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetFirstHotel');
+}
+getFirstHotelRef.operationName = 'GetFirstHotel';
+exports.getFirstHotelRef = getFirstHotelRef;
+
+exports.getFirstHotel = function getFirstHotel(dc) {
+  return executeQuery(getFirstHotelRef(dc));
 };

@@ -62,8 +62,9 @@ export interface CreateRoomVariables {
 
 export interface GetFirstHotelData {
   hotels: ({
+    id: UUIDString;
     name: string;
-  })[];
+  } & Hotel_Key)[];
 }
 
 export interface Guest_Key {
@@ -114,18 +115,6 @@ export interface UpdateRoomStatusVariables {
   id: UUIDString;
   status: string;
 }
-
-interface GetFirstHotelRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<GetFirstHotelData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<GetFirstHotelData, undefined>;
-  operationName: string;
-}
-export const getFirstHotelRef: GetFirstHotelRef;
-
-export function getFirstHotel(): QueryPromise<GetFirstHotelData, undefined>;
-export function getFirstHotel(dc: DataConnect): QueryPromise<GetFirstHotelData, undefined>;
 
 interface ListAvailableRoomsRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -198,4 +187,16 @@ export const createBookingRef: CreateBookingRef;
 
 export function createBooking(vars: CreateBookingVariables): MutationPromise<CreateBookingData, CreateBookingVariables>;
 export function createBooking(dc: DataConnect, vars: CreateBookingVariables): MutationPromise<CreateBookingData, CreateBookingVariables>;
+
+interface GetFirstHotelRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetFirstHotelData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<GetFirstHotelData, undefined>;
+  operationName: string;
+}
+export const getFirstHotelRef: GetFirstHotelRef;
+
+export function getFirstHotel(): QueryPromise<GetFirstHotelData, undefined>;
+export function getFirstHotel(dc: DataConnect): QueryPromise<GetFirstHotelData, undefined>;
 

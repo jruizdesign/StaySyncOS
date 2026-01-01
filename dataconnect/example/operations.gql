@@ -33,3 +33,10 @@ mutation CreateGuest($firstName: String!, $lastName: String!, $email: String!) @
 mutation CreateBooking($guestId: UUID!, $hotelId: UUID!, $checkInDate: Date!, $checkOutDate: Date!, $bookingStatus: String!) @auth(level: PUBLIC) {
   booking_insert(data: {guestId: $guestId, hotelId: $hotelId, checkInDate: $checkInDate, checkOutDate: $checkOutDate, bookingStatus: $bookingStatus})
 }
+
+query GetFirstHotel @auth(level: PUBLIC) {
+  hotels(limit: 1) {
+    id
+    name
+  }
+}

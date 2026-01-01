@@ -1,12 +1,9 @@
-import { GetFirstHotelData, ListAvailableRoomsData, CreateRoomData, CreateRoomVariables, CreateHotelData, CreateHotelVariables, UpdateRoomStatusData, UpdateRoomStatusVariables, CreateGuestData, CreateGuestVariables, CreateBookingData, CreateBookingVariables } from '../';
+import { ListAvailableRoomsData, CreateRoomData, CreateRoomVariables, CreateHotelData, CreateHotelVariables, UpdateRoomStatusData, UpdateRoomStatusVariables, CreateGuestData, CreateGuestVariables, CreateBookingData, CreateBookingVariables, GetFirstHotelData } from '../';
 import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise} from '@angular/fire/data-connect';
 import { CreateQueryResult, CreateMutationResult} from '@tanstack/angular-query-experimental';
 import { CreateDataConnectQueryResult, CreateDataConnectQueryOptions, CreateDataConnectMutationResult, DataConnectMutationOptionsUndefinedMutationFn } from '@tanstack-query-firebase/angular/data-connect';
 import { FirebaseError } from 'firebase/app';
 import { Injector } from '@angular/core';
-
-export type GetFirstHotelOptions = () => Omit<CreateDataConnectQueryOptions<GetFirstHotelData, undefined>, 'queryFn'>;
-export function injectGetFirstHotel(options?: GetFirstHotelOptions, injector?: Injector): CreateDataConnectQueryResult<GetFirstHotelData, undefined>;
 
 export type ListAvailableRoomsOptions = () => Omit<CreateDataConnectQueryOptions<ListAvailableRoomsData, undefined>, 'queryFn'>;
 export function injectListAvailableRooms(options?: ListAvailableRoomsOptions, injector?: Injector): CreateDataConnectQueryResult<ListAvailableRoomsData, undefined>;
@@ -25,3 +22,6 @@ export function injectCreateGuest(options?: CreateGuestOptions, injector?: Injec
 
 type CreateBookingOptions = DataConnectMutationOptionsUndefinedMutationFn<CreateBookingData, FirebaseError, CreateBookingVariables>;
 export function injectCreateBooking(options?: CreateBookingOptions, injector?: Injector): CreateDataConnectMutationResult<CreateBookingData, CreateBookingVariables, CreateBookingVariables>;
+
+export type GetFirstHotelOptions = () => Omit<CreateDataConnectQueryOptions<GetFirstHotelData, undefined>, 'queryFn'>;
+export function injectGetFirstHotel(options?: GetFirstHotelOptions, injector?: Injector): CreateDataConnectQueryResult<GetFirstHotelData, undefined>;

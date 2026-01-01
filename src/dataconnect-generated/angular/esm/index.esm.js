@@ -1,19 +1,7 @@
-import { getFirstHotelRef, listAvailableRoomsRef, createRoomRef, createHotelRef, updateRoomStatusRef, createGuestRef, createBookingRef } from '../../';
+import { listAvailableRoomsRef, createRoomRef, createHotelRef, updateRoomStatusRef, createGuestRef, createBookingRef, getFirstHotelRef } from '../../';
 import { DataConnect, CallerSdkTypeEnum } from '@angular/fire/data-connect';
 import { injectDataConnectQuery, injectDataConnectMutation } from '@tanstack-query-firebase/angular/data-connect';
 import { inject, EnvironmentInjector } from '@angular/core';
-export function injectGetFirstHotel(options, injector) {
-  const finalInjector = injector || inject(EnvironmentInjector);
-  const dc = finalInjector.get(DataConnect);
-  return injectDataConnectQuery(() => {
-    const addOpn = options && options();
-    return {
-      queryFn: () =>  getFirstHotelRef(dc),
-      ...addOpn
-    };
-  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
-}
-
 export function injectListAvailableRooms(options, injector) {
   const finalInjector = injector || inject(EnvironmentInjector);
   const dc = finalInjector.get(DataConnect);
@@ -44,5 +32,17 @@ export function injectCreateGuest(args, injector) {
 
 export function injectCreateBooking(args, injector) {
   return injectDataConnectMutation(createBookingRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectGetFirstHotel(options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  getFirstHotelRef(dc),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
 }
 

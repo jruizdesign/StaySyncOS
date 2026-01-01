@@ -251,13 +251,41 @@ export class DataService {
   }
 
   factoryReset(seedDemoData: boolean) {
+    // We only want to seed data here. 
+    // The configuration (demoMode true/false) is now controlled by the Settings UI independently.
+    // If seedDemoData is true, we seed. If false, we might want to clear?
+    // For now, let's keep it simple: if seed requested, seed.
     if (seedDemoData) {
       this.seedData();
       this.seedStaff();
+      // Ensure config reflects this if not already set? 
+      // Actually, let's update the config to match expectation if we are indeed doing a full reset
+      this.updateHotelDetails({ demoMode: true });
+    } else {
+      // If we are doing a "hard reset" to empty (Production mode), we should probably clear data?
+      // Since specific clear logic isn't here, we assume the user just wants the mode flag set to false
+      // and they will manually clear or the system stays as is but stops seeding.
+      this.updateHotelDetails({ demoMode: false });
     }
   }
 
   private async seedData() {
+    // 0. Ensure Config Exists (so we don't fall back to defaults that might toggle modes)
+    // We check if we have a value. If not, or if it's strictly the default, let's write it.
+    // Actually, just writing the default config to Firestore if it's missing is safer.
+    // We can't easily check 'exists' with the signal synchronously, but we can just set it if we are seeding.
+    const currentConfig = this.hotelConfigSignal();
+    if (!currentConfig) {
+      this.updateHotelDetails({
+        name: 'StaySyncOS Demo Hotel',
+        address: '123 Luxury Blvd, Metropolis, NY',
+        email: 'contact@staysyncos.com',
+        phone: '(555) 019-2834',
+        demoMode: true, // Default to true on fresh seed
+        maintenanceEmail: 'maintenance@staysyncos.com'
+      });
+    }
+
     // 1. Ensure Hotel Exists
     let hotel = this.firstHotelQuery.data()?.hotels?.[0];
 
