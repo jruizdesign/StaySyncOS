@@ -66,9 +66,13 @@ export const verifyRecaptcha = onCall({ cors: ["https://www.staysync.space"] }, 
         }
 
         if (response.tokenProperties.action === action) {
+            const score = response.riskAnalysis?.score;
+            const reasons = response.riskAnalysis?.reasons;
+            console.log(`reCAPTCHA Assessment: Score=${score}, Reasons=${reasons}`);
+
             return {
-                score: response.riskAnalysis?.score,
-                reasons: response.riskAnalysis?.reasons,
+                score: score,
+                reasons: reasons,
             };
         } else {
             throw new HttpsError(

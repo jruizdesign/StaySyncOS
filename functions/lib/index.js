@@ -54,9 +54,12 @@ exports.verifyRecaptcha = (0, https_1.onCall)({ cors: ["https://www.staysync.spa
             throw new https_1.HttpsError("invalid-argument", `The function must be called with a valid token. Reason: ${(_b = response.tokenProperties) === null || _b === void 0 ? void 0 : _b.invalidReason}`);
         }
         if (response.tokenProperties.action === action) {
+            const score = (_c = response.riskAnalysis) === null || _c === void 0 ? void 0 : _c.score;
+            const reasons = (_d = response.riskAnalysis) === null || _d === void 0 ? void 0 : _d.reasons;
+            console.log(`reCAPTCHA Assessment: Score=${score}, Reasons=${reasons}`);
             return {
-                score: (_c = response.riskAnalysis) === null || _c === void 0 ? void 0 : _c.score,
-                reasons: (_d = response.riskAnalysis) === null || _d === void 0 ? void 0 : _d.reasons,
+                score: score,
+                reasons: reasons,
             };
         }
         else {
