@@ -1,10 +1,10 @@
 import {
   AuthInstances
-} from "./chunk-DRODEXM3.js";
+} from "./chunk-ER2E376R.js";
 import {
   AppCheckInstances
-} from "./chunk-SVMVNNJK.js";
-import "./chunk-ENKYQDZC.js";
+} from "./chunk-AD4MSHWX.js";
+import "./chunk-PVBHMMLE.js";
 import {
   FirebaseApp,
   FirebaseApps,
@@ -13,7 +13,8 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-GJPQPMUR.js";
+} from "./chunk-YMMAOIF5.js";
+import "./chunk-OYIDUI2F.js";
 import {
   Component,
   FirebaseError,
@@ -28,20 +29,19 @@ import {
   registerVersion,
   updateEmulatorBanner
 } from "./chunk-YWX26FOZ.js";
-import "./chunk-TO2ZCXMC.js";
 import {
   NgModule,
   Optional,
   setClassMetadata,
   ɵɵdefineNgModule
-} from "./chunk-WWLEEM6L.js";
+} from "./chunk-UGLG2V2C.js";
 import {
   InjectionToken,
   Injector,
   NgZone,
   makeEnvironmentProviders,
   ɵɵdefineInjector
-} from "./chunk-QYJRLS6B.js";
+} from "./chunk-G6I5RPEY.js";
 import {
   concatMap,
   distinct,

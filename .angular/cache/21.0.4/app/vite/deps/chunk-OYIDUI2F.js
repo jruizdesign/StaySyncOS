@@ -13,7 +13,7 @@ import {
   resource,
   signal,
   untracked
-} from "./chunk-QYJRLS6B.js";
+} from "./chunk-G6I5RPEY.js";
 import {
   Observable,
   ReplaySubject,
@@ -266,4 +266,4 @@ export {
   pendingUntilEvent,
   rxResource
 };
-//# sourceMappingURL=chunk-TO2ZCXMC.js.map
+//# sourceMappingURL=chunk-OYIDUI2F.js.map

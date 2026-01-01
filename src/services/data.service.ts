@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, effect, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from '@angular/fire/firestore';
+import { Firestore, collectionData, docData } from '@angular/fire/firestore';
+import { collection, doc, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from 'firebase/firestore';
 import { Observable } from 'rxjs';
 import { AiService } from './ai.service';
 import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetFirstHotel, injectUpdateRoomStatus } from '../dataconnect-generated/angular';
