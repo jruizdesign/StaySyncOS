@@ -18,6 +18,7 @@ You can also follow the instructions from the [Data Connect documentation](https
 - [**Queries**](#queries)
   - [*ListAvailableRooms*](#listavailablerooms)
   - [*GetFirstHotel*](#getfirsthotel)
+  - [*GetHotelById*](#gethotelbyid)
 - [**Mutations**](#mutations)
   - [*CreateRoom*](#createroom)
   - [*CreateHotel*](#createhotel)
@@ -114,11 +115,17 @@ Below are examples of how to use the `default` connector's generated Query injec
 You can execute the `ListAvailableRooms` Query using the following Query injector, which is defined in [dataconnect-generated/angular/index.d.ts](./index.d.ts):
 
 ```javascript
-injectListAvailableRooms(options?: ListAvailableRoomsOptions, injector?: Injector): CreateDataConnectQueryResult<ListAvailableRoomsData, undefined>;
+injectListAvailableRooms(args: ListAvailableRoomsArgs, options?: ListAvailableRoomsOptions, injector?: Injector): CreateDataConnectQueryResult<ListAvailableRoomsData, ListAvailableRoomsVariables>;
 ```
 
 ### Variables
-The `ListAvailableRooms` Query has no variables.
+The `ListAvailableRooms` Query requires an argument of type `ListAvailableRoomsVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface ListAvailableRoomsVariables {
+  hotelId: UUIDString;
+}
+```
 ### Return Type
 Recall that calling the `ListAvailableRooms` Query injector returns a `CreateDataConnectQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
 
@@ -148,7 +155,7 @@ To learn more about the `CreateDataConnectQueryResult` object, see the [TanStack
 
 ```javascript
 ... // other imports
-import { connectorConfig } from '@dataconnect/generated';
+import { connectorConfig, ListAvailableRoomsVariables } from '@dataconnect/generated';
 import { injectListAvailableRooms, ListAvailableRoomsOptions } from '@dataconnect/generated/angular'
 import { DataConnect } from '@angular/fire/data-connect';
 import { initializeApp } from '@angular/fire/app';
@@ -172,9 +179,16 @@ import { initializeApp } from '@angular/fire/app';
   `,
 })
 export class MyComponent {
+  // The `ListAvailableRooms` Query requires an argument of type `ListAvailableRoomsVariables`:
+  listAvailableRoomsVars: ListAvailableRoomsVariables = {
+    hotelId: ..., 
+  };
+
   // Since the execution of the query is eager, you don't have to call `execute` to "execute" the Query.
   // Call the Query injector function to get a `CreateDataConnectQueryResult` object which holds the state of your Query.
-  query = injectListAvailableRooms();
+  query = injectListAvailableRooms(this.listAvailableRoomsVars);
+  // Variables can be defined inline as well.
+  query = injectListAvailableRooms({ hotelId: ..., });
 
   // You can also pass in an options function (not object) of type `ListAvailableRoomsOptions` to the Query injector function.
   options: ListAvailableRoomsOptions = () => {
@@ -182,7 +196,7 @@ export class MyComponent {
       staleTime: 5 * 1000
     };
   };
-  query = injectListAvailableRooms(this.options);
+  query = injectListAvailableRooms(this.listAvailableRoomsVars, this.options);
 }
 ```
 
@@ -251,6 +265,89 @@ export class MyComponent {
     };
   };
   query = injectGetFirstHotel(this.options);
+}
+```
+
+## GetHotelById
+You can execute the `GetHotelById` Query using the following Query injector, which is defined in [dataconnect-generated/angular/index.d.ts](./index.d.ts):
+
+```javascript
+injectGetHotelById(args: GetHotelByIdArgs, options?: GetHotelByIdOptions, injector?: Injector): CreateDataConnectQueryResult<GetHotelByIdData, GetHotelByIdVariables>;
+```
+
+### Variables
+The `GetHotelById` Query requires an argument of type `GetHotelByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface GetHotelByIdVariables {
+  id: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `GetHotelById` Query injector returns a `CreateDataConnectQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `CreateDataConnectQueryResult.status()` function. You can also check for pending / success / error status using the `CreateDataConnectQueryResult.isPending()`, `CreateDataConnectQueryResult.isSuccess()`, and `CreateDataConnectQueryResult.isError()` functions.
+
+To access the data returned by a Query, use the `CreateDataConnectQueryResult.data()` function. The data for the `GetHotelById` Query is of type `GetHotelByIdData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface GetHotelByIdData {
+  hotel?: {
+    id: UUIDString;
+    name: string;
+    address: string;
+    propertyId: string;
+  } & Hotel_Key;
+}
+```
+
+To learn more about the `CreateDataConnectQueryResult` object, see the [TanStack Query Firebase documentation](https://docs.page/invertase/tanstack-query-firebase/angular/data-connect/functions/injectDataConnectQuery) and the [TanStack Angular Query documentation](https://tanstack.com/query/v5/docs/framework/angular/reference/functions/injectquery).
+
+### Using `GetHotelById`'s Query injector
+
+```javascript
+... // other imports
+import { connectorConfig, GetHotelByIdVariables } from '@dataconnect/generated';
+import { injectGetHotelById, GetHotelByIdOptions } from '@dataconnect/generated/angular'
+import { DataConnect } from '@angular/fire/data-connect';
+import { initializeApp } from '@angular/fire/app';
+
+@Component({
+  ... // other component fields
+  template: `
+    <!-- You can render your component dynamically based on the status of the Query. -->
+    @if (query.isPending()) {
+      Loading...
+    }
+    @if (query.error()) {
+      An error has occurred: {{ query.error() }}
+    }
+    <!-- If the Query is successful, you can access the data returned using
+      the CreateDataConnectQueryResult.data() function. -->
+    @if (query.data(); as data) {
+      <!-- use your data to display something -->
+            <div>Query successful!</div>
+    }
+  `,
+})
+export class MyComponent {
+  // The `GetHotelById` Query requires an argument of type `GetHotelByIdVariables`:
+  getHotelByIdVars: GetHotelByIdVariables = {
+    id: ..., 
+  };
+
+  // Since the execution of the query is eager, you don't have to call `execute` to "execute" the Query.
+  // Call the Query injector function to get a `CreateDataConnectQueryResult` object which holds the state of your Query.
+  query = injectGetHotelById(this.getHotelByIdVars);
+  // Variables can be defined inline as well.
+  query = injectGetHotelById({ id: ..., });
+
+  // You can also pass in an options function (not object) of type `GetHotelByIdOptions` to the Query injector function.
+  options: GetHotelByIdOptions = () => {
+    return {
+      staleTime: 5 * 1000
+    };
+  };
+  query = injectGetHotelById(this.getHotelByIdVars, this.options);
 }
 ```
 

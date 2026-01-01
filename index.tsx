@@ -60,13 +60,15 @@ const setupGuard: CanActivateFn = () => {
   const router = inject(Router);
 
   // Check if hotel exists. Wait for data to be defined.
-  // Note: firstHotelQuery.data is a signal.
-  return toObservable(data.firstHotelQuery.data).pipe(
+  // Note: currentHotelQuery.data is a signal.
+  // We also want to ensure the query has actually run (not just undefined).
+  // The 'enabled' flag in data service helps, but here we can just check the data.
+  return toObservable(data.currentHotelQuery.data).pipe(
     filter(d => d !== undefined),
     take(1),
     map((d: any) => {
-      const hasHotel = (d?.hotels?.length || 0) > 0;
-      if (hasHotel) {
+      // If we have a hotel object, we are good.
+      if (d?.hotel) {
         return true;
       }
       return router.parseUrl('/setup');

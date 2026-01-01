@@ -104,27 +104,43 @@ export class LoginComponent {
     e.preventDefault();
     this.loading.set(true);
     this.error.set(false);
+    this.errorMessage.set('');
 
-    let success = false;
+    try {
+      if (this.isSignUp()) {
+        await this.auth.signup(this.email, this.password);
+      } else {
+        await this.auth.login(this.email, this.password);
+      }
 
-    if (this.isSignUp()) {
-      success = await this.auth.signup(this.email, this.password);
-    } else {
-      success = await this.auth.login(this.email, this.password);
-    }
-
-    if (!success) {
-      this.error.set(true);
-      this.errorMessage.set('Authentication failed. Please check your credentials.');
-      this.loading.set(false);
-    } else {
       // Force data refresh to ensure guards have fresh data
       try {
-        await this.data.firstHotelQuery.refetch();
+        await this.data.currentHotelQuery.refetch();
       } catch (err) {
         console.warn('Data refetch failed', err);
       }
       this.router.navigate(['/dashboard']);
+
+    } catch (err: any) {
+      this.error.set(true);
+      this.loading.set(false);
+
+      console.error('Auth error:', err);
+
+      // Handle specific error codes
+      if (err.code === 'auth/network-request-failed') {
+        this.errorMessage.set('Unable to connect. Please check your internet connection and try again.');
+      } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        this.errorMessage.set('Invalid email or password. Please check your credentials.');
+      } else if (err.code === 'auth/email-already-in-use') {
+        this.errorMessage.set('This email is already in use. Please sign in instead.');
+      } else if (err.code === 'auth/too-many-requests') {
+        this.errorMessage.set('Too many failed attempts. Please try again later.');
+      } else if (err.message && (err.message as string).includes('Security check')) {
+        this.errorMessage.set(err.message);
+      } else {
+        this.errorMessage.set('An error occurred during authentication. Please try again.');
+      }
     }
   }
 }

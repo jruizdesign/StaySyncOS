@@ -7,16 +7,16 @@ const connectorConfig = {
 };
 exports.connectorConfig = connectorConfig;
 
-const listAvailableRoomsRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+const listAvailableRoomsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListAvailableRooms');
+  return queryRef(dcInstance, 'ListAvailableRooms', inputVars);
 }
 listAvailableRoomsRef.operationName = 'ListAvailableRooms';
 exports.listAvailableRoomsRef = listAvailableRoomsRef;
 
-exports.listAvailableRooms = function listAvailableRooms(dc) {
-  return executeQuery(listAvailableRoomsRef(dc));
+exports.listAvailableRooms = function listAvailableRooms(dcOrVars, vars) {
+  return executeQuery(listAvailableRoomsRef(dcOrVars, vars));
 };
 
 const createRoomRef = (dcOrVars, vars) => {
@@ -89,4 +89,16 @@ exports.getFirstHotelRef = getFirstHotelRef;
 
 exports.getFirstHotel = function getFirstHotel(dc) {
   return executeQuery(getFirstHotelRef(dc));
+};
+
+const getHotelByIdRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetHotelById', inputVars);
+}
+getHotelByIdRef.operationName = 'GetHotelById';
+exports.getHotelByIdRef = getHotelByIdRef;
+
+exports.getHotelById = function getHotelById(dcOrVars, vars) {
+  return executeQuery(getHotelByIdRef(dcOrVars, vars));
 };

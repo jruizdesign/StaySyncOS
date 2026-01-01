@@ -2,9 +2,11 @@ import { Injectable, signal, computed, effect, inject, Signal } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Firestore, collectionData, docData } from '@angular/fire/firestore';
 import { collection, doc, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from 'firebase/firestore';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AiService } from './ai.service';
-import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetFirstHotel, injectUpdateRoomStatus } from '../dataconnect-generated/angular';
+import { switchMap } from 'rxjs/operators';
+import { AuthService } from './auth.service';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus } from '../dataconnect-generated/angular';
 import { ListAvailableRoomsData } from '../dataconnect-generated';
 
 // Interfaces
@@ -134,10 +136,29 @@ export interface HotelConfig {
 export class DataService {
   ai = inject(AiService);
   firestore = inject(Firestore);
+  auth = inject(AuthService);
+
+  // User Profile matching current User to Hotel
+  userProfile = toSignal(
+    this.auth.user$.pipe(
+      switchMap(u => u ? docData(doc(this.firestore, `users/${u.uid}`)) : of(null))
+    ),
+    { initialValue: null }
+  );
+
+  currentHotelId = computed(() => this.userProfile()?.['hotelId']);
 
   // Data Connect Queries & Mutations
-  roomsQuery = injectListAvailableRooms();
-  firstHotelQuery = injectGetFirstHotel();
+  // Now dependent on currentHotelId
+  roomsQuery = injectListAvailableRooms(() => ({
+    variables: { hotelId: this.currentHotelId() },
+    enabled: !!this.currentHotelId()
+  }));
+
+  currentHotelQuery = injectGetHotelById(() => ({
+    variables: { id: this.currentHotelId() },
+    enabled: !!this.currentHotelId()
+  }));
 
   createRoomMut = injectCreateRoom();
   createGuestMut = injectCreateGuest();
@@ -197,28 +218,16 @@ export class DataService {
   }
 
   async addRoom(room: Omit<Room, 'id' | 'status' | 'hotel'>) {
-    let hotel = this.firstHotelQuery.data()?.hotels?.[0];
-    if (!hotel) {
-      console.log("No hotel record found. Attempting to seed default hotel...");
-      const seededHotel = await this.seedData();
-      if (seededHotel) {
-        hotel = seededHotel as any;
-      }
+    const hotelId = this.currentHotelId();
 
-      // Double check in case seed failed or query didn't update yet (though Data Connect should be fast)
-      if (!hotel) {
-        console.warn("Hotel creation triggered but query not yet updated. Using default ID if available from seed.");
-
-        if (!hotel) {
-          console.error("Cannot add room: No hotel record found even after seeding.");
-          return;
-        }
-      }
+    if (!hotelId) {
+      console.error("Cannot add room: No hotel linked to user.");
+      return;
     }
 
     try {
       await this.createRoomMut.mutateAsync({
-        hotelId: hotel.id,
+        hotelId: hotelId,
         roomNumber: room.roomNumber,
         roomType: room.roomType,
         status: 'Available',
@@ -251,85 +260,67 @@ export class DataService {
   factoryReset(seedDemoData: boolean) {
     // We only want to seed data here. 
     // The configuration (demoMode true/false) is now controlled by the Settings UI independently.
-    // If seedDemoData is true, we seed. If false, we might want to clear?
-    // For now, let's keep it simple: if seed requested, seed.
     if (seedDemoData) {
-      this.seedData();
-      this.seedStaff();
-      // Ensure config reflects this if not already set? 
-      // Actually, let's update the config to match expectation if we are indeed doing a full reset
-      this.updateHotelDetails({ demoMode: true });
+      const hotelId = this.currentHotelId();
+      if (hotelId) {
+        this.seedRooms(hotelId);
+        this.seedStaff();
+        this.updateHotelDetails({ demoMode: true });
+      }
     } else {
-      // If we are doing a "hard reset" to empty (Production mode), we should probably clear data?
-      // Since specific clear logic isn't here, we assume the user just wants the mode flag set to false
-      // and they will manually clear or the system stays as is but stops seeding.
       this.updateHotelDetails({ demoMode: false });
     }
   }
 
-  private async seedData() {
-    // 0. Ensure Config Exists (so we don't fall back to defaults that might toggle modes)
-    // We check if we have a value. If not, or if it's strictly the default, let's write it.
-    // Actually, just writing the default config to Firestore if it's missing is safer.
-    // We can't easily check 'exists' with the signal synchronously, but we can just set it if we are seeding.
-    const currentConfig = this.hotelConfigSignal();
-    if (!currentConfig) {
-      this.updateHotelDetails({
-        name: 'StaySyncOS Demo Hotel',
-        address: '123 Luxury Blvd, Metropolis, NY',
-        email: 'contact@staysyncos.com',
-        phone: '(555) 019-2834',
-        demoMode: true, // Default to true on fresh seed
-        maintenanceEmail: 'maintenance@staysyncos.com'
+  // Modified to be used by SetupComponent specifically
+  async createHotelForUser(name: string, address: string, propertyId: string) {
+    const user = this.auth.currentUser();
+    if (!user) return undefined;
+
+    try {
+      const res = await this.createHotelMut.mutateAsync({
+        name,
+        address,
+        propertyId
+      });
+
+      // @ts-ignore
+      const newId = res.data?.hotel_insert as unknown as string;
+
+      if (newId) {
+        // Link to User
+        await setDoc(doc(this.firestore, `users/${user.id}`), { hotelId: newId }, { merge: true });
+        this.log('System', 'Initialization', 'Created hotel and linked to user.');
+
+        // Seed initial rooms
+        await this.seedRooms(newId);
+        return newId;
+      }
+    } catch (e) {
+      console.error("Failed to create hotel", e);
+    }
+    return undefined;
+  }
+
+  // Refactored seeding to take ID
+  private async seedRooms(hotelId: string) {
+    const roomsToCreate = [
+      { roomNumber: '101', roomType: 'Single', dailyRate: 120 },
+      { roomNumber: '102', roomType: 'Double', dailyRate: 180 },
+      { roomNumber: '201', roomType: 'Suite', dailyRate: 350 },
+      { roomNumber: '305', roomType: 'Single', dailyRate: 110 },
+    ];
+
+    for (const r of roomsToCreate) {
+      await this.createRoomMut.mutateAsync({
+        hotelId: hotelId,
+        roomNumber: r.roomNumber,
+        roomType: r.roomType,
+        status: 'Available',
+        dailyRate: r.dailyRate
       });
     }
-
-    // 1. Ensure Hotel Exists
-    let hotel = this.firstHotelQuery.data()?.hotels?.[0];
-
-    if (!hotel) {
-      try {
-        const res = await this.createHotelMut.mutateAsync({
-          name: "StaySyncOS Demo Hotel",
-          address: "123 Luxury Blvd, Metropolis, NY",
-          propertyId: "PROP-001"
-        });
-        // The mutation returns the UUID string directly in the generated SDK for scalar returns
-        // @ts-ignore - The types might be slightly off depending on generation but at runtime this is the ID
-        const newId = res.data?.hotel_insert as unknown as string;
-
-        if (newId) {
-          hotel = { id: newId, name: "StaySyncOS Demo Hotel" };
-          this.log('System', 'Initialization', 'Created default hotel record.');
-        }
-      } catch (e) {
-        console.error("Failed to create hotel", e);
-        return undefined;
-      }
-    }
-
-    if (!hotel) return undefined;
-
-    // 2. Seed Rooms if empty
-    if ((this.rooms()?.length || 0) === 0) {
-      const roomsToCreate = [
-        { roomNumber: '101', roomType: 'Single', dailyRate: 120 },
-        { roomNumber: '102', roomType: 'Double', dailyRate: 180 },
-        { roomNumber: '201', roomType: 'Suite', dailyRate: 350 },
-        { roomNumber: '305', roomType: 'Single', dailyRate: 110 },
-      ];
-
-      for (const r of roomsToCreate) {
-        await this.createRoomMut.mutateAsync({
-          hotelId: hotel.id,
-          roomNumber: r.roomNumber,
-          roomType: r.roomType,
-          status: 'Available',
-          dailyRate: r.dailyRate
-        });
-      }
-      this.log('System', 'Seeding', 'Seeded initial rooms.');
-    }
+    this.log('System', 'Seeding', 'Seeded initial rooms.');
   }
 
   private seedStaff() {

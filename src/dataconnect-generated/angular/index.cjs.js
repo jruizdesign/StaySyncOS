@@ -1,15 +1,16 @@
-const { listAvailableRoomsRef, createRoomRef, createHotelRef, updateRoomStatusRef, createGuestRef, createBookingRef, getFirstHotelRef } = require('../');
+const { listAvailableRoomsRef, createRoomRef, createHotelRef, updateRoomStatusRef, createGuestRef, createBookingRef, getFirstHotelRef, getHotelByIdRef } = require('../');
 const { DataConnect, CallerSdkTypeEnum } = require('@angular/fire/data-connect');
 const { injectDataConnectQuery, injectDataConnectMutation } = require('@tanstack-query-firebase/angular/data-connect');
 const { inject, EnvironmentInjector } = require('@angular/core');
 
-exports.injectListAvailableRooms = function injectListAvailableRooms(options, injector) {
+exports.injectListAvailableRooms = function injectListAvailableRooms(args, options, injector) {
   const finalInjector = injector || inject(EnvironmentInjector);
   const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
   return injectDataConnectQuery(() => {
     const addOpn = options && options();
     return {
-      queryFn: () =>  listAvailableRoomsRef(dc),
+      queryFn: () =>  listAvailableRoomsRef(dc, varsFactoryFn()),
       ...addOpn
     };
   }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
@@ -42,6 +43,19 @@ exports.injectGetFirstHotel = function injectGetFirstHotel(options, injector) {
     const addOpn = options && options();
     return {
       queryFn: () =>  getFirstHotelRef(dc),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectGetHotelById = function injectGetHotelById(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  getHotelByIdRef(dc, varsFactoryFn()),
       ...addOpn
     };
   }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);

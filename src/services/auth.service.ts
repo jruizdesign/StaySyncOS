@@ -73,35 +73,33 @@ export class AuthService {
     }
   }
 
-  async login(email: string, pass: string): Promise<boolean> {
+  async login(email: string, pass: string): Promise<void> {
     const score = await this.verifyRecaptcha('login');
     if (score < 0.5) {
       console.error('reCAPTCHA score too low:', score);
-      return false;
+      throw new Error('Security check failed. Please try again.');
     }
 
     try {
       await signInWithEmailAndPassword(this.auth, email, pass);
-      return true;
-    } catch (e) {
+    } catch (e: any) {
       console.error('Login failed', e);
-      return false;
+      throw e;
     }
   }
 
-  async signup(email: string, pass: string): Promise<boolean> {
+  async signup(email: string, pass: string): Promise<void> {
     const score = await this.verifyRecaptcha('signup');
     if (score < 0.5) {
       console.error('reCAPTCHA score too low:', score);
-      return false;
+      throw new Error('Security check failed. Please try again.');
     }
 
     try {
       await createUserWithEmailAndPassword(this.auth, email, pass);
-      return true;
-    } catch (e) {
+    } catch (e: any) {
       console.error('Signup failed', e);
-      return false;
+      throw e;
     }
   }
 

@@ -12,6 +12,7 @@ This README will guide you through the process of using the generated JavaScript
 - [**Queries**](#queries)
   - [*ListAvailableRooms*](#listavailablerooms)
   - [*GetFirstHotel*](#getfirsthotel)
+  - [*GetHotelById*](#gethotelbyid)
 - [**Mutations**](#mutations)
   - [*CreateRoom*](#createroom)
   - [*CreateHotel*](#createhotel)
@@ -67,22 +68,22 @@ Below are examples of how to use the `default` connector's generated functions t
 ## ListAvailableRooms
 You can execute the `ListAvailableRooms` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listAvailableRooms(): QueryPromise<ListAvailableRoomsData, undefined>;
+listAvailableRooms(vars: ListAvailableRoomsVariables): QueryPromise<ListAvailableRoomsData, ListAvailableRoomsVariables>;
 
 interface ListAvailableRoomsRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListAvailableRoomsData, undefined>;
+  (vars: ListAvailableRoomsVariables): QueryRef<ListAvailableRoomsData, ListAvailableRoomsVariables>;
 }
 export const listAvailableRoomsRef: ListAvailableRoomsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listAvailableRooms(dc: DataConnect): QueryPromise<ListAvailableRoomsData, undefined>;
+listAvailableRooms(dc: DataConnect, vars: ListAvailableRoomsVariables): QueryPromise<ListAvailableRoomsData, ListAvailableRoomsVariables>;
 
 interface ListAvailableRoomsRef {
   ...
-  (dc: DataConnect): QueryRef<ListAvailableRoomsData, undefined>;
+  (dc: DataConnect, vars: ListAvailableRoomsVariables): QueryRef<ListAvailableRoomsData, ListAvailableRoomsVariables>;
 }
 export const listAvailableRoomsRef: ListAvailableRoomsRef;
 ```
@@ -94,7 +95,13 @@ console.log(name);
 ```
 
 ### Variables
-The `ListAvailableRooms` query has no variables.
+The `ListAvailableRooms` query requires an argument of type `ListAvailableRoomsVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface ListAvailableRoomsVariables {
+  hotelId: UUIDString;
+}
+```
 ### Return Type
 Recall that executing the `ListAvailableRooms` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
@@ -119,21 +126,27 @@ export interface ListAvailableRoomsData {
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, listAvailableRooms } from '@dataconnect/generated';
+import { connectorConfig, listAvailableRooms, ListAvailableRoomsVariables } from '@dataconnect/generated';
 
+// The `ListAvailableRooms` query requires an argument of type `ListAvailableRoomsVariables`:
+const listAvailableRoomsVars: ListAvailableRoomsVariables = {
+  hotelId: ..., 
+};
 
 // Call the `listAvailableRooms()` function to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await listAvailableRooms();
+const { data } = await listAvailableRooms(listAvailableRoomsVars);
+// Variables can be defined inline as well.
+const { data } = await listAvailableRooms({ hotelId: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
-const { data } = await listAvailableRooms(dataConnect);
+const { data } = await listAvailableRooms(dataConnect, listAvailableRoomsVars);
 
 console.log(data.rooms);
 
 // Or, you can use the `Promise` API.
-listAvailableRooms().then((response) => {
+listAvailableRooms(listAvailableRoomsVars).then((response) => {
   const data = response.data;
   console.log(data.rooms);
 });
@@ -143,15 +156,21 @@ listAvailableRooms().then((response) => {
 
 ```typescript
 import { getDataConnect, executeQuery } from 'firebase/data-connect';
-import { connectorConfig, listAvailableRoomsRef } from '@dataconnect/generated';
+import { connectorConfig, listAvailableRoomsRef, ListAvailableRoomsVariables } from '@dataconnect/generated';
 
+// The `ListAvailableRooms` query requires an argument of type `ListAvailableRoomsVariables`:
+const listAvailableRoomsVars: ListAvailableRoomsVariables = {
+  hotelId: ..., 
+};
 
 // Call the `listAvailableRoomsRef()` function to get a reference to the query.
-const ref = listAvailableRoomsRef();
+const ref = listAvailableRoomsRef(listAvailableRoomsVars);
+// Variables can be defined inline as well.
+const ref = listAvailableRoomsRef({ hotelId: ..., });
 
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);
-const ref = listAvailableRoomsRef(dataConnect);
+const ref = listAvailableRoomsRef(dataConnect, listAvailableRoomsVars);
 
 // Call `executeQuery()` on the reference to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
@@ -257,6 +276,120 @@ console.log(data.hotels);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.hotels);
+});
+```
+
+## GetHotelById
+You can execute the `GetHotelById` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getHotelById(vars: GetHotelByIdVariables): QueryPromise<GetHotelByIdData, GetHotelByIdVariables>;
+
+interface GetHotelByIdRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetHotelByIdVariables): QueryRef<GetHotelByIdData, GetHotelByIdVariables>;
+}
+export const getHotelByIdRef: GetHotelByIdRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getHotelById(dc: DataConnect, vars: GetHotelByIdVariables): QueryPromise<GetHotelByIdData, GetHotelByIdVariables>;
+
+interface GetHotelByIdRef {
+  ...
+  (dc: DataConnect, vars: GetHotelByIdVariables): QueryRef<GetHotelByIdData, GetHotelByIdVariables>;
+}
+export const getHotelByIdRef: GetHotelByIdRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getHotelByIdRef:
+```typescript
+const name = getHotelByIdRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetHotelById` query requires an argument of type `GetHotelByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetHotelByIdVariables {
+  id: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `GetHotelById` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetHotelByIdData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetHotelByIdData {
+  hotel?: {
+    id: UUIDString;
+    name: string;
+    address: string;
+    propertyId: string;
+  } & Hotel_Key;
+}
+```
+### Using `GetHotelById`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getHotelById, GetHotelByIdVariables } from '@dataconnect/generated';
+
+// The `GetHotelById` query requires an argument of type `GetHotelByIdVariables`:
+const getHotelByIdVars: GetHotelByIdVariables = {
+  id: ..., 
+};
+
+// Call the `getHotelById()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getHotelById(getHotelByIdVars);
+// Variables can be defined inline as well.
+const { data } = await getHotelById({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getHotelById(dataConnect, getHotelByIdVars);
+
+console.log(data.hotel);
+
+// Or, you can use the `Promise` API.
+getHotelById(getHotelByIdVars).then((response) => {
+  const data = response.data;
+  console.log(data.hotel);
+});
+```
+
+### Using `GetHotelById`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getHotelByIdRef, GetHotelByIdVariables } from '@dataconnect/generated';
+
+// The `GetHotelById` query requires an argument of type `GetHotelByIdVariables`:
+const getHotelByIdVars: GetHotelByIdVariables = {
+  id: ..., 
+};
+
+// Call the `getHotelByIdRef()` function to get a reference to the query.
+const ref = getHotelByIdRef(getHotelByIdVars);
+// Variables can be defined inline as well.
+const ref = getHotelByIdRef({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getHotelByIdRef(dataConnect, getHotelByIdVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.hotel);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.hotel);
 });
 ```
 

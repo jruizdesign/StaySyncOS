@@ -1,6 +1,6 @@
 
-query ListAvailableRooms @auth(level: PUBLIC) {
-  rooms {
+query ListAvailableRooms($hotelId: UUID!) @auth(level: PUBLIC) {
+  rooms(where: {hotel: {id: {eq: $hotelId}}}) {
     id
     roomNumber
     roomType
@@ -38,5 +38,14 @@ query GetFirstHotel @auth(level: PUBLIC) {
   hotels(limit: 1) {
     id
     name
+  }
+}
+
+query GetHotelById($id: UUID!) @auth(level: PUBLIC) {
+  hotel(id: $id) {
+    id
+    name
+    address
+    propertyId
   }
 }

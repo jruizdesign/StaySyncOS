@@ -5,10 +5,10 @@ import { Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 
 @Component({
-    selector: 'app-setup',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
+  selector: 'app-setup',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
     <div class="min-h-screen flex items-center justify-center bg-slate-900 relative overflow-hidden">
       
       <!-- Background Effects -->
@@ -72,7 +72,7 @@ import { DataService } from '../services/data.service';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     @keyframes fade-in {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -81,55 +81,51 @@ import { DataService } from '../services/data.service';
   `]
 })
 export class SetupComponent {
-    data = inject(DataService);
-    router = inject(Router);
+  data = inject(DataService);
+  router = inject(Router);
 
-    name = 'StaySyncOS Hotel';
-    address = '';
-    propertyId = 'PROP-' + Math.floor(Math.random() * 1000);
+  name = 'StaySyncOS Hotel';
+  address = '';
+  propertyId = 'PROP-' + Math.floor(Math.random() * 1000);
 
-    loading = signal(false);
-    error = signal(false);
-    errorMessage = signal('');
+  loading = signal(false);
+  error = signal(false);
+  errorMessage = signal('');
 
-    constructor() {
-        // If hotel already exists, redirect away
-        effect(() => {
-            const hotel = this.data.firstHotelQuery.data()?.hotels?.[0];
-            if (hotel) {
-                this.router.navigate(['/dashboard']);
-            }
-        });
+  constructor() {
+    // If hotel already exists, redirect away
+    effect(() => {
+      const hotel = this.data.currentHotelQuery.data()?.hotel;
+      if (hotel) {
+        this.router.navigate(['/dashboard']);
+      }
+    });
+  }
+
+  async onSubmit(e: Event) {
+    e.preventDefault();
+    if (!this.name || !this.address || !this.propertyId) return;
+
+    this.loading.set(true);
+    this.error.set(false);
+
+    try {
+      const newId = await this.data.createHotelForUser(this.name, this.address, this.propertyId);
+
+      if (newId) {
+        // Wait for the Signal to propagate the new Hotel ID
+        // We can check data.currentHotelId() or just wait a bit
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 1000);
+      } else {
+        throw new Error("Failed to link hotel to user.");
+      }
+
+    } catch (err: any) {
+      this.error.set(true);
+      this.errorMessage.set(err.message || "Failed to create hotel record.");
+      this.loading.set(false);
     }
-
-    async onSubmit(e: Event) {
-        e.preventDefault();
-        if (!this.name || !this.address || !this.propertyId) return;
-
-        this.loading.set(true);
-        this.error.set(false);
-
-        try {
-            await this.data.createHotelMut.mutateAsync({
-                name: this.name,
-                address: this.address,
-                propertyId: this.propertyId
-            });
-
-            // Let the effect handle the redirect, or do it manually
-            // We might need to wait for query invalidation/update
-            // But since we just mutated, let's give it a moment or rely on the signal update
-
-            // Wait for a brief moment for the signal to potentially update if we want to be safe
-            // But manual redirect is fine too.
-            setTimeout(() => {
-                this.router.navigate(['/dashboard']);
-            }, 500);
-
-        } catch (err: any) {
-            this.error.set(true);
-            this.errorMessage.set(err.message || "Failed to create hotel record.");
-            this.loading.set(false);
-        }
-    }
+  }
 }
