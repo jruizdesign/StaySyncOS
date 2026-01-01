@@ -102,6 +102,13 @@ export class LoginComponent {
 
   async onSubmit(e: Event) {
     e.preventDefault();
+
+    if (!this.email || !this.password) {
+      this.error.set(true);
+      this.errorMessage.set('Please enter both email and password');
+      return;
+    }
+
     this.loading.set(true);
     this.error.set(false);
     this.errorMessage.set('');
