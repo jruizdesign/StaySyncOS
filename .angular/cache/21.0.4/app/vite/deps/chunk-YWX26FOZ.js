@@ -1,7 +1,10 @@
 import {
-  Logger,
-  openDB
-} from "./chunk-SSHC6CQW.js";
+  __spreadProps,
+  __spreadValues
+} from "./chunk-653SOEEV.js";
+
+// node_modules/@firebase/util/dist/postinstall.mjs
+var getDefaultsFromPostinstall = () => void 0;
 
 // node_modules/@firebase/util/dist/index.esm2017.js
 var stringToByteArray$1 = function(str) {
@@ -289,10 +292,30 @@ var getDefaultsFromCookie = () => {
 };
 var getDefaults = () => {
   try {
-    return getDefaultsFromGlobal() || getDefaultsFromEnvVariable() || getDefaultsFromCookie();
+    return getDefaultsFromPostinstall() || getDefaultsFromGlobal() || getDefaultsFromEnvVariable() || getDefaultsFromCookie();
   } catch (e) {
     console.info(`Unable to get __FIREBASE_DEFAULTS__ due to: ${e}`);
     return;
+  }
+};
+var getDefaultEmulatorHost = (productName) => {
+  var _a, _b;
+  return (_b = (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.emulatorHosts) === null || _b === void 0 ? void 0 : _b[productName];
+};
+var getDefaultEmulatorHostnameAndPort = (productName) => {
+  const host = getDefaultEmulatorHost(productName);
+  if (!host) {
+    return void 0;
+  }
+  const separatorIndex = host.lastIndexOf(":");
+  if (separatorIndex <= 0 || separatorIndex + 1 === host.length) {
+    throw new Error(`Invalid host ${host} with no separate hostname and port!`);
+  }
+  const port = parseInt(host.substring(separatorIndex + 1), 10);
+  if (host[0] === "[") {
+    return [host.substring(1, separatorIndex - 1), port];
+  } else {
+    return [host.substring(0, separatorIndex), port];
   }
 };
 var getDefaultAppConfig = () => {
@@ -338,6 +361,183 @@ var Deferred = class {
     };
   }
 };
+function isCloudWorkstation(url) {
+  try {
+    const host = url.startsWith("http://") || url.startsWith("https://") ? new URL(url).hostname : url;
+    return host.endsWith(".cloudworkstations.dev");
+  } catch (_a) {
+    return false;
+  }
+}
+async function pingServer(endpoint) {
+  const result = await fetch(endpoint, {
+    credentials: "include"
+  });
+  return result.ok;
+}
+function createMockUserToken(token, projectId) {
+  if (token.uid) {
+    throw new Error('The "uid" field is no longer supported by mockUserToken. Please use "sub" instead for Firebase Auth User ID.');
+  }
+  const header = {
+    alg: "none",
+    type: "JWT"
+  };
+  const project = projectId || "demo-project";
+  const iat = token.iat || 0;
+  const sub = token.sub || token.user_id;
+  if (!sub) {
+    throw new Error("mockUserToken must contain 'sub' or 'user_id' field!");
+  }
+  const payload = Object.assign({
+    // Set all required fields to decent defaults
+    iss: `https://securetoken.google.com/${project}`,
+    aud: project,
+    iat,
+    exp: iat + 3600,
+    auth_time: iat,
+    sub,
+    user_id: sub,
+    firebase: {
+      sign_in_provider: "custom",
+      identities: {}
+    }
+  }, token);
+  const signature = "";
+  return [
+    base64urlEncodeWithoutPadding(JSON.stringify(header)),
+    base64urlEncodeWithoutPadding(JSON.stringify(payload)),
+    signature
+  ].join(".");
+}
+var emulatorStatus = {};
+function getEmulatorSummary() {
+  const summary = {
+    prod: [],
+    emulator: []
+  };
+  for (const key of Object.keys(emulatorStatus)) {
+    if (emulatorStatus[key]) {
+      summary.emulator.push(key);
+    } else {
+      summary.prod.push(key);
+    }
+  }
+  return summary;
+}
+function getOrCreateEl(id) {
+  let parentDiv = document.getElementById(id);
+  let created = false;
+  if (!parentDiv) {
+    parentDiv = document.createElement("div");
+    parentDiv.setAttribute("id", id);
+    created = true;
+  }
+  return { created, element: parentDiv };
+}
+var previouslyDismissed = false;
+function updateEmulatorBanner(name2, isRunningEmulator) {
+  if (typeof window === "undefined" || typeof document === "undefined" || !isCloudWorkstation(window.location.host) || emulatorStatus[name2] === isRunningEmulator || emulatorStatus[name2] || // If already set to use emulator, can't go back to prod.
+  previouslyDismissed) {
+    return;
+  }
+  emulatorStatus[name2] = isRunningEmulator;
+  function prefixedId(id) {
+    return `__firebase__banner__${id}`;
+  }
+  const bannerId = "__firebase__banner";
+  const summary = getEmulatorSummary();
+  const showError = summary.prod.length > 0;
+  function tearDown() {
+    const element = document.getElementById(bannerId);
+    if (element) {
+      element.remove();
+    }
+  }
+  function setupBannerStyles(bannerEl) {
+    bannerEl.style.display = "flex";
+    bannerEl.style.background = "#7faaf0";
+    bannerEl.style.position = "fixed";
+    bannerEl.style.bottom = "5px";
+    bannerEl.style.left = "5px";
+    bannerEl.style.padding = ".5em";
+    bannerEl.style.borderRadius = "5px";
+    bannerEl.style.alignItems = "center";
+  }
+  function setupIconStyles(prependIcon, iconId) {
+    prependIcon.setAttribute("width", "24");
+    prependIcon.setAttribute("id", iconId);
+    prependIcon.setAttribute("height", "24");
+    prependIcon.setAttribute("viewBox", "0 0 24 24");
+    prependIcon.setAttribute("fill", "none");
+    prependIcon.style.marginLeft = "-6px";
+  }
+  function setupCloseBtn() {
+    const closeBtn = document.createElement("span");
+    closeBtn.style.cursor = "pointer";
+    closeBtn.style.marginLeft = "16px";
+    closeBtn.style.fontSize = "24px";
+    closeBtn.innerHTML = " &times;";
+    closeBtn.onclick = () => {
+      previouslyDismissed = true;
+      tearDown();
+    };
+    return closeBtn;
+  }
+  function setupLinkStyles(learnMoreLink, learnMoreId) {
+    learnMoreLink.setAttribute("id", learnMoreId);
+    learnMoreLink.innerText = "Learn more";
+    learnMoreLink.href = "https://firebase.google.com/docs/studio/preview-apps#preview-backend";
+    learnMoreLink.setAttribute("target", "__blank");
+    learnMoreLink.style.paddingLeft = "5px";
+    learnMoreLink.style.textDecoration = "underline";
+  }
+  function setupDom() {
+    const banner = getOrCreateEl(bannerId);
+    const firebaseTextId = prefixedId("text");
+    const firebaseText = document.getElementById(firebaseTextId) || document.createElement("span");
+    const learnMoreId = prefixedId("learnmore");
+    const learnMoreLink = document.getElementById(learnMoreId) || document.createElement("a");
+    const prependIconId = prefixedId("preprendIcon");
+    const prependIcon = document.getElementById(prependIconId) || document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    if (banner.created) {
+      const bannerEl = banner.element;
+      setupBannerStyles(bannerEl);
+      setupLinkStyles(learnMoreLink, learnMoreId);
+      const closeBtn = setupCloseBtn();
+      setupIconStyles(prependIcon, prependIconId);
+      bannerEl.append(prependIcon, firebaseText, learnMoreLink, closeBtn);
+      document.body.appendChild(bannerEl);
+    }
+    if (showError) {
+      firebaseText.innerText = `Preview backend disconnected.`;
+      prependIcon.innerHTML = `<g clip-path="url(#clip0_6013_33858)">
+<path d="M4.8 17.6L12 5.6L19.2 17.6H4.8ZM6.91667 16.4H17.0833L12 7.93333L6.91667 16.4ZM12 15.6C12.1667 15.6 12.3056 15.5444 12.4167 15.4333C12.5389 15.3111 12.6 15.1667 12.6 15C12.6 14.8333 12.5389 14.6944 12.4167 14.5833C12.3056 14.4611 12.1667 14.4 12 14.4C11.8333 14.4 11.6889 14.4611 11.5667 14.5833C11.4556 14.6944 11.4 14.8333 11.4 15C11.4 15.1667 11.4556 15.3111 11.5667 15.4333C11.6889 15.5444 11.8333 15.6 12 15.6ZM11.4 13.6H12.6V10.4H11.4V13.6Z" fill="#212121"/>
+</g>
+<defs>
+<clipPath id="clip0_6013_33858">
+<rect width="24" height="24" fill="white"/>
+</clipPath>
+</defs>`;
+    } else {
+      prependIcon.innerHTML = `<g clip-path="url(#clip0_6083_34804)">
+<path d="M11.4 15.2H12.6V11.2H11.4V15.2ZM12 10C12.1667 10 12.3056 9.94444 12.4167 9.83333C12.5389 9.71111 12.6 9.56667 12.6 9.4C12.6 9.23333 12.5389 9.09444 12.4167 8.98333C12.3056 8.86111 12.1667 8.8 12 8.8C11.8333 8.8 11.6889 8.86111 11.5667 8.98333C11.4556 9.09444 11.4 9.23333 11.4 9.4C11.4 9.56667 11.4556 9.71111 11.5667 9.83333C11.6889 9.94444 11.8333 10 12 10ZM12 18.4C11.1222 18.4 10.2944 18.2333 9.51667 17.9C8.73889 17.5667 8.05556 17.1111 7.46667 16.5333C6.88889 15.9444 6.43333 15.2611 6.1 14.4833C5.76667 13.7056 5.6 12.8778 5.6 12C5.6 11.1111 5.76667 10.2833 6.1 9.51667C6.43333 8.73889 6.88889 8.06111 7.46667 7.48333C8.05556 6.89444 8.73889 6.43333 9.51667 6.1C10.2944 5.76667 11.1222 5.6 12 5.6C12.8889 5.6 13.7167 5.76667 14.4833 6.1C15.2611 6.43333 15.9389 6.89444 16.5167 7.48333C17.1056 8.06111 17.5667 8.73889 17.9 9.51667C18.2333 10.2833 18.4 11.1111 18.4 12C18.4 12.8778 18.2333 13.7056 17.9 14.4833C17.5667 15.2611 17.1056 15.9444 16.5167 16.5333C15.9389 17.1111 15.2611 17.5667 14.4833 17.9C13.7167 18.2333 12.8889 18.4 12 18.4ZM12 17.2C13.4444 17.2 14.6722 16.6944 15.6833 15.6833C16.6944 14.6722 17.2 13.4444 17.2 12C17.2 10.5556 16.6944 9.32778 15.6833 8.31667C14.6722 7.30555 13.4444 6.8 12 6.8C10.5556 6.8 9.32778 7.30555 8.31667 8.31667C7.30556 9.32778 6.8 10.5556 6.8 12C6.8 13.4444 7.30556 14.6722 8.31667 15.6833C9.32778 16.6944 10.5556 17.2 12 17.2Z" fill="#212121"/>
+</g>
+<defs>
+<clipPath id="clip0_6083_34804">
+<rect width="24" height="24" fill="white"/>
+</clipPath>
+</defs>`;
+      firebaseText.innerText = "Preview backend running in this workspace.";
+    }
+    firebaseText.setAttribute("id", firebaseTextId);
+  }
+  if (document.readyState === "loading") {
+    window.addEventListener("DOMContentLoaded", setupDom);
+  } else {
+    setupDom();
+  }
+}
 function getUA() {
   if (typeof navigator !== "undefined" && typeof navigator["userAgent"] === "string") {
     return navigator["userAgent"];
@@ -364,6 +564,12 @@ function isNode() {
     return false;
   }
 }
+function isBrowser() {
+  return typeof window !== "undefined" || isWebWorker();
+}
+function isWebWorker() {
+  return typeof WorkerGlobalScope !== "undefined" && typeof self !== "undefined" && self instanceof WorkerGlobalScope;
+}
 function isCloudflareWorker() {
   return typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers";
 }
@@ -380,6 +586,9 @@ function isIE() {
 }
 function isSafari() {
   return !isNode() && !!navigator.userAgent && navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome");
+}
+function isSafariOrWebkit() {
+  return !isNode() && !!navigator.userAgent && (navigator.userAgent.includes("Safari") || navigator.userAgent.includes("WebKit")) && !navigator.userAgent.includes("Chrome");
 }
 function isIndexedDBAvailable() {
   try {
@@ -449,6 +658,42 @@ function replaceTemplate(template, data) {
   });
 }
 var PATTERN = /\{\$([^}]+)}/g;
+function jsonEval(str) {
+  return JSON.parse(str);
+}
+var decode = function(token) {
+  let header = {}, claims = {}, data = {}, signature = "";
+  try {
+    const parts = token.split(".");
+    header = jsonEval(base64Decode(parts[0]) || "");
+    claims = jsonEval(base64Decode(parts[1]) || "");
+    signature = parts[2];
+    data = claims["d"] || {};
+    delete claims["d"];
+  } catch (e) {
+  }
+  return {
+    header,
+    claims,
+    data,
+    signature
+  };
+};
+var issuedAtTime = function(token) {
+  const claims = decode(token).claims;
+  if (typeof claims === "object" && claims.hasOwnProperty("iat")) {
+    return claims["iat"];
+  }
+  return null;
+};
+function isEmpty(obj) {
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return false;
+    }
+  }
+  return true;
+}
 function deepEqual(a, b) {
   if (a === b) {
     return true;
@@ -664,7 +909,21 @@ function implementsAnyMethods(obj, methods) {
 }
 function noop() {
 }
+var DEFAULT_INTERVAL_MILLIS = 1e3;
+var DEFAULT_BACKOFF_FACTOR = 2;
 var MAX_VALUE_MILLIS = 4 * 60 * 60 * 1e3;
+var RANDOM_FACTOR = 0.5;
+function calculateBackoffMillis(backoffCount, intervalMillis = DEFAULT_INTERVAL_MILLIS, backoffFactor = DEFAULT_BACKOFF_FACTOR) {
+  const currBaseValue = intervalMillis * Math.pow(backoffFactor, backoffCount);
+  const randomWait = Math.round(
+    // A fraction of the backoff value to add/subtract.
+    // Deviation: changes multiplication order to improve readability.
+    RANDOM_FACTOR * currBaseValue * // A random float (rounded to int by Math.round above) in the range [-1, 1]. Determines
+    // if we add or subtract.
+    (Math.random() - 0.5) * 2
+  );
+  return Math.min(MAX_VALUE_MILLIS, currBaseValue + randomWait);
+}
 function getModularInstance(service) {
   if (service && service._delegate) {
     return service._delegate;
@@ -962,6 +1221,362 @@ var ComponentContainer = class {
   }
 };
 
+// node_modules/@firebase/logger/dist/esm/index.esm2017.js
+var instances = [];
+var LogLevel;
+(function(LogLevel2) {
+  LogLevel2[LogLevel2["DEBUG"] = 0] = "DEBUG";
+  LogLevel2[LogLevel2["VERBOSE"] = 1] = "VERBOSE";
+  LogLevel2[LogLevel2["INFO"] = 2] = "INFO";
+  LogLevel2[LogLevel2["WARN"] = 3] = "WARN";
+  LogLevel2[LogLevel2["ERROR"] = 4] = "ERROR";
+  LogLevel2[LogLevel2["SILENT"] = 5] = "SILENT";
+})(LogLevel || (LogLevel = {}));
+var levelStringToEnum = {
+  "debug": LogLevel.DEBUG,
+  "verbose": LogLevel.VERBOSE,
+  "info": LogLevel.INFO,
+  "warn": LogLevel.WARN,
+  "error": LogLevel.ERROR,
+  "silent": LogLevel.SILENT
+};
+var defaultLogLevel = LogLevel.INFO;
+var ConsoleMethod = {
+  [LogLevel.DEBUG]: "log",
+  [LogLevel.VERBOSE]: "log",
+  [LogLevel.INFO]: "info",
+  [LogLevel.WARN]: "warn",
+  [LogLevel.ERROR]: "error"
+};
+var defaultLogHandler = (instance, logType, ...args) => {
+  if (logType < instance.logLevel) {
+    return;
+  }
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const method = ConsoleMethod[logType];
+  if (method) {
+    console[method](`[${now}]  ${instance.name}:`, ...args);
+  } else {
+    throw new Error(`Attempted to log a message with an invalid logType (value: ${logType})`);
+  }
+};
+var Logger = class {
+  /**
+   * Gives you an instance of a Logger to capture messages according to
+   * Firebase's logging scheme.
+   *
+   * @param name The name that the logs will be associated with
+   */
+  constructor(name2) {
+    this.name = name2;
+    this._logLevel = defaultLogLevel;
+    this._logHandler = defaultLogHandler;
+    this._userLogHandler = null;
+    instances.push(this);
+  }
+  get logLevel() {
+    return this._logLevel;
+  }
+  set logLevel(val) {
+    if (!(val in LogLevel)) {
+      throw new TypeError(`Invalid value "${val}" assigned to \`logLevel\``);
+    }
+    this._logLevel = val;
+  }
+  // Workaround for setter/getter having to be the same type.
+  setLogLevel(val) {
+    this._logLevel = typeof val === "string" ? levelStringToEnum[val] : val;
+  }
+  get logHandler() {
+    return this._logHandler;
+  }
+  set logHandler(val) {
+    if (typeof val !== "function") {
+      throw new TypeError("Value assigned to `logHandler` must be a function");
+    }
+    this._logHandler = val;
+  }
+  get userLogHandler() {
+    return this._userLogHandler;
+  }
+  set userLogHandler(val) {
+    this._userLogHandler = val;
+  }
+  /**
+   * The functions below are all based on the `console` interface
+   */
+  debug(...args) {
+    this._userLogHandler && this._userLogHandler(this, LogLevel.DEBUG, ...args);
+    this._logHandler(this, LogLevel.DEBUG, ...args);
+  }
+  log(...args) {
+    this._userLogHandler && this._userLogHandler(this, LogLevel.VERBOSE, ...args);
+    this._logHandler(this, LogLevel.VERBOSE, ...args);
+  }
+  info(...args) {
+    this._userLogHandler && this._userLogHandler(this, LogLevel.INFO, ...args);
+    this._logHandler(this, LogLevel.INFO, ...args);
+  }
+  warn(...args) {
+    this._userLogHandler && this._userLogHandler(this, LogLevel.WARN, ...args);
+    this._logHandler(this, LogLevel.WARN, ...args);
+  }
+  error(...args) {
+    this._userLogHandler && this._userLogHandler(this, LogLevel.ERROR, ...args);
+    this._logHandler(this, LogLevel.ERROR, ...args);
+  }
+};
+function setLogLevel(level) {
+  instances.forEach((inst) => {
+    inst.setLogLevel(level);
+  });
+}
+function setUserLogHandler(logCallback, options) {
+  for (const instance of instances) {
+    let customLogLevel = null;
+    if (options && options.level) {
+      customLogLevel = levelStringToEnum[options.level];
+    }
+    if (logCallback === null) {
+      instance.userLogHandler = null;
+    } else {
+      instance.userLogHandler = (instance2, level, ...args) => {
+        const message = args.map((arg) => {
+          if (arg == null) {
+            return null;
+          } else if (typeof arg === "string") {
+            return arg;
+          } else if (typeof arg === "number" || typeof arg === "boolean") {
+            return arg.toString();
+          } else if (arg instanceof Error) {
+            return arg.message;
+          } else {
+            try {
+              return JSON.stringify(arg);
+            } catch (ignored) {
+              return null;
+            }
+          }
+        }).filter((arg) => arg).join(" ");
+        if (level >= (customLogLevel !== null && customLogLevel !== void 0 ? customLogLevel : instance2.logLevel)) {
+          logCallback({
+            level: LogLevel[level].toLowerCase(),
+            message,
+            args,
+            type: instance2.name
+          });
+        }
+      };
+    }
+  }
+}
+
+// node_modules/idb/build/wrap-idb-value.js
+var instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
+var idbProxyableTypes;
+var cursorAdvanceMethods;
+function getIdbProxyableTypes() {
+  return idbProxyableTypes || (idbProxyableTypes = [
+    IDBDatabase,
+    IDBObjectStore,
+    IDBIndex,
+    IDBCursor,
+    IDBTransaction
+  ]);
+}
+function getCursorAdvanceMethods() {
+  return cursorAdvanceMethods || (cursorAdvanceMethods = [
+    IDBCursor.prototype.advance,
+    IDBCursor.prototype.continue,
+    IDBCursor.prototype.continuePrimaryKey
+  ]);
+}
+var cursorRequestMap = /* @__PURE__ */ new WeakMap();
+var transactionDoneMap = /* @__PURE__ */ new WeakMap();
+var transactionStoreNamesMap = /* @__PURE__ */ new WeakMap();
+var transformCache = /* @__PURE__ */ new WeakMap();
+var reverseTransformCache = /* @__PURE__ */ new WeakMap();
+function promisifyRequest(request) {
+  const promise = new Promise((resolve, reject) => {
+    const unlisten = () => {
+      request.removeEventListener("success", success);
+      request.removeEventListener("error", error);
+    };
+    const success = () => {
+      resolve(wrap(request.result));
+      unlisten();
+    };
+    const error = () => {
+      reject(request.error);
+      unlisten();
+    };
+    request.addEventListener("success", success);
+    request.addEventListener("error", error);
+  });
+  promise.then((value) => {
+    if (value instanceof IDBCursor) {
+      cursorRequestMap.set(value, request);
+    }
+  }).catch(() => {
+  });
+  reverseTransformCache.set(promise, request);
+  return promise;
+}
+function cacheDonePromiseForTransaction(tx) {
+  if (transactionDoneMap.has(tx))
+    return;
+  const done = new Promise((resolve, reject) => {
+    const unlisten = () => {
+      tx.removeEventListener("complete", complete);
+      tx.removeEventListener("error", error);
+      tx.removeEventListener("abort", error);
+    };
+    const complete = () => {
+      resolve();
+      unlisten();
+    };
+    const error = () => {
+      reject(tx.error || new DOMException("AbortError", "AbortError"));
+      unlisten();
+    };
+    tx.addEventListener("complete", complete);
+    tx.addEventListener("error", error);
+    tx.addEventListener("abort", error);
+  });
+  transactionDoneMap.set(tx, done);
+}
+var idbProxyTraps = {
+  get(target, prop, receiver) {
+    if (target instanceof IDBTransaction) {
+      if (prop === "done")
+        return transactionDoneMap.get(target);
+      if (prop === "objectStoreNames") {
+        return target.objectStoreNames || transactionStoreNamesMap.get(target);
+      }
+      if (prop === "store") {
+        return receiver.objectStoreNames[1] ? void 0 : receiver.objectStore(receiver.objectStoreNames[0]);
+      }
+    }
+    return wrap(target[prop]);
+  },
+  set(target, prop, value) {
+    target[prop] = value;
+    return true;
+  },
+  has(target, prop) {
+    if (target instanceof IDBTransaction && (prop === "done" || prop === "store")) {
+      return true;
+    }
+    return prop in target;
+  }
+};
+function replaceTraps(callback) {
+  idbProxyTraps = callback(idbProxyTraps);
+}
+function wrapFunction(func) {
+  if (func === IDBDatabase.prototype.transaction && !("objectStoreNames" in IDBTransaction.prototype)) {
+    return function(storeNames, ...args) {
+      const tx = func.call(unwrap(this), storeNames, ...args);
+      transactionStoreNamesMap.set(tx, storeNames.sort ? storeNames.sort() : [storeNames]);
+      return wrap(tx);
+    };
+  }
+  if (getCursorAdvanceMethods().includes(func)) {
+    return function(...args) {
+      func.apply(unwrap(this), args);
+      return wrap(cursorRequestMap.get(this));
+    };
+  }
+  return function(...args) {
+    return wrap(func.apply(unwrap(this), args));
+  };
+}
+function transformCachableValue(value) {
+  if (typeof value === "function")
+    return wrapFunction(value);
+  if (value instanceof IDBTransaction)
+    cacheDonePromiseForTransaction(value);
+  if (instanceOfAny(value, getIdbProxyableTypes()))
+    return new Proxy(value, idbProxyTraps);
+  return value;
+}
+function wrap(value) {
+  if (value instanceof IDBRequest)
+    return promisifyRequest(value);
+  if (transformCache.has(value))
+    return transformCache.get(value);
+  const newValue = transformCachableValue(value);
+  if (newValue !== value) {
+    transformCache.set(value, newValue);
+    reverseTransformCache.set(newValue, value);
+  }
+  return newValue;
+}
+var unwrap = (value) => reverseTransformCache.get(value);
+
+// node_modules/idb/build/index.js
+function openDB(name2, version2, { blocked, upgrade, blocking, terminated } = {}) {
+  const request = indexedDB.open(name2, version2);
+  const openPromise = wrap(request);
+  if (upgrade) {
+    request.addEventListener("upgradeneeded", (event) => {
+      upgrade(wrap(request.result), event.oldVersion, event.newVersion, wrap(request.transaction), event);
+    });
+  }
+  if (blocked) {
+    request.addEventListener("blocked", (event) => blocked(
+      // Casting due to https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1405
+      event.oldVersion,
+      event.newVersion,
+      event
+    ));
+  }
+  openPromise.then((db) => {
+    if (terminated)
+      db.addEventListener("close", () => terminated());
+    if (blocking) {
+      db.addEventListener("versionchange", (event) => blocking(event.oldVersion, event.newVersion, event));
+    }
+  }).catch(() => {
+  });
+  return openPromise;
+}
+var readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"];
+var writeMethods = ["put", "add", "delete", "clear"];
+var cachedMethods = /* @__PURE__ */ new Map();
+function getMethod(target, prop) {
+  if (!(target instanceof IDBDatabase && !(prop in target) && typeof prop === "string")) {
+    return;
+  }
+  if (cachedMethods.get(prop))
+    return cachedMethods.get(prop);
+  const targetFuncName = prop.replace(/FromIndex$/, "");
+  const useIndex = prop !== targetFuncName;
+  const isWrite = writeMethods.includes(targetFuncName);
+  if (
+    // Bail if the target doesn't exist on the target. Eg, getAll isn't in Edge.
+    !(targetFuncName in (useIndex ? IDBIndex : IDBObjectStore).prototype) || !(isWrite || readMethods.includes(targetFuncName))
+  ) {
+    return;
+  }
+  const method = async function(storeName, ...args) {
+    const tx = this.transaction(storeName, isWrite ? "readwrite" : "readonly");
+    let target2 = tx.store;
+    if (useIndex)
+      target2 = target2.index(args.shift());
+    return (await Promise.all([
+      target2[targetFuncName](...args),
+      isWrite && tx.done
+    ]))[0];
+  };
+  cachedMethods.set(prop, method);
+  return method;
+}
+replaceTraps((oldTraps) => __spreadProps(__spreadValues({}, oldTraps), {
+  get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver),
+  has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
+}));
+
 // node_modules/@firebase/app/dist/esm/index.esm2017.js
 var PlatformLoggerServiceImpl = class {
   constructor(container) {
@@ -986,7 +1601,7 @@ function isVersionServiceProvider(provider) {
   return (component === null || component === void 0 ? void 0 : component.type) === "VERSION";
 }
 var name$q = "@firebase/app";
-var version$1 = "0.11.0";
+var version$1 = "0.13.2";
 var logger = new Logger("@firebase/app");
 var name$p = "@firebase/app-compat";
 var name$o = "@firebase/analytics-compat";
@@ -1011,10 +1626,10 @@ var name$6 = "@firebase/remote-config-compat";
 var name$5 = "@firebase/storage";
 var name$4 = "@firebase/storage-compat";
 var name$3 = "@firebase/firestore";
-var name$2 = "@firebase/vertexai";
+var name$2 = "@firebase/ai";
 var name$1 = "@firebase/firestore-compat";
 var name = "firebase";
-var version = "11.3.0";
+var version = "11.10.0";
 var DEFAULT_ENTRY_NAME2 = "[DEFAULT]";
 var PLATFORM_LOG_STRING = {
   [name$q]: "fire-core",
@@ -1057,6 +1672,9 @@ function _addComponent(app, component) {
     logger.debug(`Component ${component.name} failed to register with FirebaseApp ${app.name}`, e);
   }
 }
+function _addOrOverwriteComponent(app, component) {
+  app.container.addOrOverwriteComponent(component);
+}
 function _registerComponent(component) {
   const componentName = component.name;
   if (_components.has(componentName)) {
@@ -1082,11 +1700,17 @@ function _getProvider(app, name2) {
 function _removeServiceInstance(app, name2, instanceIdentifier = DEFAULT_ENTRY_NAME2) {
   _getProvider(app, name2).clearInstance(instanceIdentifier);
 }
+function _isFirebaseApp(obj) {
+  return obj.options !== void 0;
+}
 function _isFirebaseServerApp(obj) {
   if (obj === null || obj === void 0) {
     return false;
   }
   return obj.settings !== void 0;
+}
+function _clearComponents() {
+  _components.clear();
 }
 var ERRORS = {
   [
@@ -1201,6 +1825,103 @@ var FirebaseAppImpl = class {
     }
   }
 };
+function validateTokenTTL(base64Token, tokenName) {
+  const secondPart = base64Decode(base64Token.split(".")[1]);
+  if (secondPart === null) {
+    console.error(`FirebaseServerApp ${tokenName} is invalid: second part could not be parsed.`);
+    return;
+  }
+  const expClaim = JSON.parse(secondPart).exp;
+  if (expClaim === void 0) {
+    console.error(`FirebaseServerApp ${tokenName} is invalid: expiration claim could not be parsed`);
+    return;
+  }
+  const exp = JSON.parse(secondPart).exp * 1e3;
+  const now = (/* @__PURE__ */ new Date()).getTime();
+  const diff = exp - now;
+  if (diff <= 0) {
+    console.error(`FirebaseServerApp ${tokenName} is invalid: the token has expired.`);
+  }
+}
+var FirebaseServerAppImpl = class extends FirebaseAppImpl {
+  constructor(options, serverConfig, name2, container) {
+    const automaticDataCollectionEnabled = serverConfig.automaticDataCollectionEnabled !== void 0 ? serverConfig.automaticDataCollectionEnabled : true;
+    const config = {
+      name: name2,
+      automaticDataCollectionEnabled
+    };
+    if (options.apiKey !== void 0) {
+      super(options, config, container);
+    } else {
+      const appImpl = options;
+      super(appImpl.options, config, container);
+    }
+    this._serverConfig = Object.assign({ automaticDataCollectionEnabled }, serverConfig);
+    if (this._serverConfig.authIdToken) {
+      validateTokenTTL(this._serverConfig.authIdToken, "authIdToken");
+    }
+    if (this._serverConfig.appCheckToken) {
+      validateTokenTTL(this._serverConfig.appCheckToken, "appCheckToken");
+    }
+    this._finalizationRegistry = null;
+    if (typeof FinalizationRegistry !== "undefined") {
+      this._finalizationRegistry = new FinalizationRegistry(() => {
+        this.automaticCleanup();
+      });
+    }
+    this._refCount = 0;
+    this.incRefCount(this._serverConfig.releaseOnDeref);
+    this._serverConfig.releaseOnDeref = void 0;
+    serverConfig.releaseOnDeref = void 0;
+    registerVersion(name$q, version$1, "serverapp");
+  }
+  toJSON() {
+    return void 0;
+  }
+  get refCount() {
+    return this._refCount;
+  }
+  // Increment the reference count of this server app. If an object is provided, register it
+  // with the finalization registry.
+  incRefCount(obj) {
+    if (this.isDeleted) {
+      return;
+    }
+    this._refCount++;
+    if (obj !== void 0 && this._finalizationRegistry !== null) {
+      this._finalizationRegistry.register(obj, this);
+    }
+  }
+  // Decrement the reference count.
+  decRefCount() {
+    if (this.isDeleted) {
+      return 0;
+    }
+    return --this._refCount;
+  }
+  // Invoked by the FinalizationRegistry callback to note that this app should go through its
+  // reference counts and delete itself if no reference count remain. The coordinating logic that
+  // handles this is in deleteApp(...).
+  automaticCleanup() {
+    void deleteApp(this);
+  }
+  get settings() {
+    this.checkDestroyed();
+    return this._serverConfig;
+  }
+  /**
+   * This function will throw an Error if the App has already been deleted -
+   * use before performing API actions on the App.
+   */
+  checkDestroyed() {
+    if (this.isDeleted) {
+      throw ERROR_FACTORY.create(
+        "server-app-deleted"
+        /* AppError.SERVER_APP_DELETED */
+      );
+    }
+  }
+};
 var SDK_VERSION = version;
 function initializeApp(_options, rawConfig = {}) {
   let options = _options;
@@ -1208,7 +1929,7 @@ function initializeApp(_options, rawConfig = {}) {
     const name3 = rawConfig;
     rawConfig = { name: name3 };
   }
-  const config = Object.assign({ name: DEFAULT_ENTRY_NAME2, automaticDataCollectionEnabled: false }, rawConfig);
+  const config = Object.assign({ name: DEFAULT_ENTRY_NAME2, automaticDataCollectionEnabled: true }, rawConfig);
   const name2 = config.name;
   if (typeof name2 !== "string" || !name2) {
     throw ERROR_FACTORY.create("bad-app-name", {
@@ -1238,6 +1959,48 @@ function initializeApp(_options, rawConfig = {}) {
   _apps.set(name2, newApp);
   return newApp;
 }
+function initializeServerApp(_options, _serverAppConfig) {
+  if (isBrowser() && !isWebWorker()) {
+    throw ERROR_FACTORY.create(
+      "invalid-server-app-environment"
+      /* AppError.INVALID_SERVER_APP_ENVIRONMENT */
+    );
+  }
+  if (_serverAppConfig.automaticDataCollectionEnabled === void 0) {
+    _serverAppConfig.automaticDataCollectionEnabled = true;
+  }
+  let appOptions;
+  if (_isFirebaseApp(_options)) {
+    appOptions = _options.options;
+  } else {
+    appOptions = _options;
+  }
+  const nameObj = Object.assign(Object.assign({}, _serverAppConfig), appOptions);
+  if (nameObj.releaseOnDeref !== void 0) {
+    delete nameObj.releaseOnDeref;
+  }
+  const hashCode = (s) => {
+    return [...s].reduce((hash, c) => Math.imul(31, hash) + c.charCodeAt(0) | 0, 0);
+  };
+  if (_serverAppConfig.releaseOnDeref !== void 0) {
+    if (typeof FinalizationRegistry === "undefined") {
+      throw ERROR_FACTORY.create("finalization-registry-not-supported", {});
+    }
+  }
+  const nameString = "" + hashCode(JSON.stringify(nameObj));
+  const existingApp = _serverApps.get(nameString);
+  if (existingApp) {
+    existingApp.incRefCount(_serverAppConfig.releaseOnDeref);
+    return existingApp;
+  }
+  const container = new ComponentContainer(nameString);
+  for (const component of _components.values()) {
+    container.addComponent(component);
+  }
+  const newApp = new FirebaseServerAppImpl(appOptions, _serverAppConfig, nameString, container);
+  _serverApps.set(nameString, newApp);
+  return newApp;
+}
 function getApp(name2 = DEFAULT_ENTRY_NAME2) {
   const app = _apps.get(name2);
   if (!app && name2 === DEFAULT_ENTRY_NAME2 && getDefaultAppConfig()) {
@@ -1247,6 +2010,27 @@ function getApp(name2 = DEFAULT_ENTRY_NAME2) {
     throw ERROR_FACTORY.create("no-app", { appName: name2 });
   }
   return app;
+}
+function getApps() {
+  return Array.from(_apps.values());
+}
+async function deleteApp(app) {
+  let cleanupProviders = false;
+  const name2 = app.name;
+  if (_apps.has(name2)) {
+    cleanupProviders = true;
+    _apps.delete(name2);
+  } else if (_serverApps.has(name2)) {
+    const firebaseServerApp = app;
+    if (firebaseServerApp.decRefCount() <= 0) {
+      _serverApps.delete(name2);
+      cleanupProviders = true;
+    }
+  }
+  if (cleanupProviders) {
+    await Promise.all(app.container.getProviders().map((provider) => provider.delete()));
+    app.isDeleted = true;
+  }
 }
 function registerVersion(libraryKeyOrName, version2, variant) {
   var _a;
@@ -1278,6 +2062,18 @@ function registerVersion(libraryKeyOrName, version2, variant) {
     "VERSION"
     /* ComponentType.VERSION */
   ));
+}
+function onLog(logCallback, options) {
+  if (logCallback !== null && typeof logCallback !== "function") {
+    throw ERROR_FACTORY.create(
+      "invalid-log-argument"
+      /* AppError.INVALID_LOG_ARGUMENT */
+    );
+  }
+  setUserLogHandler(logCallback, options);
+}
+function setLogLevel2(logLevel) {
+  setLogLevel(logLevel);
 }
 var DB_NAME = "firebase-heartbeat-database";
 var DB_VERSION = 1;
@@ -1555,8 +2351,17 @@ function registerCoreComponents(variant) {
 registerCoreComponents("");
 
 export {
+  base64,
   base64Decode,
+  getGlobal,
+  getDefaultEmulatorHost,
+  getDefaultEmulatorHostnameAndPort,
   getExperimentalSetting,
+  Deferred,
+  isCloudWorkstation,
+  pingServer,
+  createMockUserToken,
+  updateEmulatorBanner,
   getUA,
   isMobileCordova,
   isCloudflareWorker,
@@ -1564,20 +2369,42 @@ export {
   isReactNative,
   isIE,
   isSafari,
+  isSafariOrWebkit,
+  isIndexedDBAvailable,
   FirebaseError,
   ErrorFactory,
+  issuedAtTime,
+  isEmpty,
+  deepEqual,
   querystring,
   querystringDecode,
   extractQuerystring,
   createSubscribe,
+  calculateBackoffMillis,
   getModularInstance,
   Component,
+  LogLevel,
+  Logger,
+  DEFAULT_ENTRY_NAME2 as DEFAULT_ENTRY_NAME,
+  _apps,
+  _serverApps,
+  _components,
+  _addComponent,
+  _addOrOverwriteComponent,
   _registerComponent,
   _getProvider,
   _removeServiceInstance,
+  _isFirebaseApp,
   _isFirebaseServerApp,
+  _clearComponents,
   SDK_VERSION,
+  initializeApp,
+  initializeServerApp,
   getApp,
-  registerVersion
+  getApps,
+  deleteApp,
+  registerVersion,
+  onLog,
+  setLogLevel2 as setLogLevel
 };
-//# sourceMappingURL=chunk-QPRLTB6Y.js.map
+//# sourceMappingURL=chunk-YWX26FOZ.js.map

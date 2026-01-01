@@ -2,12 +2,19 @@ import {
   isPlatformServer
 } from "./chunk-ENKYQDZC.js";
 import {
-  Component,
-  Deferred,
-  ErrorFactory,
   FirebaseApp,
   FirebaseApps,
   VERSION,
+  ɵAngularFireSchedulers,
+  ɵgetAllInstancesOf,
+  ɵgetDefaultInstanceOf,
+  ɵzoneWrap
+} from "./chunk-GJPQPMUR.js";
+import {
+  Component,
+  Deferred,
+  ErrorFactory,
+  Logger,
   _getProvider,
   _registerComponent,
   base64,
@@ -17,15 +24,8 @@ import {
   getModularInstance,
   isIndexedDBAvailable,
   issuedAtTime,
-  registerVersion,
-  ɵAngularFireSchedulers,
-  ɵgetAllInstancesOf,
-  ɵgetDefaultInstanceOf,
-  ɵzoneWrap
-} from "./chunk-RLMWUO5H.js";
-import {
-  Logger
-} from "./chunk-SSHC6CQW.js";
+  registerVersion
+} from "./chunk-YWX26FOZ.js";
 import {
   NgModule,
   Optional,
@@ -48,7 +48,7 @@ import {
   timer
 } from "./chunk-MUD6KAHP.js";
 
-// node_modules/@angular/fire/node_modules/@firebase/app-check/dist/esm/index.esm2017.js
+// node_modules/@firebase/app-check/dist/esm/index.esm2017.js
 var APP_CHECK_STATES = /* @__PURE__ */ new Map();
 var DEFAULT_STATE = {
   activated: false,
@@ -1227,4 +1227,4 @@ export {
   onTokenChanged2 as onTokenChanged,
   setTokenAutoRefreshEnabled2 as setTokenAutoRefreshEnabled
 };
-//# sourceMappingURL=chunk-X3A73COD.js.map
+//# sourceMappingURL=chunk-SVMVNNJK.js.map
