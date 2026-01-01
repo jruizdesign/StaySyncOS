@@ -83,8 +83,8 @@ bootstrapApplication(AppComponent, {
       return dc;
     }),
     provideAppCheck(() => {
-      if (window.location.hostname === 'localhost') {
-        (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = "DEBUG_TOKEN";
+      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        return undefined as any; // Disable App Check on localhost
       }
       return initializeAppCheck(undefined, {
         provider: new ReCaptchaEnterpriseProvider('6Ldk8TssAAAAAHmIfBZ4GDSaaeR772oXEPSoVtfC'),
