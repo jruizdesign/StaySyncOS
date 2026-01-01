@@ -50,7 +50,7 @@ const loginGuard: CanActivateFn = () => {
       if (!user) {
         return true;
       }
-      return router.parseUrl('/');
+      return router.parseUrl('/dashboard');
     })
   );
 };
@@ -77,7 +77,7 @@ const setupGuard: CanActivateFn = () => {
 import { LandingComponent } from './src/components/landing.component';
 
 const routes: Routes = [
-  { path: '', component: LandingComponent, pathMatch: 'full' },
+  { path: '', component: LandingComponent, pathMatch: 'full', canActivate: [loginGuard] },
   { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
   { path: 'setup', component: SetupComponent, canActivate: [authGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard, setupGuard] },
