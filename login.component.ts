@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-// Adjust this import path based on your actual DataService location
-import { DataService } from '../../services/data.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-login',
@@ -157,6 +156,7 @@ import { DataService } from '../../services/data.service';
       align-items: center;
       margin-bottom: 1.5rem;
       font-size: 0.875rem;
+      font-size: 0.875rem;
     }
     .remember-me {
       display: flex;
@@ -206,7 +206,7 @@ import { DataService } from '../../services/data.service';
       text-decoration: none;
       font-weight: 600;
     }
-  `]
+    `]
 })
 export class LoginComponent {
     loginForm: FormGroup;
@@ -215,7 +215,7 @@ export class LoginComponent {
 
     constructor(
         private fb: FormBuilder,
-        private dataService: DataService,
+        private authService: AuthService,
         private router: Router
     ) {
         this.loginForm = this.fb.group({
@@ -229,22 +229,27 @@ export class LoginComponent {
         return !!(control && control.invalid && (control.dirty || control.touched));
     }
 
-    onSubmit() {
+    async onSubmit() {
         if (this.loginForm.valid) {
             this.isLoading = true;
             this.errorMessage = '';
 
-            this.dataService.login(this.loginForm.value).subscribe({
-                next: (response: any) => {
-                    // Navigate to dashboard on success
-                    this.router.navigate(['/dashboard']);
-                },
-                error: (err: any) => {
+            const { email, password } = this.loginForm.value;
+
+            try {
+                const success = await this.authService.login(email, password);
+                if (success) {
+                    // Router navigation is handled in AuthService, but ensured here just in case? 
+                    // No, usually best to trust service or do it here. Service does it.
+                } else {
                     this.isLoading = false;
                     this.errorMessage = 'Invalid email or password. Please try again.';
-                    console.error('Login error:', err);
                 }
-            });
+            } catch (e) {
+                this.isLoading = false;
+                this.errorMessage = 'An error occurred. Please try again.';
+                console.error(e);
+            }
         } else {
             this.loginForm.markAllAsTouched();
         }
