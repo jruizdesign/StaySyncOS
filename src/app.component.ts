@@ -76,7 +76,12 @@ export class AppComponent {
   // For '/login', we want strict match or starts with /login?
   // Our routes are simple.
   checkPublicRoute(url: string) {
-    if (url === '/' || url === '') return true;
-    return this.publicRoutes.some(r => r !== '/' && url.startsWith(r));
+    // Basic normalization to handle potential query params/fragments
+    const path = url.split('?')[0];
+
+    console.log('[AppComponent] Checking public route:', { url, path, isPublic: this.publicRoutes.some(r => path === '/' ? true : path.startsWith(r)) });
+
+    if (path === '/' || path === '') return true;
+    return this.publicRoutes.some(r => r !== '/' && path.startsWith(r));
   }
 }
