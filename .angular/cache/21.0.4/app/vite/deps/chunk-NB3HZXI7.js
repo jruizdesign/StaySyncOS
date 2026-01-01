@@ -2,8 +2,6 @@ import {
   Component as Component2,
   ErrorFactory as ErrorFactory2,
   FirebaseError as FirebaseError2,
-  LogLevel as LogLevel2,
-  Logger as Logger2,
   SDK_VERSION as SDK_VERSION2,
   _isFirebaseServerApp as _isFirebaseServerApp2,
   _registerComponent as _registerComponent2,
@@ -14,7 +12,6 @@ import {
   getModularInstance as getModularInstance2,
   getUA as getUA2,
   isBrowserExtension as isBrowserExtension2,
-  isCloudWorkstation as isCloudWorkstation2,
   isCloudflareWorker as isCloudflareWorker2,
   isIE as isIE2,
   isMobileCordova as isMobileCordova2,
@@ -22,18 +19,16 @@ import {
   querystring as querystring2,
   querystringDecode as querystringDecode2,
   registerVersion as registerVersion2
-} from "./chunk-XPVU57NH.js";
+} from "./chunk-QPRLTB6Y.js";
 import {
   AppCheckInstances
-} from "./chunk-VVRJ3KGE.js";
+} from "./chunk-X3A73COD.js";
 import {
   Component,
   ErrorFactory,
   FirebaseApp,
   FirebaseApps,
   FirebaseError,
-  LogLevel,
-  Logger,
   SDK_VERSION,
   VERSION,
   _getProvider,
@@ -64,7 +59,11 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-DRKXN4VZ.js";
+} from "./chunk-RLMWUO5H.js";
+import {
+  LogLevel,
+  Logger
+} from "./chunk-SSHC6CQW.js";
 import {
   NgModule,
   Optional,
@@ -88,13 +87,8 @@ import {
   switchMap,
   timer
 } from "./chunk-MUD6KAHP.js";
-import {
-  __objRest,
-  __spreadProps,
-  __spreadValues
-} from "./chunk-653SOEEV.js";
 
-// node_modules/@firebase/auth/dist/esm/index-36fcbc82.js
+// node_modules/@firebase/auth/dist/esm2017/index-dfc2d82f.js
 function _prodErrorMap() {
   return {
     [
@@ -105,14 +99,14 @@ function _prodErrorMap() {
 }
 var prodErrorMap = _prodErrorMap;
 var _DEFAULT_AUTH_ERROR_FACTORY = new ErrorFactory2("auth", "Firebase", _prodErrorMap());
-var logClient = new Logger2("@firebase/auth");
+var logClient = new Logger("@firebase/auth");
 function _logWarn(msg, ...args) {
-  if (logClient.logLevel <= LogLevel2.WARN) {
+  if (logClient.logLevel <= LogLevel.WARN) {
     logClient.warn(`Auth (${SDK_VERSION2}): ${msg}`, ...args);
   }
 }
 function _logError(msg, ...args) {
-  if (logClient.logLevel <= LogLevel2.ERROR) {
+  if (logClient.logLevel <= LogLevel.ERROR) {
     logClient.error(`Auth (${SDK_VERSION2}): ${msg}`, ...args);
   }
 }
@@ -123,9 +117,7 @@ function _createError(authOrCode, ...rest) {
   return createErrorInternal(authOrCode, ...rest);
 }
 function _errorWithCustomMessage(auth, code, message) {
-  const errorMap = __spreadProps(__spreadValues({}, prodErrorMap()), {
-    [code]: message
-  });
+  const errorMap = Object.assign(Object.assign({}, prodErrorMap()), { [code]: message });
   const factory = new ErrorFactory2("auth", "Firebase", errorMap);
   return factory.create(code, {
     appName: auth.name
@@ -164,7 +156,8 @@ function _isHttpOrHttps() {
   return _getCurrentScheme() === "http:" || _getCurrentScheme() === "https:";
 }
 function _getCurrentScheme() {
-  return typeof self !== "undefined" && self.location?.protocol || null;
+  var _a;
+  return typeof self !== "undefined" && ((_a = self.location) === null || _a === void 0 ? void 0 : _a.protocol) || null;
 }
 function _isOnline() {
   if (typeof navigator !== "undefined" && navigator && "onLine" in navigator && typeof navigator.onLine === "boolean" && // Apply only for traditional web apps and Chrome extensions.
@@ -487,21 +480,10 @@ var SERVER_ERROR_MAP = {
   ]: "invalid-req-type"
   /* AuthErrorCode.INVALID_REQ_TYPE */
 };
-var CookieAuthProxiedEndpoints = [
-  "/v1/accounts:signInWithCustomToken",
-  "/v1/accounts:signInWithEmailLink",
-  "/v1/accounts:signInWithIdp",
-  "/v1/accounts:signInWithPassword",
-  "/v1/accounts:signInWithPhoneNumber",
-  "/v1/token"
-  /* Endpoint.TOKEN */
-];
 var DEFAULT_API_TIMEOUT_MS = new Delay(3e4, 6e4);
 function _addTidIfNecessary(auth, request) {
   if (auth.tenantId && !request.tenantId) {
-    return __spreadProps(__spreadValues({}, request), {
-      tenantId: auth.tenantId
-    });
+    return Object.assign(Object.assign({}, request), { tenantId: auth.tenantId });
   }
   return request;
 }
@@ -518,9 +500,7 @@ async function _performApiRequest(auth, method, path, request, customErrorMap = 
         };
       }
     }
-    const query = querystring2(__spreadValues({
-      key: auth.config.apiKey
-    }, params)).slice(1);
+    const query = querystring2(Object.assign({ key: auth.config.apiKey }, params)).slice(1);
     const headers = await auth._getAdditionalHeaders();
     headers[
       "Content-Type"
@@ -532,22 +512,19 @@ async function _performApiRequest(auth, method, path, request, customErrorMap = 
         /* HttpHeader.X_FIREBASE_LOCALE */
       ] = auth.languageCode;
     }
-    const fetchArgs = __spreadValues({
+    const fetchArgs = Object.assign({
       method,
       headers
     }, body);
     if (!isCloudflareWorker2()) {
       fetchArgs.referrerPolicy = "no-referrer";
     }
-    if (auth.emulatorConfig && isCloudWorkstation2(auth.emulatorConfig.host)) {
-      fetchArgs.credentials = "include";
-    }
-    return FetchProvider.fetch()(await _getFinalTarget(auth, auth.config.apiHost, path, query), fetchArgs);
+    return FetchProvider.fetch()(_getFinalTarget(auth, auth.config.apiHost, path, query), fetchArgs);
   });
 }
 async function _performFetchWithErrorHandling(auth, customErrorMap, fetchFn) {
   auth._canInitEmulator = false;
-  const errorMap = __spreadValues(__spreadValues({}, SERVER_ERROR_MAP), customErrorMap);
+  const errorMap = Object.assign(Object.assign({}, SERVER_ERROR_MAP), customErrorMap);
   try {
     const networkTimeout = new NetworkTimeout(auth);
     const response = await Promise.race([
@@ -594,18 +571,12 @@ async function _performSignInRequest(auth, method, path, request, customErrorMap
   }
   return serverResponse;
 }
-async function _getFinalTarget(auth, host, path, query) {
+function _getFinalTarget(auth, host, path, query) {
   const base = `${host}${path}?${query}`;
-  const authInternal = auth;
-  const finalTarget = authInternal.config.emulator ? _emulatorUrl(auth.config, base) : `${auth.config.apiScheme}://${base}`;
-  if (CookieAuthProxiedEndpoints.includes(path)) {
-    await authInternal._persistenceManagerAvailable;
-    if (authInternal._getPersistenceType() === "COOKIE") {
-      const cookiePersistence = authInternal._getPersistence();
-      return cookiePersistence._getFinalTarget(finalTarget).toString();
-    }
+  if (!auth.config.emulator) {
+    return `${auth.config.apiScheme}://${base}`;
   }
-  return finalTarget;
+  return _emulatorUrl(auth.config, base);
 }
 function _parseEnforcementState(enforcementStateStr) {
   switch (enforcementStateStr) {
@@ -742,7 +713,7 @@ async function getIdTokenResult(user3, forceRefresh = false) {
     /* AuthErrorCode.INTERNAL_ERROR */
   );
   const firebase = typeof claims.firebase === "object" ? claims.firebase : void 0;
-  const signInProvider = firebase?.["sign_in_provider"];
+  const signInProvider = firebase === null || firebase === void 0 ? void 0 : firebase["sign_in_provider"];
   return {
     claims,
     token,
@@ -750,7 +721,7 @@ async function getIdTokenResult(user3, forceRefresh = false) {
     issuedAtTime: utcTimestampToDateString(secondsStringToMilliseconds(claims.iat)),
     expirationTime: utcTimestampToDateString(secondsStringToMilliseconds(claims.exp)),
     signInProvider: signInProvider || null,
-    signInSecondFactor: firebase?.["sign_in_second_factor"] || null
+    signInSecondFactor: (firebase === null || firebase === void 0 ? void 0 : firebase["sign_in_second_factor"]) || null
   };
 }
 function secondsStringToMilliseconds(seconds) {
@@ -770,7 +741,7 @@ function _parseToken(token) {
     }
     return JSON.parse(decoded);
   } catch (e) {
-    _logError("Caught error parsing JWT payload as JSON", e?.toString());
+    _logError("Caught error parsing JWT payload as JSON", e === null || e === void 0 ? void 0 : e.toString());
     return null;
   }
 }
@@ -835,6 +806,7 @@ var ProactiveRefresh = class {
     }
   }
   getInterval(wasError) {
+    var _a;
     if (wasError) {
       const interval = this.errorBackoff;
       this.errorBackoff = Math.min(
@@ -845,7 +817,7 @@ var ProactiveRefresh = class {
       return interval;
     } else {
       this.errorBackoff = 3e4;
-      const expTime = this.user.stsTokenManager.expirationTime ?? 0;
+      const expTime = (_a = this.user.stsTokenManager.expirationTime) !== null && _a !== void 0 ? _a : 0;
       const interval = expTime - Date.now() - 3e5;
       return Math.max(0, interval);
     }
@@ -863,7 +835,7 @@ var ProactiveRefresh = class {
     try {
       await this.user.getIdToken(true);
     } catch (e) {
-      if (e?.code === `auth/${"network-request-failed"}`) {
+      if ((e === null || e === void 0 ? void 0 : e.code) === `auth/${"network-request-failed"}`) {
         this.schedule(
           /* wasError */
           true
@@ -897,21 +869,22 @@ var UserMetadata = class {
   }
 };
 async function _reloadWithoutSaving(user3) {
+  var _a;
   const auth = user3.auth;
   const idToken3 = await user3.getIdToken();
   const response = await _logoutIfInvalidated(user3, getAccountInfo(auth, { idToken: idToken3 }));
   _assert(
-    response?.users.length,
+    response === null || response === void 0 ? void 0 : response.users.length,
     auth,
     "internal-error"
     /* AuthErrorCode.INTERNAL_ERROR */
   );
   const coreAccount = response.users[0];
   user3._notifyReloadListener(coreAccount);
-  const newProviderData = coreAccount.providerUserInfo?.length ? extractProviderData(coreAccount.providerUserInfo) : [];
+  const newProviderData = ((_a = coreAccount.providerUserInfo) === null || _a === void 0 ? void 0 : _a.length) ? extractProviderData(coreAccount.providerUserInfo) : [];
   const providerData = mergeProviderData(user3.providerData, newProviderData);
   const oldIsAnonymous = user3.isAnonymous;
-  const newIsAnonymous = !(user3.email && coreAccount.passwordHash) && !providerData?.length;
+  const newIsAnonymous = !(user3.email && coreAccount.passwordHash) && !(providerData === null || providerData === void 0 ? void 0 : providerData.length);
   const isAnonymous = !oldIsAnonymous ? false : newIsAnonymous;
   const updates = {
     uid: coreAccount.localId,
@@ -939,7 +912,7 @@ function mergeProviderData(original, newData) {
 }
 function extractProviderData(providers) {
   return providers.map((_a) => {
-    var _b = _a, { providerId } = _b, provider = __objRest(_b, ["providerId"]);
+    var { providerId } = _a, provider = __rest(_a, ["providerId"]);
     return {
       providerId,
       uid: provider.rawId || "",
@@ -957,21 +930,17 @@ async function requestStsToken(auth, refreshToken) {
       "refresh_token": refreshToken
     }).slice(1);
     const { tokenApiHost, apiKey } = auth.config;
-    const url = await _getFinalTarget(auth, tokenApiHost, "/v1/token", `key=${apiKey}`);
+    const url = _getFinalTarget(auth, tokenApiHost, "/v1/token", `key=${apiKey}`);
     const headers = await auth._getAdditionalHeaders();
     headers[
       "Content-Type"
       /* HttpHeader.CONTENT_TYPE */
     ] = "application/x-www-form-urlencoded";
-    const options = {
+    return FetchProvider.fetch()(url, {
       method: "POST",
       headers,
       body
-    };
-    if (auth.emulatorConfig && isCloudWorkstation2(auth.emulatorConfig.host)) {
-      options.credentials = "include";
-    }
-    return FetchProvider.fetch()(url, options);
+    });
   });
   return {
     accessToken: response.access_token,
@@ -1094,7 +1063,7 @@ function assertStringOrUndefined(assertion, appName) {
 }
 var UserImpl = class _UserImpl {
   constructor(_a) {
-    var _b = _a, { uid, auth, stsTokenManager } = _b, opt = __objRest(_b, ["uid", "auth", "stsTokenManager"]);
+    var { uid, auth, stsTokenManager } = _a, opt = __rest(_a, ["uid", "auth", "stsTokenManager"]);
     this.providerId = "firebase";
     this.proactiveRefresh = new ProactiveRefresh(this);
     this.reloadUserInfo = null;
@@ -1151,15 +1120,12 @@ var UserImpl = class _UserImpl {
     this.phoneNumber = user3.phoneNumber;
     this.isAnonymous = user3.isAnonymous;
     this.tenantId = user3.tenantId;
-    this.providerData = user3.providerData.map((userInfo) => __spreadValues({}, userInfo));
+    this.providerData = user3.providerData.map((userInfo) => Object.assign({}, userInfo));
     this.metadata._copy(user3.metadata);
     this.stsTokenManager._assign(user3.stsTokenManager);
   }
   _clone(auth) {
-    const newUser = new _UserImpl(__spreadProps(__spreadValues({}, this), {
-      auth,
-      stsTokenManager: this.stsTokenManager._clone()
-    }));
+    const newUser = new _UserImpl(Object.assign(Object.assign({}, this), { auth, stsTokenManager: this.stsTokenManager._clone() }));
     newUser.metadata._copy(this.metadata);
     return newUser;
   }
@@ -1213,7 +1179,7 @@ var UserImpl = class _UserImpl {
     return this.auth.signOut();
   }
   toJSON() {
-    return __spreadProps(__spreadValues({
+    return Object.assign(Object.assign({
       uid: this.uid,
       email: this.email || void 0,
       emailVerified: this.emailVerified,
@@ -1222,7 +1188,7 @@ var UserImpl = class _UserImpl {
       photoURL: this.photoURL || void 0,
       phoneNumber: this.phoneNumber || void 0,
       tenantId: this.tenantId || void 0,
-      providerData: this.providerData.map((userInfo) => __spreadValues({}, userInfo)),
+      providerData: this.providerData.map((userInfo) => Object.assign({}, userInfo)),
       stsTokenManager: this.stsTokenManager.toJSON(),
       // Redirect event ID must be maintained in case there is a pending
       // redirect event.
@@ -1231,22 +1197,21 @@ var UserImpl = class _UserImpl {
       // Required for compatibility with the legacy SDK (go/firebase-auth-sdk-persistence-parsing):
       apiKey: this.auth.config.apiKey,
       appName: this.auth.name
-      // Missing authDomain will be tolerated by the legacy SDK.
-      // stsTokenManager.apiKey isn't actually required (despite the legacy SDK persisting it).
     });
   }
   get refreshToken() {
     return this.stsTokenManager.refreshToken || "";
   }
   static _fromJSON(auth, object) {
-    const displayName = object.displayName ?? void 0;
-    const email = object.email ?? void 0;
-    const phoneNumber = object.phoneNumber ?? void 0;
-    const photoURL = object.photoURL ?? void 0;
-    const tenantId = object.tenantId ?? void 0;
-    const _redirectEventId = object._redirectEventId ?? void 0;
-    const createdAt = object.createdAt ?? void 0;
-    const lastLoginAt = object.lastLoginAt ?? void 0;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    const displayName = (_a = object.displayName) !== null && _a !== void 0 ? _a : void 0;
+    const email = (_b = object.email) !== null && _b !== void 0 ? _b : void 0;
+    const phoneNumber = (_c = object.phoneNumber) !== null && _c !== void 0 ? _c : void 0;
+    const photoURL = (_d = object.photoURL) !== null && _d !== void 0 ? _d : void 0;
+    const tenantId = (_e = object.tenantId) !== null && _e !== void 0 ? _e : void 0;
+    const _redirectEventId = (_f = object._redirectEventId) !== null && _f !== void 0 ? _f : void 0;
+    const createdAt = (_g = object.createdAt) !== null && _g !== void 0 ? _g : void 0;
+    const lastLoginAt = (_h = object.lastLoginAt) !== null && _h !== void 0 ? _h : void 0;
     const { uid, emailVerified, isAnonymous, providerData, stsTokenManager: plainObjectTokenManager } = object;
     _assert(
       uid && plainObjectTokenManager,
@@ -1296,7 +1261,7 @@ var UserImpl = class _UserImpl {
       lastLoginAt
     });
     if (providerData && Array.isArray(providerData)) {
-      user3.providerData = providerData.map((userInfo) => __spreadValues({}, userInfo));
+      user3.providerData = providerData.map((userInfo) => Object.assign({}, userInfo));
     }
     if (_redirectEventId) {
       user3._redirectEventId = _redirectEventId;
@@ -1333,7 +1298,7 @@ var UserImpl = class _UserImpl {
       /* AuthErrorCode.INTERNAL_ERROR */
     );
     const providerData = coreAccount.providerUserInfo !== void 0 ? extractProviderData(coreAccount.providerUserInfo) : [];
-    const isAnonymous = !(coreAccount.email && coreAccount.passwordHash) && !providerData?.length;
+    const isAnonymous = !(coreAccount.email && coreAccount.passwordHash) && !(providerData === null || providerData === void 0 ? void 0 : providerData.length);
     const stsTokenManager = new StsTokenManager();
     stsTokenManager.updateFromIdToken(idToken3);
     const user3 = new _UserImpl({
@@ -1352,7 +1317,7 @@ var UserImpl = class _UserImpl {
       tenantId: coreAccount.tenantId || null,
       providerData,
       metadata: new UserMetadata(coreAccount.createdAt, coreAccount.lastLoginAt),
-      isAnonymous: !(coreAccount.email && coreAccount.passwordHash) && !providerData?.length
+      isAnonymous: !(coreAccount.email && coreAccount.passwordHash) && !(providerData === null || providerData === void 0 ? void 0 : providerData.length)
     };
     Object.assign(user3, updates);
     return user3;
@@ -1416,17 +1381,7 @@ var PersistenceUserManager = class _PersistenceUserManager {
   }
   async getCurrentUser() {
     const blob = await this.persistence._get(this.fullUserKey);
-    if (!blob) {
-      return null;
-    }
-    if (typeof blob === "string") {
-      const response = await getAccountInfo(this.auth, { idToken: blob }).catch(() => void 0);
-      if (!response) {
-        return null;
-      }
-      return UserImpl._fromGetAccountInfoResponse(this.auth, response, blob);
-    }
-    return UserImpl._fromJSON(this.auth, blob);
+    return blob ? UserImpl._fromJSON(this.auth, blob) : null;
   }
   removeCurrentUser() {
     return this.persistence._remove(this.fullUserKey);
@@ -1465,25 +1420,14 @@ var PersistenceUserManager = class _PersistenceUserManager {
       try {
         const blob = await persistence._get(key);
         if (blob) {
-          let user3;
-          if (typeof blob === "string") {
-            const response = await getAccountInfo(auth, {
-              idToken: blob
-            }).catch(() => void 0);
-            if (!response) {
-              break;
-            }
-            user3 = await UserImpl._fromGetAccountInfoResponse(auth, response, blob);
-          } else {
-            user3 = UserImpl._fromJSON(auth, blob);
-          }
+          const user3 = UserImpl._fromJSON(auth, blob);
           if (persistence !== selectedPersistence) {
             userToMigrate = user3;
           }
           selectedPersistence = persistence;
           break;
         }
-      } catch {
+      } catch (_a) {
       }
     }
     const migrationHierarchy = availablePersistences.filter((p) => p._shouldAllowMigration);
@@ -1498,7 +1442,7 @@ var PersistenceUserManager = class _PersistenceUserManager {
       if (persistence !== selectedPersistence) {
         try {
           await persistence._remove(key);
-        } catch {
+        } catch (_a) {
         }
       }
     }));
@@ -1532,7 +1476,7 @@ function _getBrowserName(userAgent) {
   } else {
     const re = /([a-zA-Z\d\.]+)\/[a-zA-Z\d\.]*$/;
     const matches = userAgent.match(re);
-    if (matches?.length === 2) {
+    if ((matches === null || matches === void 0 ? void 0 : matches.length) === 2) {
       return matches[1];
     }
   }
@@ -1626,7 +1570,7 @@ var AuthMiddlewareQueue = class {
         }
       }
       throw this.auth._errorFactory.create("login-blocked", {
-        originalMessage: e?.message
+        originalMessage: e === null || e === void 0 ? void 0 : e.message
       });
     }
   }
@@ -1637,9 +1581,10 @@ async function _getPasswordPolicy(auth, request = {}) {
 var MINIMUM_MIN_PASSWORD_LENGTH = 6;
 var PasswordPolicyImpl = class {
   constructor(response) {
+    var _a, _b, _c, _d;
     const responseOptions = response.customStrengthOptions;
     this.customStrengthOptions = {};
-    this.customStrengthOptions.minPasswordLength = responseOptions.minPasswordLength ?? MINIMUM_MIN_PASSWORD_LENGTH;
+    this.customStrengthOptions.minPasswordLength = (_a = responseOptions.minPasswordLength) !== null && _a !== void 0 ? _a : MINIMUM_MIN_PASSWORD_LENGTH;
     if (responseOptions.maxPasswordLength) {
       this.customStrengthOptions.maxPasswordLength = responseOptions.maxPasswordLength;
     }
@@ -1659,23 +1604,24 @@ var PasswordPolicyImpl = class {
     if (this.enforcementState === "ENFORCEMENT_STATE_UNSPECIFIED") {
       this.enforcementState = "OFF";
     }
-    this.allowedNonAlphanumericCharacters = response.allowedNonAlphanumericCharacters?.join("") ?? "";
-    this.forceUpgradeOnSignin = response.forceUpgradeOnSignin ?? false;
+    this.allowedNonAlphanumericCharacters = (_c = (_b = response.allowedNonAlphanumericCharacters) === null || _b === void 0 ? void 0 : _b.join("")) !== null && _c !== void 0 ? _c : "";
+    this.forceUpgradeOnSignin = (_d = response.forceUpgradeOnSignin) !== null && _d !== void 0 ? _d : false;
     this.schemaVersion = response.schemaVersion;
   }
   validatePassword(password) {
+    var _a, _b, _c, _d, _e, _f;
     const status = {
       isValid: true,
       passwordPolicy: this
     };
     this.validatePasswordLengthOptions(password, status);
     this.validatePasswordCharacterOptions(password, status);
-    status.isValid && (status.isValid = status.meetsMinPasswordLength ?? true);
-    status.isValid && (status.isValid = status.meetsMaxPasswordLength ?? true);
-    status.isValid && (status.isValid = status.containsLowercaseLetter ?? true);
-    status.isValid && (status.isValid = status.containsUppercaseLetter ?? true);
-    status.isValid && (status.isValid = status.containsNumericCharacter ?? true);
-    status.isValid && (status.isValid = status.containsNonAlphanumericCharacter ?? true);
+    status.isValid && (status.isValid = (_a = status.meetsMinPasswordLength) !== null && _a !== void 0 ? _a : true);
+    status.isValid && (status.isValid = (_b = status.meetsMaxPasswordLength) !== null && _b !== void 0 ? _b : true);
+    status.isValid && (status.isValid = (_c = status.containsLowercaseLetter) !== null && _c !== void 0 ? _c : true);
+    status.isValid && (status.isValid = (_d = status.containsUppercaseLetter) !== null && _d !== void 0 ? _d : true);
+    status.isValid && (status.isValid = (_e = status.containsNumericCharacter) !== null && _e !== void 0 ? _e : true);
+    status.isValid && (status.isValid = (_f = status.containsNonAlphanumericCharacter) !== null && _f !== void 0 ? _f : true);
     return status;
   }
   /**
@@ -1779,7 +1725,6 @@ var AuthImpl = class {
     this._tenantRecaptchaConfigs = {};
     this._projectPasswordPolicy = null;
     this._tenantPasswordPolicies = {};
-    this._resolvePersistenceManagerAvailable = void 0;
     this.lastNotifiedUid = void 0;
     this.languageCode = null;
     this.tenantId = null;
@@ -1787,29 +1732,28 @@ var AuthImpl = class {
     this.frameworks = [];
     this.name = app.name;
     this.clientVersion = config.sdkClientVersion;
-    this._persistenceManagerAvailable = new Promise((resolve) => this._resolvePersistenceManagerAvailable = resolve);
   }
   _initializeWithPersistence(persistenceHierarchy, popupRedirectResolver) {
     if (popupRedirectResolver) {
       this._popupRedirectResolver = _getInstance(popupRedirectResolver);
     }
     this._initializationPromise = this.queue(async () => {
+      var _a, _b;
       if (this._deleted) {
         return;
       }
       this.persistenceManager = await PersistenceUserManager.create(this, persistenceHierarchy);
-      this._resolvePersistenceManagerAvailable?.();
       if (this._deleted) {
         return;
       }
-      if (this._popupRedirectResolver?._shouldInitProactively) {
+      if ((_a = this._popupRedirectResolver) === null || _a === void 0 ? void 0 : _a._shouldInitProactively) {
         try {
           await this._popupRedirectResolver._initialize(this);
         } catch (e) {
         }
       }
       await this.initializeCurrentUser(popupRedirectResolver);
-      this.lastNotifiedUid = this.currentUser?.uid || null;
+      this.lastNotifiedUid = ((_b = this.currentUser) === null || _b === void 0 ? void 0 : _b.uid) || null;
       if (this._deleted) {
         return;
       }
@@ -1850,6 +1794,7 @@ var AuthImpl = class {
     }
   }
   async initializeCurrentUser(popupRedirectResolver) {
+    var _a;
     if (_isFirebaseServerApp2(this.app)) {
       const idToken3 = this.app.settings.authIdToken;
       if (idToken3) {
@@ -1865,10 +1810,10 @@ var AuthImpl = class {
     let needsTocheckMiddleware = false;
     if (popupRedirectResolver && this.config.authDomain) {
       await this.getOrInitRedirectPersistenceManager();
-      const redirectUserEventId = this.redirectUser?._redirectEventId;
-      const storedUserEventId = futureCurrentUser?._redirectEventId;
+      const redirectUserEventId = (_a = this.redirectUser) === null || _a === void 0 ? void 0 : _a._redirectEventId;
+      const storedUserEventId = futureCurrentUser === null || futureCurrentUser === void 0 ? void 0 : futureCurrentUser._redirectEventId;
       const result = await this.tryRedirectSignIn(popupRedirectResolver);
-      if ((!redirectUserEventId || redirectUserEventId === storedUserEventId) && result?.user) {
+      if ((!redirectUserEventId || redirectUserEventId === storedUserEventId) && (result === null || result === void 0 ? void 0 : result.user)) {
         futureCurrentUser = result.user;
         needsTocheckMiddleware = true;
       }
@@ -1916,7 +1861,7 @@ var AuthImpl = class {
     try {
       await _reloadWithoutSaving(user3);
     } catch (e) {
-      if (e?.code !== `auth/${"network-request-failed"}`) {
+      if ((e === null || e === void 0 ? void 0 : e.code) !== `auth/${"network-request-failed"}`) {
         return this.directlySetCurrentUser(null);
       }
     }
@@ -2018,11 +1963,8 @@ var AuthImpl = class {
       this._tenantPasswordPolicies[this.tenantId] = passwordPolicy;
     }
   }
-  _getPersistenceType() {
-    return this.assertedPersistence.persistence.type;
-  }
   _getPersistence() {
-    return this.assertedPersistence.persistence;
+    return this.assertedPersistence.persistence.type;
   }
   _updateErrorMap(errorMap) {
     this._errorFactory = new ErrorFactory2("auth", "Firebase", errorMap());
@@ -2067,11 +2009,12 @@ var AuthImpl = class {
     }
   }
   toJSON() {
+    var _a;
     return {
       apiKey: this.config.apiKey,
       authDomain: this.config.authDomain,
       appName: this.name,
-      currentUser: this._currentUser?.toJSON()
+      currentUser: (_a = this._currentUser) === null || _a === void 0 ? void 0 : _a.toJSON()
     };
   }
   async _setRedirectUser(user3, popupRedirectResolver) {
@@ -2098,14 +2041,15 @@ var AuthImpl = class {
     return this.redirectPersistenceManager;
   }
   async _redirectUserForId(id) {
+    var _a, _b;
     if (this._isInitialized) {
       await this.queue(async () => {
       });
     }
-    if (this._currentUser?._redirectEventId === id) {
+    if (((_a = this._currentUser) === null || _a === void 0 ? void 0 : _a._redirectEventId) === id) {
       return this._currentUser;
     }
-    if (this.redirectUser?._redirectEventId === id) {
+    if (((_b = this.redirectUser) === null || _b === void 0 ? void 0 : _b._redirectEventId) === id) {
       return this.redirectUser;
     }
     return null;
@@ -2141,11 +2085,12 @@ var AuthImpl = class {
     return this.currentUser;
   }
   notifyAuthListeners() {
+    var _a, _b;
     if (!this._isInitialized) {
       return;
     }
     this.idTokenSubscription.next(this.currentUser);
-    const currentUid = this.currentUser?.uid ?? null;
+    const currentUid = (_b = (_a = this.currentUser) === null || _a === void 0 ? void 0 : _a.uid) !== null && _b !== void 0 ? _b : null;
     if (this.lastNotifiedUid !== currentUid) {
       this.lastNotifiedUid = currentUid;
       this.authStateSubscription.next(this.currentUser);
@@ -2229,6 +2174,7 @@ var AuthImpl = class {
     return this.frameworks;
   }
   async _getAdditionalHeaders() {
+    var _a;
     const headers = {
       [
         "X-Client-Version"
@@ -2241,9 +2187,9 @@ var AuthImpl = class {
         /* HttpHeader.X_FIREBASE_GMPID */
       ] = this.app.options.appId;
     }
-    const heartbeatsHeader = await this.heartbeatServiceProvider.getImmediate({
+    const heartbeatsHeader = await ((_a = this.heartbeatServiceProvider.getImmediate({
       optional: true
-    })?.getHeartbeatsHeader();
+    })) === null || _a === void 0 ? void 0 : _a.getHeartbeatsHeader());
     if (heartbeatsHeader) {
       headers[
         "X-Firebase-Client"
@@ -2260,14 +2206,15 @@ var AuthImpl = class {
     return headers;
   }
   async _getAppCheckToken() {
+    var _a;
     if (_isFirebaseServerApp2(this.app) && this.app.settings.appCheckToken) {
       return this.app.settings.appCheckToken;
     }
-    const appCheckTokenResult = await this.appCheckServiceProvider.getImmediate({ optional: true })?.getToken();
-    if (appCheckTokenResult?.error) {
+    const appCheckTokenResult = await ((_a = this.appCheckServiceProvider.getImmediate({ optional: true })) === null || _a === void 0 ? void 0 : _a.getToken());
+    if (appCheckTokenResult === null || appCheckTokenResult === void 0 ? void 0 : appCheckTokenResult.error) {
       _logWarn(`Error while retrieving App Check token: ${appCheckTokenResult.error}`);
     }
-    return appCheckTokenResult?.token;
+    return appCheckTokenResult === null || appCheckTokenResult === void 0 ? void 0 : appCheckTokenResult.token;
   }
 };
 function _castAuth(auth) {
@@ -2438,7 +2385,7 @@ async function injectRecaptchaFields(auth, request, action, isCaptchaResp = fals
       captchaResponse = await verifier.verify(action, true);
     }
   }
-  const newRequest = __spreadValues({}, request);
+  const newRequest = Object.assign({}, request);
   if (action === "mfaSmsEnrollment" || action === "mfaSmsSignIn") {
     if ("phoneEnrollmentInfo" in newRequest) {
       const phoneNumber = newRequest.phoneEnrollmentInfo.phoneNumber;
@@ -2483,8 +2430,9 @@ async function injectRecaptchaFields(auth, request, action, isCaptchaResp = fals
   return newRequest;
 }
 async function handleRecaptchaFlow(authInstance, request, actionName, actionMethod, recaptchaAuthProvider) {
+  var _a, _b;
   if (recaptchaAuthProvider === "EMAIL_PASSWORD_PROVIDER") {
-    if (authInstance._getRecaptchaConfig()?.isProviderEnabled(
+    if ((_a = authInstance._getRecaptchaConfig()) === null || _a === void 0 ? void 0 : _a.isProviderEnabled(
       "EMAIL_PASSWORD_PROVIDER"
       /* RecaptchaAuthProvider.EMAIL_PASSWORD_PROVIDER */
     )) {
@@ -2514,16 +2462,17 @@ async function handleRecaptchaFlow(authInstance, request, actionName, actionMeth
       });
     }
   } else if (recaptchaAuthProvider === "PHONE_PROVIDER") {
-    if (authInstance._getRecaptchaConfig()?.isProviderEnabled(
+    if ((_b = authInstance._getRecaptchaConfig()) === null || _b === void 0 ? void 0 : _b.isProviderEnabled(
       "PHONE_PROVIDER"
       /* RecaptchaAuthProvider.PHONE_PROVIDER */
     )) {
       const requestWithRecaptcha = await injectRecaptchaFields(authInstance, request, actionName);
       return actionMethod(authInstance, requestWithRecaptcha).catch(async (error) => {
-        if (authInstance._getRecaptchaConfig()?.getProviderEnforcementState(
+        var _a2;
+        if (((_a2 = authInstance._getRecaptchaConfig()) === null || _a2 === void 0 ? void 0 : _a2.getProviderEnforcementState(
           "PHONE_PROVIDER"
           /* RecaptchaAuthProvider.PHONE_PROVIDER */
-        ) === "AUDIT") {
+        )) === "AUDIT") {
           if (error.code === `auth/${"missing-recaptcha-token"}` || error.code === `auth/${"invalid-app-credential"}`) {
             console.log(`Failed to verify with reCAPTCHA Enterprise. Automatically triggering the reCAPTCHA v2 flow to complete the ${actionName} flow.`);
             const requestWithRecaptchaFields = await injectRecaptchaFields(
@@ -2575,12 +2524,12 @@ async function _initializeRecaptchaConfig(auth) {
   }
 }
 function _initializeAuthInstance(auth, deps) {
-  const persistence = deps?.persistence || [];
+  const persistence = (deps === null || deps === void 0 ? void 0 : deps.persistence) || [];
   const hierarchy = (Array.isArray(persistence) ? persistence : [persistence]).map(_getInstance);
-  if (deps?.errorMap) {
+  if (deps === null || deps === void 0 ? void 0 : deps.errorMap) {
     auth._updateErrorMap(deps.errorMap);
   }
-  auth._initializeWithPersistence(hierarchy, deps?.popupRedirectResolver);
+  auth._initializeWithPersistence(hierarchy, deps === null || deps === void 0 ? void 0 : deps.popupRedirectResolver);
 }
 var AuthCredential = class {
   /** @internal */
@@ -2661,7 +2610,7 @@ var EmailAuthCredential = class _EmailAuthCredential extends AuthCredential {
    */
   static fromJSON(json) {
     const obj = typeof json === "string" ? JSON.parse(json) : json;
-    if (obj?.email && obj?.password) {
+    if ((obj === null || obj === void 0 ? void 0 : obj.email) && (obj === null || obj === void 0 ? void 0 : obj.password)) {
       if (obj.signInMethod === "password") {
         return this._fromEmailAndPassword(obj.email, obj.password);
       } else if (obj.signInMethod === "emailLink") {
@@ -2800,7 +2749,7 @@ var OAuthCredential = class _OAuthCredential extends AuthCredential {
    */
   static fromJSON(json) {
     const obj = typeof json === "string" ? JSON.parse(json) : json;
-    const _a = obj, { providerId, signInMethod } = _a, rest = __objRest(_a, ["providerId", "signInMethod"]);
+    const { providerId, signInMethod } = obj, rest = __rest(obj, ["providerId", "signInMethod"]);
     if (!providerId || !signInMethod) {
       return null;
     }
@@ -2877,9 +2826,7 @@ var VERIFY_PHONE_NUMBER_FOR_EXISTING_ERROR_MAP_ = {
   /* AuthErrorCode.USER_DELETED */
 };
 async function verifyPhoneNumberForExisting(auth, request) {
-  const apiRequest = __spreadProps(__spreadValues({}, request), {
-    operation: "REAUTH"
-  });
+  const apiRequest = Object.assign(Object.assign({}, request), { operation: "REAUTH" });
   return _performSignInRequest(auth, "POST", "/v1/accounts:signInWithPhoneNumber", _addTidIfNecessary(auth, apiRequest), VERIFY_PHONE_NUMBER_FOR_EXISTING_ERROR_MAP_);
 }
 var PhoneAuthCredential = class _PhoneAuthCredential extends AuthCredential {
@@ -2905,9 +2852,7 @@ var PhoneAuthCredential = class _PhoneAuthCredential extends AuthCredential {
   }
   /** @internal */
   _linkToIdToken(auth, idToken3) {
-    return linkWithPhoneNumber$1(auth, __spreadValues({
-      idToken: idToken3
-    }, this._makeVerificationRequest()));
+    return linkWithPhoneNumber$1(auth, Object.assign({ idToken: idToken3 }, this._makeVerificationRequest()));
   }
   /** @internal */
   _getReauthenticationResolver(auth) {
@@ -2993,19 +2938,20 @@ var ActionCodeURL = class _ActionCodeURL {
    * @internal
    */
   constructor(actionLink) {
+    var _a, _b, _c, _d, _e, _f;
     const searchParams = querystringDecode2(extractQuerystring2(actionLink));
-    const apiKey = searchParams[
+    const apiKey = (_a = searchParams[
       "apiKey"
       /* QueryField.API_KEY */
-    ] ?? null;
-    const code = searchParams[
+    ]) !== null && _a !== void 0 ? _a : null;
+    const code = (_b = searchParams[
       "oobCode"
       /* QueryField.CODE */
-    ] ?? null;
-    const operation = parseMode(searchParams[
+    ]) !== null && _b !== void 0 ? _b : null;
+    const operation = parseMode((_c = searchParams[
       "mode"
       /* QueryField.MODE */
-    ] ?? null);
+    ]) !== null && _c !== void 0 ? _c : null);
     _assert(
       apiKey && code && operation,
       "argument-error"
@@ -3014,18 +2960,18 @@ var ActionCodeURL = class _ActionCodeURL {
     this.apiKey = apiKey;
     this.operation = operation;
     this.code = code;
-    this.continueUrl = searchParams[
+    this.continueUrl = (_d = searchParams[
       "continueUrl"
       /* QueryField.CONTINUE_URL */
-    ] ?? null;
-    this.languageCode = searchParams[
-      "lang"
+    ]) !== null && _d !== void 0 ? _d : null;
+    this.languageCode = (_e = searchParams[
+      "languageCode"
       /* QueryField.LANGUAGE_CODE */
-    ] ?? null;
-    this.tenantId = searchParams[
+    ]) !== null && _e !== void 0 ? _e : null;
+    this.tenantId = (_f = searchParams[
       "tenantId"
       /* QueryField.TENANT_ID */
-    ] ?? null;
+    ]) !== null && _f !== void 0 ? _f : null;
   }
   /**
    * Parses the email action link string and returns an {@link ActionCodeURL} if the link is valid,
@@ -3040,7 +2986,7 @@ var ActionCodeURL = class _ActionCodeURL {
     const actionLink = parseDeepLink(link);
     try {
       return new _ActionCodeURL(actionLink);
-    } catch {
+    } catch (_a) {
       return null;
     }
   }
@@ -3220,7 +3166,7 @@ var FacebookAuthProvider = class _FacebookAuthProvider extends BaseOAuthProvider
     }
     try {
       return _FacebookAuthProvider.credential(tokenResponse.oauthAccessToken);
-    } catch {
+    } catch (_a) {
       return null;
     }
   }
@@ -3283,7 +3229,7 @@ var GoogleAuthProvider = class _GoogleAuthProvider extends BaseOAuthProvider {
     }
     try {
       return _GoogleAuthProvider.credential(oauthIdToken, oauthAccessToken);
-    } catch {
+    } catch (_a) {
       return null;
     }
   }
@@ -3335,7 +3281,7 @@ var GithubAuthProvider = class _GithubAuthProvider extends BaseOAuthProvider {
     }
     try {
       return _GithubAuthProvider.credential(tokenResponse.oauthAccessToken);
-    } catch {
+    } catch (_a) {
       return null;
     }
   }
@@ -3390,7 +3336,7 @@ var TwitterAuthProvider = class _TwitterAuthProvider extends BaseOAuthProvider {
     }
     try {
       return _TwitterAuthProvider.credential(oauthAccessToken, oauthTokenSecret);
-    } catch {
+    } catch (_a) {
       return null;
     }
   }
@@ -3441,13 +3387,14 @@ function providerIdForResponse(response) {
 }
 var MultiFactorError = class _MultiFactorError extends FirebaseError2 {
   constructor(auth, error, operationType, user3) {
+    var _a;
     super(error.code, error.message);
     this.operationType = operationType;
     this.user = user3;
     Object.setPrototypeOf(this, _MultiFactorError.prototype);
     this.customData = {
       appName: auth.name,
-      tenantId: auth.tenantId ?? void 0,
+      tenantId: (_a = auth.tenantId) !== null && _a !== void 0 ? _a : void 0,
       _serverResponse: error.customData._serverResponse,
       operationType
     };
@@ -3499,7 +3446,7 @@ async function _reauthenticate(user3, credential, bypassAuthState = false) {
     );
     return UserCredentialImpl._forOperation(user3, operationType, response);
   } catch (e) {
-    if (e?.code === `auth/${"user-not-found"}`) {
+    if ((e === null || e === void 0 ? void 0 : e.code) === `auth/${"user-not-found"}`) {
       _fail(
         auth,
         "user-mismatch"
@@ -3553,7 +3500,7 @@ var BrowserPersistenceClass = class {
       this.storage.setItem(STORAGE_AVAILABLE_KEY, "1");
       this.storage.removeItem(STORAGE_AVAILABLE_KEY);
       return Promise.resolve(true);
-    } catch {
+    } catch (_a) {
       return Promise.resolve(false);
     }
   }
@@ -3704,113 +3651,6 @@ var BrowserLocalPersistence = class extends BrowserPersistenceClass {
   }
 };
 BrowserLocalPersistence.type = "LOCAL";
-var POLLING_INTERVAL_MS = 1e3;
-function getDocumentCookie(name3) {
-  const escapedName = name3.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
-  const matcher = RegExp(`${escapedName}=([^;]+)`);
-  return document.cookie.match(matcher)?.[1] ?? null;
-}
-function getCookieName(key) {
-  const isDevMode = window.location.protocol === "http:";
-  return `${isDevMode ? "__dev_" : "__HOST-"}FIREBASE_${key.split(":")[3]}`;
-}
-var CookiePersistence = class {
-  constructor() {
-    this.type = "COOKIE";
-    this.listenerUnsubscribes = /* @__PURE__ */ new Map();
-  }
-  // used to get the URL to the backend to proxy to
-  _getFinalTarget(originalUrl) {
-    if (typeof window === void 0) {
-      return originalUrl;
-    }
-    const url = new URL(`${window.location.origin}/__cookies__`);
-    url.searchParams.set("finalTarget", originalUrl);
-    return url;
-  }
-  // To be a usable persistence method in a chain browserCookiePersistence ensures that
-  // prerequisites have been met, namely that we're in a secureContext, navigator and document are
-  // available and cookies are enabled. Not all UAs support these method, so fallback accordingly.
-  async _isAvailable() {
-    if (typeof isSecureContext === "boolean" && !isSecureContext) {
-      return false;
-    }
-    if (typeof navigator === "undefined" || typeof document === "undefined") {
-      return false;
-    }
-    return navigator.cookieEnabled ?? true;
-  }
-  // Set should be a noop as we expect middleware to handle this
-  async _set(_key, _value) {
-    return;
-  }
-  // Attempt to get the cookie from cookieStore, fallback to document.cookie
-  async _get(key) {
-    if (!this._isAvailable()) {
-      return null;
-    }
-    const name3 = getCookieName(key);
-    if (window.cookieStore) {
-      const cookie = await window.cookieStore.get(name3);
-      return cookie?.value;
-    }
-    return getDocumentCookie(name3);
-  }
-  // Log out by overriding the idToken with a sentinel value of ""
-  async _remove(key) {
-    if (!this._isAvailable()) {
-      return;
-    }
-    const existingValue = await this._get(key);
-    if (!existingValue) {
-      return;
-    }
-    const name3 = getCookieName(key);
-    document.cookie = `${name3}=;Max-Age=34560000;Partitioned;Secure;SameSite=Strict;Path=/;Priority=High`;
-    await fetch(`/__cookies__`, { method: "DELETE" }).catch(() => void 0);
-  }
-  // Listen for cookie changes, both cookieStore and fallback to polling document.cookie
-  _addListener(key, listener) {
-    if (!this._isAvailable()) {
-      return;
-    }
-    const name3 = getCookieName(key);
-    if (window.cookieStore) {
-      const cb = ((event) => {
-        const changedCookie = event.changed.find((change) => change.name === name3);
-        if (changedCookie) {
-          listener(changedCookie.value);
-        }
-        const deletedCookie = event.deleted.find((change) => change.name === name3);
-        if (deletedCookie) {
-          listener(null);
-        }
-      });
-      const unsubscribe2 = () => window.cookieStore.removeEventListener("change", cb);
-      this.listenerUnsubscribes.set(listener, unsubscribe2);
-      return window.cookieStore.addEventListener("change", cb);
-    }
-    let lastValue = getDocumentCookie(name3);
-    const interval = setInterval(() => {
-      const currentValue = getDocumentCookie(name3);
-      if (currentValue !== lastValue) {
-        listener(currentValue);
-        lastValue = currentValue;
-      }
-    }, POLLING_INTERVAL_MS);
-    const unsubscribe = () => clearInterval(interval);
-    this.listenerUnsubscribes.set(listener, unsubscribe);
-  }
-  _removeListener(_key, listener) {
-    const unsubscribe = this.listenerUnsubscribes.get(listener);
-    if (!unsubscribe) {
-      return;
-    }
-    unsubscribe();
-    this.listenerUnsubscribes.delete(listener);
-  }
-};
-CookiePersistence.type = "COOKIE";
 var BrowserSessionPersistence = class extends BrowserPersistenceClass {
   constructor() {
     super(
@@ -3881,7 +3721,7 @@ var Receiver = class _Receiver {
     const messageEvent = event;
     const { eventId, eventType, data } = messageEvent.data;
     const handlers = this.handlersMap[eventType];
-    if (!handlers?.size) {
+    if (!(handlers === null || handlers === void 0 ? void 0 : handlers.size)) {
       return;
     }
     messageEvent.ports[0].postMessage({
@@ -4047,18 +3887,19 @@ function _isWorker() {
   return typeof _window()["WorkerGlobalScope"] !== "undefined" && typeof _window()["importScripts"] === "function";
 }
 async function _getActiveServiceWorker() {
-  if (!navigator?.serviceWorker) {
+  if (!(navigator === null || navigator === void 0 ? void 0 : navigator.serviceWorker)) {
     return null;
   }
   try {
     const registration = await navigator.serviceWorker.ready;
     return registration.active;
-  } catch {
+  } catch (_a) {
     return null;
   }
 }
 function _getServiceWorkerController() {
-  return navigator?.serviceWorker?.controller || null;
+  var _a;
+  return ((_a = navigator === null || navigator === void 0 ? void 0 : navigator.serviceWorker) === null || _a === void 0 ? void 0 : _a.controller) || null;
 }
 function _getWorkerGlobalScope() {
   return _isWorker() ? self : null;
@@ -4206,6 +4047,7 @@ var IndexedDBLocalPersistence = class {
    * may not resolve.
    */
   async initializeSender() {
+    var _a, _b;
     this.activeServiceWorker = await _getActiveServiceWorker();
     if (!this.activeServiceWorker) {
       return;
@@ -4220,10 +4062,10 @@ var IndexedDBLocalPersistence = class {
     if (!results) {
       return;
     }
-    if (results[0]?.fulfilled && results[0]?.value.includes(
+    if (((_a = results[0]) === null || _a === void 0 ? void 0 : _a.fulfilled) && ((_b = results[0]) === null || _b === void 0 ? void 0 : _b.value.includes(
       "keyChanged"
       /* _EventType.KEY_CHANGED */
-    )) {
+    ))) {
       this.serviceWorkerReceiverAvailable = true;
     }
   }
@@ -4248,7 +4090,7 @@ var IndexedDBLocalPersistence = class {
         this.serviceWorkerReceiverAvailable ? 800 : 50
         /* _TimeoutDuration.ACK */
       );
-    } catch {
+    } catch (_a) {
     }
   }
   async _isAvailable() {
@@ -4260,7 +4102,7 @@ var IndexedDBLocalPersistence = class {
       await _putObject(db, STORAGE_AVAILABLE_KEY, "1");
       await _deleteObject(db, STORAGE_AVAILABLE_KEY);
       return true;
-    } catch {
+    } catch (_a) {
     }
     return false;
   }
@@ -4376,6 +4218,7 @@ var _JSLOAD_CALLBACK = _generateCallbackName("rcb");
 var NETWORK_TIMEOUT_DELAY = new Delay(3e4, 6e4);
 var RECAPTCHA_VERIFIER_TYPE = "recaptcha";
 async function _verifyPhoneNumber(auth, options, verifier) {
+  var _a;
   if (!auth._getRecaptchaConfig()) {
     try {
       await _initializeRecaptchaConfig(auth);
@@ -4412,7 +4255,7 @@ async function _verifyPhoneNumber(auth, options, verifier) {
         const startEnrollPhoneMfaActionCallback = async (authInstance, request) => {
           if (request.phoneEnrollmentInfo.captchaResponse === FAKE_TOKEN) {
             _assert(
-              verifier?.type === RECAPTCHA_VERIFIER_TYPE,
+              (verifier === null || verifier === void 0 ? void 0 : verifier.type) === RECAPTCHA_VERIFIER_TYPE,
               authInstance,
               "argument-error"
               /* AuthErrorCode.ARGUMENT_ERROR */
@@ -4441,7 +4284,7 @@ async function _verifyPhoneNumber(auth, options, verifier) {
           "internal-error"
           /* AuthErrorCode.INTERNAL_ERROR */
         );
-        const mfaEnrollmentId = phoneInfoOptions.multiFactorHint?.uid || phoneInfoOptions.multiFactorUid;
+        const mfaEnrollmentId = ((_a = phoneInfoOptions.multiFactorHint) === null || _a === void 0 ? void 0 : _a.uid) || phoneInfoOptions.multiFactorUid;
         _assert(
           mfaEnrollmentId,
           auth,
@@ -4459,7 +4302,7 @@ async function _verifyPhoneNumber(auth, options, verifier) {
         const startSignInPhoneMfaActionCallback = async (authInstance, request) => {
           if (request.phoneSignInInfo.captchaResponse === FAKE_TOKEN) {
             _assert(
-              verifier?.type === RECAPTCHA_VERIFIER_TYPE,
+              (verifier === null || verifier === void 0 ? void 0 : verifier.type) === RECAPTCHA_VERIFIER_TYPE,
               authInstance,
               "argument-error"
               /* AuthErrorCode.ARGUMENT_ERROR */
@@ -4491,7 +4334,7 @@ async function _verifyPhoneNumber(auth, options, verifier) {
       const sendPhoneVerificationCodeActionCallback = async (authInstance, request) => {
         if (request.captchaResponse === FAKE_TOKEN) {
           _assert(
-            verifier?.type === RECAPTCHA_VERIFIER_TYPE,
+            (verifier === null || verifier === void 0 ? void 0 : verifier.type) === RECAPTCHA_VERIFIER_TYPE,
             authInstance,
             "argument-error"
             /* AuthErrorCode.ARGUMENT_ERROR */
@@ -4515,7 +4358,7 @@ async function _verifyPhoneNumber(auth, options, verifier) {
       return response.sessionInfo;
     }
   } finally {
-    verifier?._reset();
+    verifier === null || verifier === void 0 ? void 0 : verifier._reset();
   }
 }
 async function injectRecaptchaV2Token(auth, request, recaptchaV2Verifier) {
@@ -4532,7 +4375,7 @@ async function injectRecaptchaV2Token(auth, request, recaptchaV2Verifier) {
     "argument-error"
     /* AuthErrorCode.ARGUMENT_ERROR */
   );
-  const newRequest = __spreadValues({}, request);
+  const newRequest = Object.assign({}, request);
   if ("phoneEnrollmentInfo" in newRequest) {
     const phoneNumber = newRequest.phoneEnrollmentInfo.phoneNumber;
     const captchaResponse = newRequest.phoneEnrollmentInfo.captchaResponse;
@@ -4885,7 +4728,8 @@ var PopupOperation = class _PopupOperation extends AbstractPopupRedirectOperatio
     this.pollUserCancellation();
   }
   get eventId() {
-    return this.authWindow?.associatedEvent || null;
+    var _a;
+    return ((_a = this.authWindow) === null || _a === void 0 ? void 0 : _a.associatedEvent) || null;
   }
   cancel() {
     this.reject(_createError(
@@ -4907,7 +4751,8 @@ var PopupOperation = class _PopupOperation extends AbstractPopupRedirectOperatio
   }
   pollUserCancellation() {
     const poll = () => {
-      if (this.authWindow?.window?.closed) {
+      var _a, _b;
+      if ((_b = (_a = this.authWindow) === null || _a === void 0 ? void 0 : _a.window) === null || _b === void 0 ? void 0 : _b.closed) {
         this.pollId = window.setTimeout(
           () => {
             this.pollId = null;
@@ -5029,9 +4874,10 @@ var TotpMultiFactorGenerator = class {
    * @returns A promise to {@link TotpSecret}.
    */
   static async generateSecret(session) {
+    var _a;
     const mfaSession = session;
     _assert(
-      typeof mfaSession.user?.auth !== "undefined",
+      typeof ((_a = mfaSession.user) === null || _a === void 0 ? void 0 : _a.auth) !== "undefined",
       "internal-error"
       /* AuthErrorCode.INTERNAL_ERROR */
     );
@@ -5121,13 +4967,14 @@ var TotpSecret = class _TotpSecret {
    * @returns A QR code URL string.
    */
   generateQrCodeUrl(accountName, issuer) {
+    var _a;
     let useDefaults = false;
     if (_isEmptyString(accountName) || _isEmptyString(issuer)) {
       useDefaults = true;
     }
     if (useDefaults) {
       if (_isEmptyString(accountName)) {
-        accountName = this.auth.currentUser?.email || "unknownuser";
+        accountName = ((_a = this.auth.currentUser) === null || _a === void 0 ? void 0 : _a.email) || "unknownuser";
       }
       if (_isEmptyString(issuer)) {
         issuer = this.auth.name;
@@ -5137,18 +4984,19 @@ var TotpSecret = class _TotpSecret {
   }
 };
 function _isEmptyString(input) {
-  return typeof input === "undefined" || input?.length === 0;
+  return typeof input === "undefined" || (input === null || input === void 0 ? void 0 : input.length) === 0;
 }
 var name = "@firebase/auth";
-var version = "1.12.0";
+var version = "1.9.0";
 var AuthInterop = class {
   constructor(auth) {
     this.auth = auth;
     this.internalListeners = /* @__PURE__ */ new Map();
   }
   getUid() {
+    var _a;
     this.assertAuthConfigured();
-    return this.auth.currentUser?.uid || null;
+    return ((_a = this.auth.currentUser) === null || _a === void 0 ? void 0 : _a.uid) || null;
   }
   async getToken(forceRefresh) {
     this.assertAuthConfigured();
@@ -5165,7 +5013,7 @@ var AuthInterop = class {
       return;
     }
     const unsubscribe = this.auth.onIdTokenChanged((user3) => {
-      listener(user3?.stsTokenManager.accessToken || null);
+      listener((user3 === null || user3 === void 0 ? void 0 : user3.stsTokenManager.accessToken) || null);
     });
     this.internalListeners.set(listener, unsubscribe);
     this.updateProactiveRefresh();
@@ -5261,12 +5109,13 @@ function registerAuth(clientPlatform) {
     /* InstantiationMode.EXPLICIT */
   ));
   registerVersion2(name, version, getVersionForPlatform(clientPlatform));
-  registerVersion2(name, version, "esm2020");
+  registerVersion2(name, version, "esm2017");
 }
 var DEFAULT_ID_TOKEN_MAX_AGE = 5 * 60;
 var authIdTokenMaxAge = getExperimentalSetting2("authIdTokenMaxAge") || DEFAULT_ID_TOKEN_MAX_AGE;
 function getScriptParentElement() {
-  return document.getElementsByTagName("head")?.[0] ?? document;
+  var _a, _b;
+  return (_b = (_a = document.getElementsByTagName("head")) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : document;
 }
 _setExternalJSProvider({
   loadJS(url) {
@@ -6325,7 +6174,7 @@ var SERVER_ERROR_MAP2 = {
   ]: "invalid-req-type"
   /* AuthErrorCode.INVALID_REQ_TYPE */
 };
-var CookieAuthProxiedEndpoints2 = [
+var CookieAuthProxiedEndpoints = [
   "/v1/accounts:signInWithCustomToken",
   "/v1/accounts:signInWithEmailLink",
   "/v1/accounts:signInWithIdp",
@@ -6432,7 +6281,7 @@ async function _getFinalTarget2(auth, host, path, query) {
   const base = `${host}${path}?${query}`;
   const authInternal = auth;
   const finalTarget = authInternal.config.emulator ? _emulatorUrl2(auth.config, base) : `${auth.config.apiScheme}://${base}`;
-  if (CookieAuthProxiedEndpoints2.includes(path)) {
+  if (CookieAuthProxiedEndpoints.includes(path)) {
     await authInternal._persistenceManagerAvailable;
     if (authInternal._getPersistenceType() === "COOKIE") {
       const cookiePersistence = authInternal._getPersistence();
@@ -10749,18 +10598,18 @@ var BrowserLocalPersistence2 = class extends BrowserPersistenceClass2 {
 };
 BrowserLocalPersistence2.type = "LOCAL";
 var browserLocalPersistence2 = BrowserLocalPersistence2;
-var POLLING_INTERVAL_MS2 = 1e3;
-function getDocumentCookie2(name3) {
+var POLLING_INTERVAL_MS = 1e3;
+function getDocumentCookie(name3) {
   var _a, _b;
   const escapedName = name3.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
   const matcher = RegExp(`${escapedName}=([^;]+)`);
   return (_b = (_a = document.cookie.match(matcher)) === null || _a === void 0 ? void 0 : _a[1]) !== null && _b !== void 0 ? _b : null;
 }
-function getCookieName2(key) {
+function getCookieName(key) {
   const isDevMode = window.location.protocol === "http:";
   return `${isDevMode ? "__dev_" : "__HOST-"}FIREBASE_${key.split(":")[3]}`;
 }
-var CookiePersistence2 = class {
+var CookiePersistence = class {
   constructor() {
     this.type = "COOKIE";
     this.listenerUnsubscribes = /* @__PURE__ */ new Map();
@@ -10796,12 +10645,12 @@ var CookiePersistence2 = class {
     if (!this._isAvailable()) {
       return null;
     }
-    const name3 = getCookieName2(key);
+    const name3 = getCookieName(key);
     if (window.cookieStore) {
       const cookie = await window.cookieStore.get(name3);
       return cookie === null || cookie === void 0 ? void 0 : cookie.value;
     }
-    return getDocumentCookie2(name3);
+    return getDocumentCookie(name3);
   }
   // Log out by overriding the idToken with a sentinel value of ""
   async _remove(key) {
@@ -10812,7 +10661,7 @@ var CookiePersistence2 = class {
     if (!existingValue) {
       return;
     }
-    const name3 = getCookieName2(key);
+    const name3 = getCookieName(key);
     document.cookie = `${name3}=;Max-Age=34560000;Partitioned;Secure;SameSite=Strict;Path=/;Priority=High`;
     await fetch(`/__cookies__`, { method: "DELETE" }).catch(() => void 0);
   }
@@ -10821,7 +10670,7 @@ var CookiePersistence2 = class {
     if (!this._isAvailable()) {
       return;
     }
-    const name3 = getCookieName2(key);
+    const name3 = getCookieName(key);
     if (window.cookieStore) {
       const cb = ((event) => {
         const changedCookie = event.changed.find((change) => change.name === name3);
@@ -10837,14 +10686,14 @@ var CookiePersistence2 = class {
       this.listenerUnsubscribes.set(listener, unsubscribe2);
       return window.cookieStore.addEventListener("change", cb);
     }
-    let lastValue = getDocumentCookie2(name3);
+    let lastValue = getDocumentCookie(name3);
     const interval = setInterval(() => {
-      const currentValue = getDocumentCookie2(name3);
+      const currentValue = getDocumentCookie(name3);
       if (currentValue !== lastValue) {
         listener(currentValue);
         lastValue = currentValue;
       }
-    }, POLLING_INTERVAL_MS2);
+    }, POLLING_INTERVAL_MS);
     const unsubscribe = () => clearInterval(interval);
     this.listenerUnsubscribes.set(listener, unsubscribe);
   }
@@ -10857,8 +10706,8 @@ var CookiePersistence2 = class {
     this.listenerUnsubscribes.delete(listener);
   }
 };
-CookiePersistence2.type = "COOKIE";
-var browserCookiePersistence2 = CookiePersistence2;
+CookiePersistence.type = "COOKIE";
+var browserCookiePersistence = CookiePersistence;
 var BrowserSessionPersistence2 = class extends BrowserPersistenceClass2 {
   constructor() {
     super(
@@ -13577,7 +13426,7 @@ export {
   TwitterAuthProvider2 as TwitterAuthProvider,
   multiFactor2 as multiFactor,
   browserLocalPersistence2 as browserLocalPersistence,
-  browserCookiePersistence2 as browserCookiePersistence,
+  browserCookiePersistence,
   browserSessionPersistence2 as browserSessionPersistence,
   indexedDBLocalPersistence2 as indexedDBLocalPersistence,
   RecaptchaVerifier2 as RecaptchaVerifier,
@@ -13648,4 +13497,4 @@ export {
   verifyBeforeUpdateEmail3 as verifyBeforeUpdateEmail,
   verifyPasswordResetCode3 as verifyPasswordResetCode
 };
-//# sourceMappingURL=chunk-RC7RPDLL.js.map
+//# sourceMappingURL=chunk-NB3HZXI7.js.map

@@ -7,7 +7,6 @@ import {
   ErrorFactory,
   FirebaseApp,
   FirebaseApps,
-  Logger,
   VERSION,
   _getProvider,
   _registerComponent,
@@ -23,7 +22,10 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-DRKXN4VZ.js";
+} from "./chunk-RLMWUO5H.js";
+import {
+  Logger
+} from "./chunk-SSHC6CQW.js";
 import {
   NgModule,
   Optional,
@@ -1225,4 +1227,4 @@ export {
   onTokenChanged2 as onTokenChanged,
   setTokenAutoRefreshEnabled2 as setTokenAutoRefreshEnabled
 };
-//# sourceMappingURL=chunk-VVRJ3KGE.js.map
+//# sourceMappingURL=chunk-X3A73COD.js.map

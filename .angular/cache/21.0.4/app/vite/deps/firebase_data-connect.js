@@ -1,27 +1,22 @@
 import {
   Component,
   FirebaseError,
-  Logger,
   SDK_VERSION,
   _getProvider,
   _isFirebaseServerApp,
   _registerComponent,
   _removeServiceInstance,
   getApp,
-  isCloudWorkstation,
-  pingServer,
-  registerVersion,
-  updateEmulatorBanner
-} from "./chunk-XPVU57NH.js";
-import "./chunk-WXWJ24DR.js";
+  registerVersion
+} from "./chunk-QPRLTB6Y.js";
 import {
-  __spreadProps,
-  __spreadValues
-} from "./chunk-653SOEEV.js";
+  Logger
+} from "./chunk-SSHC6CQW.js";
+import "./chunk-653SOEEV.js";
 
-// node_modules/@firebase/data-connect/dist/index.esm.js
+// node_modules/@firebase/data-connect/dist/index.esm2017.js
 var name = "@firebase/data-connect";
-var version = "0.3.12";
+var version = "0.3.0";
 var SDK_VERSION2 = "";
 function setSDKVersion(version2) {
   SDK_VERSION2 = version2;
@@ -32,9 +27,9 @@ var AppCheckTokenProvider = class {
     if (_isFirebaseServerApp(app) && app.settings.appCheckToken) {
       this.serverAppAppCheckToken = app.settings.appCheckToken;
     }
-    this.appCheck = appCheckProvider?.getImmediate({ optional: true });
+    this.appCheck = appCheckProvider === null || appCheckProvider === void 0 ? void 0 : appCheckProvider.getImmediate({ optional: true });
     if (!this.appCheck) {
-      void appCheckProvider?.get().then((appCheck) => this.appCheck = appCheck).catch();
+      void (appCheckProvider === null || appCheckProvider === void 0 ? void 0 : appCheckProvider.get().then((appCheck) => this.appCheck = appCheck).catch());
     }
   }
   getToken() {
@@ -55,7 +50,8 @@ var AppCheckTokenProvider = class {
     return this.appCheck.getToken();
   }
   addTokenChangeListener(listener) {
-    void this.appCheckProvider?.get().then((appCheck) => appCheck.addTokenListener(listener));
+    var _a;
+    void ((_a = this.appCheckProvider) === null || _a === void 0 ? void 0 : _a.get().then((appCheck) => appCheck.addTokenListener(listener)));
   }
 };
 var Code = {
@@ -67,23 +63,13 @@ var Code = {
   PARTIAL_ERROR: "partial-error",
   UNAUTHORIZED: "unauthorized"
 };
-var DataConnectError = class _DataConnectError extends FirebaseError {
+var DataConnectError = class extends FirebaseError {
+  /** @hideconstructor */
   constructor(code, message) {
     super(code, message);
-    this.name = "DataConnectError";
-    Object.setPrototypeOf(this, _DataConnectError.prototype);
-  }
-  /** @internal */
-  toString() {
-    return `${this.name}[code=${this.code}]: ${this.message}`;
-  }
-};
-var DataConnectOperationError = class extends DataConnectError {
-  /** @hideconstructor */
-  constructor(message, response) {
-    super(Code.PARTIAL_ERROR, message);
-    this.name = "DataConnectOperationError";
-    this.response = response;
+    this.code = code;
+    this.message = message;
+    this.toString = () => `${this.name}: [code=${this.code}]: ${this.message}`;
   }
 };
 var logger = new Logger("@firebase/data-connect");
@@ -129,7 +115,8 @@ var FirebaseAuthProvider = class {
     });
   }
   addTokenChangeListener(listener) {
-    this._auth?.addAuthTokenListener(listener);
+    var _a;
+    (_a = this._auth) === null || _a === void 0 ? void 0 : _a.addAuthTokenListener(listener);
   }
   removeTokenChangeListener(listener) {
     this._authProvider.get().then((auth) => auth.removeAuthTokenListener(listener)).catch((err) => logError(err));
@@ -156,9 +143,7 @@ function getRefSerializer(queryRef2, data, source) {
       refInfo: {
         name: queryRef2.name,
         variables: queryRef2.variables,
-        connectorConfig: __spreadValues({
-          projectId: queryRef2.dataConnect.app.options.projectId
-        }, queryRef2.dataConnect.getSettings())
+        connectorConfig: Object.assign({ projectId: queryRef2.dataConnect.app.options.projectId }, queryRef2.dataConnect.getSettings())
       },
       fetchTime: Date.now().toLocaleString(),
       source
@@ -186,7 +171,7 @@ var QueryManager = class {
     setIfNotExists(this._queries, key, newTrackedQuery);
     return this._queries.get(key);
   }
-  addSubscription(queryRef2, onResultCallback, onCompleteCallback, onErrorCallback, initialCache) {
+  addSubscription(queryRef2, onResultCallback, onErrorCallback, initialCache) {
     const key = encoderImpl({
       name: queryRef2.name,
       variables: queryRef2.variables,
@@ -195,13 +180,11 @@ var QueryManager = class {
     const trackedQuery = this._queries.get(key);
     const subscription = {
       userCallback: onResultCallback,
-      onCompleteCallback,
       errCallback: onErrorCallback
     };
     const unsubscribe = () => {
       const trackedQuery2 = this._queries.get(key);
       trackedQuery2.subscriptions = trackedQuery2.subscriptions.filter((sub) => sub !== subscription);
-      onCompleteCallback?.();
     };
     if (initialCache && trackedQuery.currentCache !== initialCache) {
       logDebug("Initial cache found. Comparing dates.");
@@ -248,12 +231,7 @@ var QueryManager = class {
     const result = this.transport.invokeQuery(queryRef2.name, queryRef2.variables);
     const newR = result.then((res) => {
       const fetchTime = (/* @__PURE__ */ new Date()).toString();
-      const result2 = __spreadProps(__spreadValues({}, res), {
-        source: SOURCE_SERVER,
-        ref: queryRef2,
-        toJSON: getRefSerializer(queryRef2, res.data, SOURCE_SERVER),
-        fetchTime
-      });
+      const result2 = Object.assign(Object.assign({}, res), { source: SOURCE_SERVER, ref: queryRef2, toJSON: getRefSerializer(queryRef2, res.data, SOURCE_SERVER), fetchTime });
       trackedQuery.subscriptions.forEach((subscription) => {
         subscription.userCallback(result2);
       });
@@ -309,7 +287,7 @@ function urlBuilder(projectConfig, transportOptions) {
     logError("Port type is of an invalid type");
     throw new DataConnectError(Code.INVALID_ARGUMENT, "Incorrect type for port passed in!");
   }
-  return `${baseUrl}/v1/projects/${project}/locations/${location}/services/${service}/connectors/${connector}`;
+  return `${baseUrl}/v1beta/projects/${project}/locations/${location}/services/${service}/connectors/${connector}`;
 }
 function addToken(url, apiKey) {
   if (!apiKey) {
@@ -329,7 +307,7 @@ function getGoogApiClientValue(_isUsingGen, _callerSdkType) {
   }
   return str;
 }
-function dcFetch(url, body, { signal }, appId, accessToken, appCheckToken, _isUsingGen, _callerSdkType, _isUsingEmulator) {
+function dcFetch(url, body, { signal }, appId, accessToken, appCheckToken, _isUsingGen, _callerSdkType) {
   if (!connectFetch) {
     throw new DataConnectError(Code.OTHER, "No Fetch Implementation detected!");
   }
@@ -347,16 +325,13 @@ function dcFetch(url, body, { signal }, appId, accessToken, appCheckToken, _isUs
     headers["X-Firebase-AppCheck"] = appCheckToken;
   }
   const bodyStr = JSON.stringify(body);
-  const fetchOptions = {
+  logDebug(`Making request out to ${url} with body: ${bodyStr}`);
+  return connectFetch(url, {
     body: bodyStr,
     method: "POST",
     headers,
     signal
-  };
-  if (isCloudWorkstation(url) && _isUsingEmulator) {
-    fetchOptions.credentials = "include";
-  }
-  return connectFetch(url, fetchOptions).catch((err) => {
+  }).catch((err) => {
     throw new DataConnectError(Code.OTHER, "Failed to fetch: " + JSON.stringify(err));
   }).then(async (response) => {
     let jsonResponse = null;
@@ -377,23 +352,21 @@ function dcFetch(url, body, { signal }, appId, accessToken, appCheckToken, _isUs
   }).then((res) => {
     if (res.errors && res.errors.length) {
       const stringified = JSON.stringify(res.errors);
-      const response = {
-        errors: res.errors,
-        data: res.data
-      };
-      throw new DataConnectOperationError("DataConnect error while performing request: " + stringified, response);
+      logError("DataConnect error while performing request: " + stringified);
+      throw new DataConnectError(Code.OTHER, stringified);
     }
     return res;
   });
 }
 function getMessage(obj) {
-  if ("message" in obj && obj.message) {
+  if ("message" in obj) {
     return obj.message;
   }
   return JSON.stringify(obj);
 }
 var RESTTransport = class {
   constructor(options, apiKey, appId, authProvider, appCheckProvider, transportOptions, _isUsingGen = false, _callerSdkType = CallerSdkTypeEnum.Base) {
+    var _a, _b;
     this.apiKey = apiKey;
     this.appId = appId;
     this.authProvider = authProvider;
@@ -408,14 +381,13 @@ var RESTTransport = class {
     this._accessToken = null;
     this._appCheckToken = null;
     this._lastToken = null;
-    this._isUsingEmulator = false;
     this.invokeQuery = (queryName, body) => {
       const abortController = new AbortController();
       const withAuth = this.withRetry(() => dcFetch(addToken(`${this.endpointUrl}:executeQuery`, this.apiKey), {
         name: `projects/${this._project}/locations/${this._location}/services/${this._serviceName}/connectors/${this._connectorName}`,
         operationName: queryName,
         variables: body
-      }, abortController, this.appId, this._accessToken, this._appCheckToken, this._isUsingGen, this._callerSdkType, this._isUsingEmulator));
+      }, abortController, this.appId, this._accessToken, this._appCheckToken, this._isUsingGen, this._callerSdkType));
       return withAuth;
     };
     this.invokeMutation = (mutationName, body) => {
@@ -425,7 +397,7 @@ var RESTTransport = class {
           name: `projects/${this._project}/locations/${this._location}/services/${this._serviceName}/connectors/${this._connectorName}`,
           operationName: mutationName,
           variables: body
-        }, abortController, this.appId, this._accessToken, this._appCheckToken, this._isUsingGen, this._callerSdkType, this._isUsingEmulator);
+        }, abortController, this.appId, this._accessToken, this._appCheckToken, this._isUsingGen, this._callerSdkType);
       });
       return taskResult;
     };
@@ -450,11 +422,11 @@ var RESTTransport = class {
       throw new DataConnectError(Code.INVALID_ARGUMENT, "Connector Name required!");
     }
     this._connectorName = connector;
-    this.authProvider?.addTokenChangeListener((token) => {
+    (_a = this.authProvider) === null || _a === void 0 ? void 0 : _a.addTokenChangeListener((token) => {
       logDebug(`New Token Available: ${token}`);
       this._accessToken = token;
     });
-    this.appCheckProvider?.addTokenChangeListener((result) => {
+    (_b = this.appCheckProvider) === null || _b === void 0 ? void 0 : _b.addTokenChangeListener((result) => {
       const { token } = result;
       logDebug(`New App Check Token Available: ${token}`);
       this._appCheckToken = token;
@@ -470,7 +442,6 @@ var RESTTransport = class {
   }
   useEmulator(host, port, isSecure) {
     this._host = host;
-    this._isUsingEmulator = true;
     if (typeof port === "number") {
       this._port = port;
     }
@@ -482,9 +453,10 @@ var RESTTransport = class {
     this._accessToken = newToken;
   }
   async getWithAuth(forceToken = false) {
+    var _a;
     let starterPromise = new Promise((resolve) => resolve(this._accessToken));
     if (this.appCheckProvider) {
-      this._appCheckToken = (await this.appCheckProvider.getToken())?.token;
+      this._appCheckToken = (_a = await this.appCheckProvider.getToken()) === null || _a === void 0 ? void 0 : _a.token;
     }
     if (this.authProvider) {
       starterPromise = this.authProvider.getToken(
@@ -541,12 +513,7 @@ var MutationManager = class {
   executeMutation(mutationRef2) {
     const result = this._transport.invokeMutation(mutationRef2.name, mutationRef2.variables);
     const withRefPromise = result.then((res) => {
-      const obj = __spreadProps(__spreadValues({}, res), {
-        // Double check that the result is result.data, not just result
-        source: SOURCE_SERVER,
-        ref: mutationRef2,
-        fetchTime: Date.now().toLocaleString()
-      });
+      const obj = Object.assign(Object.assign({}, res), { source: SOURCE_SERVER, ref: mutationRef2, fetchTime: Date.now().toLocaleString() });
       return obj;
     });
     this._inflight.push(result);
@@ -633,7 +600,7 @@ var DataConnect = class {
   }
   // @internal
   enableEmulator(transportOptions) {
-    if (this._transportOptions && this._initialized && !areTransportOptionsEqual(this._transportOptions, transportOptions)) {
+    if (this._initialized && !areTransportOptionsEqual(this._transportOptions, transportOptions)) {
       logError("enableEmulator called after initialization");
       throw new DataConnectError(Code.ALREADY_INITIALIZED, "DataConnect instance already initialized!");
     }
@@ -645,10 +612,6 @@ function areTransportOptionsEqual(transportOptions1, transportOptions2) {
   return transportOptions1.host === transportOptions2.host && transportOptions1.port === transportOptions2.port && transportOptions1.sslEnabled === transportOptions2.sslEnabled;
 }
 function connectDataConnectEmulator(dc, host, port, sslEnabled = false) {
-  if (isCloudWorkstation(host)) {
-    void pingServer(`https://${host}${port ? `:${port}` : ""}`);
-    updateEmulatorBanner("Data Connect", true);
-  }
   dc.enableEmulator({ host, port, sslEnabled });
 }
 function getDataConnect(appOrOptions, optionalOptions) {
@@ -712,13 +675,13 @@ function registerDataConnect(variant) {
       if (!app.options.projectId) {
         throw new DataConnectError(Code.INVALID_ARGUMENT, "Project ID must be provided. Did you pass in a proper projectId to initializeApp?");
       }
-      return new DataConnect(app, __spreadProps(__spreadValues({}, newOpts), { projectId: app.options.projectId }), authProvider, appCheckProvider);
+      return new DataConnect(app, Object.assign(Object.assign({}, newOpts), { projectId: app.options.projectId }), authProvider, appCheckProvider);
     },
     "PUBLIC"
     /* ComponentType.PUBLIC */
   ).setMultipleInstances(true));
   registerVersion(name, version, variant);
-  registerVersion(name, version, "esm2020");
+  registerVersion(name, version, "esm2017");
 }
 function executeQuery(queryRef2) {
   return queryRef2.dataConnect._queryManager.executeQuery(queryRef2);
@@ -773,20 +736,17 @@ function subscribe(queryRefOrSerializedResult, observerOrOnNext, onError, onComp
   } else {
     onResult = observerOrOnNext.onNext;
     onError = observerOrOnNext.onErr;
-    onComplete = observerOrOnNext.onComplete;
+    observerOrOnNext.onComplete;
   }
   if (!onResult) {
     throw new DataConnectError(Code.INVALID_ARGUMENT, "Must provide onNext");
   }
-  return ref.dataConnect._queryManager.addSubscription(ref, onResult, onComplete, onError, initialCache);
+  return ref.dataConnect._queryManager.addSubscription(ref, onResult, onError, initialCache);
 }
 registerDataConnect();
 export {
   CallerSdkTypeEnum,
-  Code,
   DataConnect,
-  DataConnectError,
-  DataConnectOperationError,
   MUTATION_STR,
   MutationManager,
   QUERY_STR,

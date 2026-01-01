@@ -3,7 +3,6 @@ import {
   FirebaseApp,
   FirebaseApps,
   FirebaseError,
-  Logger,
   SDK_VERSION,
   VERSION,
   _getProvider,
@@ -19,15 +18,17 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-DRKXN4VZ.js";
-import "./chunk-WXWJ24DR.js";
-import "./chunk-TO2ZCXMC.js";
+} from "./chunk-RLMWUO5H.js";
+import {
+  Logger
+} from "./chunk-SSHC6CQW.js";
 import {
   NgModule,
   Optional,
   setClassMetadata,
   ɵɵdefineNgModule
 } from "./chunk-WWLEEM6L.js";
+import "./chunk-TO2ZCXMC.js";
 import {
   InjectionToken,
   Injector,

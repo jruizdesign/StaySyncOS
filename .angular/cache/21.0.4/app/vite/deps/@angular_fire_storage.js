@@ -1,6 +1,6 @@
 import {
   AuthInstances
-} from "./chunk-RC7RPDLL.js";
+} from "./chunk-NB3HZXI7.js";
 import {
   Component as Component2,
   FirebaseError as FirebaseError2,
@@ -8,10 +8,10 @@ import {
   _isFirebaseServerApp as _isFirebaseServerApp2,
   _registerComponent as _registerComponent2,
   registerVersion as registerVersion2
-} from "./chunk-XPVU57NH.js";
+} from "./chunk-QPRLTB6Y.js";
 import {
   AppCheckInstances
-} from "./chunk-VVRJ3KGE.js";
+} from "./chunk-X3A73COD.js";
 import "./chunk-ENKYQDZC.js";
 import {
   Component,
@@ -35,15 +35,15 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-DRKXN4VZ.js";
-import "./chunk-WXWJ24DR.js";
-import "./chunk-TO2ZCXMC.js";
+} from "./chunk-RLMWUO5H.js";
+import "./chunk-SSHC6CQW.js";
 import {
   NgModule,
   Optional,
   setClassMetadata,
   ɵɵdefineNgModule
 } from "./chunk-WWLEEM6L.js";
+import "./chunk-TO2ZCXMC.js";
 import {
   InjectionToken,
   Injector,
@@ -61,7 +61,7 @@ import {
 } from "./chunk-MUD6KAHP.js";
 import "./chunk-653SOEEV.js";
 
-// node_modules/@firebase/storage/dist/index.esm.js
+// node_modules/@firebase/storage/dist/index.esm2017.js
 var DEFAULT_HOST = "firebasestorage.googleapis.com";
 var CONFIG_STORAGE_BUCKET_KEY = "storageBucket";
 var DEFAULT_MAX_OPERATION_RETRY_TIME = 2 * 60 * 1e3;
@@ -393,7 +393,7 @@ function isRetryStatusCode(status, additionalRetryCodes) {
   return isFiveHundredCode || isExtraRetryCode || isAdditionalRetryCode;
 }
 var NetworkRequest = class {
-  constructor(url_, method_, headers_, body_, successCodes_, additionalRetryCodes_, callback_, errorCallback_, timeout_, progressCallback_, connectionFactory_, retry = true, isUsingEmulator = false) {
+  constructor(url_, method_, headers_, body_, successCodes_, additionalRetryCodes_, callback_, errorCallback_, timeout_, progressCallback_, connectionFactory_, retry = true) {
     this.url_ = url_;
     this.method_ = method_;
     this.headers_ = headers_;
@@ -406,7 +406,6 @@ var NetworkRequest = class {
     this.progressCallback_ = progressCallback_;
     this.connectionFactory_ = connectionFactory_;
     this.retry = retry;
-    this.isUsingEmulator = isUsingEmulator;
     this.pendingConnection_ = null;
     this.backoffId_ = null;
     this.canceled_ = false;
@@ -438,7 +437,7 @@ var NetworkRequest = class {
       if (this.progressCallback_ !== null) {
         connection.addUploadProgressListener(progressListener);
       }
-      connection.send(this.url_, this.method_, this.isUsingEmulator, this.body_, this.headers_).then(() => {
+      connection.send(this.url_, this.method_, this.body_, this.headers_).then(() => {
         if (this.progressCallback_ !== null) {
           connection.removeUploadProgressListener(progressListener);
         }
@@ -524,7 +523,7 @@ function addAuthHeader_(headers, authToken) {
   }
 }
 function addVersionHeader_(headers, firebaseVersion) {
-  headers["X-Firebase-Storage-Version"] = "webjs/" + (firebaseVersion ?? "AppManager");
+  headers["X-Firebase-Storage-Version"] = "webjs/" + (firebaseVersion !== null && firebaseVersion !== void 0 ? firebaseVersion : "AppManager");
 }
 function addGmpidHeader_(headers, appId) {
   if (appId) {
@@ -536,7 +535,7 @@ function addAppCheckHeader_(headers, appCheckToken) {
     headers["X-Firebase-AppCheck"] = appCheckToken;
   }
 }
-function makeRequest(requestInfo, appId, authToken, appCheckToken, requestFactory, firebaseVersion, retry = true, isUsingEmulator = false) {
+function makeRequest(requestInfo, appId, authToken, appCheckToken, requestFactory, firebaseVersion, retry = true) {
   const queryPart = makeQueryString(requestInfo.urlParams);
   const url = requestInfo.url + queryPart;
   const headers = Object.assign({}, requestInfo.headers);
@@ -544,7 +543,7 @@ function makeRequest(requestInfo, appId, authToken, appCheckToken, requestFactor
   addAuthHeader_(headers, authToken);
   addVersionHeader_(headers, firebaseVersion);
   addAppCheckHeader_(headers, appCheckToken);
-  return new NetworkRequest(url, requestInfo.method, headers, requestInfo.body, requestInfo.successCodes, requestInfo.additionalRetryCodes, requestInfo.handler, requestInfo.errorHandler, requestInfo.timeout, requestInfo.progressCallback, requestFactory, retry, isUsingEmulator);
+  return new NetworkRequest(url, requestInfo.method, headers, requestInfo.body, requestInfo.successCodes, requestInfo.additionalRetryCodes, requestInfo.handler, requestInfo.errorHandler, requestInfo.timeout, requestInfo.progressCallback, requestFactory, retry);
 }
 function parent(path) {
   if (path.length === 0) {
@@ -640,20 +639,19 @@ var Reference = class _Reference {
   }
 };
 function extractBucket(host, config) {
-  const bucketString = config?.[CONFIG_STORAGE_BUCKET_KEY];
+  const bucketString = config === null || config === void 0 ? void 0 : config[CONFIG_STORAGE_BUCKET_KEY];
   if (bucketString == null) {
     return null;
   }
   return Location.makeFromBucketSpec(bucketString, host);
 }
 var FirebaseStorageImpl = class {
-  constructor(app, _authProvider, _appCheckProvider, _url, _firebaseVersion, _isUsingEmulator = false) {
+  constructor(app, _authProvider, _appCheckProvider, _url, _firebaseVersion) {
     this.app = app;
     this._authProvider = _authProvider;
     this._appCheckProvider = _appCheckProvider;
     this._url = _url;
     this._firebaseVersion = _firebaseVersion;
-    this._isUsingEmulator = _isUsingEmulator;
     this._bucket = null;
     this._host = DEFAULT_HOST;
     this._protocol = "https";
@@ -766,7 +764,7 @@ var FirebaseStorageImpl = class {
    */
   _makeRequest(requestInfo, requestFactory, authToken, appCheckToken, retry = true) {
     if (!this._deleted) {
-      const request = makeRequest(requestInfo, this._appId, authToken, appCheckToken, requestFactory, this._firebaseVersion, retry, this._isUsingEmulator);
+      const request = makeRequest(requestInfo, this._appId, authToken, appCheckToken, requestFactory, this._firebaseVersion, retry);
       this._requests.add(request);
       request.getPromise().then(() => this._requests.delete(request), () => this._requests.delete(request));
       return request;
@@ -783,7 +781,7 @@ var FirebaseStorageImpl = class {
   }
 };
 var name = "@firebase/storage";
-var version = "0.14.0";
+var version = "0.13.6";
 var STORAGE_TYPE = "storage";
 function factory(container, { instanceIdentifier: url }) {
   const app = container.getProvider("app").getImmediate();
@@ -799,7 +797,7 @@ function registerStorage() {
     /* ComponentType.PUBLIC */
   ).setMultipleInstances(true));
   registerVersion2(name, version, "");
-  registerVersion2(name, version, "esm2020");
+  registerVersion2(name, version, "esm2017");
 }
 registerStorage();
 

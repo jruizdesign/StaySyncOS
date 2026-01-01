@@ -1,18 +1,17 @@
 import {
   AuthInstances
-} from "./chunk-RC7RPDLL.js";
+} from "./chunk-NB3HZXI7.js";
 import {
   Component as Component2,
   FirebaseError as FirebaseError2,
   _isFirebaseServerApp as _isFirebaseServerApp2,
   _registerComponent as _registerComponent2,
   getModularInstance as getModularInstance2,
-  isCloudWorkstation as isCloudWorkstation2,
   registerVersion as registerVersion2
-} from "./chunk-XPVU57NH.js";
+} from "./chunk-QPRLTB6Y.js";
 import {
   AppCheckInstances
-} from "./chunk-VVRJ3KGE.js";
+} from "./chunk-X3A73COD.js";
 import "./chunk-ENKYQDZC.js";
 import {
   Component,
@@ -34,15 +33,15 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-DRKXN4VZ.js";
-import "./chunk-WXWJ24DR.js";
-import "./chunk-TO2ZCXMC.js";
+} from "./chunk-RLMWUO5H.js";
+import "./chunk-SSHC6CQW.js";
 import {
   NgModule,
   Optional,
   setClassMetadata,
   ɵɵdefineNgModule
 } from "./chunk-WWLEEM6L.js";
+import "./chunk-TO2ZCXMC.js";
 import {
   InjectionToken,
   Injector,
@@ -59,7 +58,7 @@ import {
 } from "./chunk-MUD6KAHP.js";
 import "./chunk-653SOEEV.js";
 
-// node_modules/@firebase/functions/dist/esm/index.esm.js
+// node_modules/@firebase/functions/dist/esm/index.esm2017.js
 var LONG_TYPE = "type.googleapis.com/google.protobuf.Int64Value";
 var UNSIGNED_LONG_TYPE = "type.googleapis.com/google.protobuf.UInt64Value";
 function mapValues(o, f) {
@@ -242,7 +241,7 @@ var ContextProvider = class {
       });
     }
     if (!this.appCheck) {
-      appCheckProvider?.get().then((appCheck) => this.appCheck = appCheck, () => {
+      appCheckProvider === null || appCheckProvider === void 0 ? void 0 : appCheckProvider.get().then((appCheck) => this.appCheck = appCheck, () => {
       });
     }
   }
@@ -252,7 +251,7 @@ var ContextProvider = class {
     }
     try {
       const token = await this.auth.getToken();
-      return token?.accessToken;
+      return token === null || token === void 0 ? void 0 : token.accessToken;
     } catch (e) {
       return void 0;
     }
@@ -357,18 +356,14 @@ function httpsCallable$1(functionsInstance, name3, options) {
   };
   return callable;
 }
-function getCredentials(functionsInstance) {
-  return functionsInstance.emulatorOrigin && isCloudWorkstation2(functionsInstance.emulatorOrigin) ? "include" : void 0;
-}
-async function postJSON(url, body, headers, fetchImpl, functionsInstance) {
+async function postJSON(url, body, headers, fetchImpl) {
   headers["Content-Type"] = "application/json";
   let response;
   try {
     response = await fetchImpl(url, {
       method: "POST",
       body: JSON.stringify(body),
-      headers,
-      credentials: getCredentials(functionsInstance)
+      headers
     });
   } catch (e) {
     return {
@@ -411,7 +406,7 @@ async function callAtURL(functionsInstance, url, data, options) {
   const timeout = options.timeout || 7e4;
   const failAfterHandle = failAfter(timeout);
   const response = await Promise.race([
-    postJSON(url, body, headers, functionsInstance.fetchImpl, functionsInstance),
+    postJSON(url, body, headers, functionsInstance.fetchImpl),
     failAfterHandle.promise,
     functionsInstance.cancelAllRequests
   ]);
@@ -441,6 +436,7 @@ function stream(functionsInstance, name3, data, options) {
   return streamAtURL(functionsInstance, url, data, options || {});
 }
 async function streamAtURL(functionsInstance, url, data, options) {
+  var _a;
   data = encode(data);
   const body = { data };
   const headers = await makeAuthHeaders(functionsInstance, options);
@@ -452,8 +448,7 @@ async function streamAtURL(functionsInstance, url, data, options) {
       method: "POST",
       body: JSON.stringify(body),
       headers,
-      signal: options?.signal,
-      credentials: getCredentials(functionsInstance)
+      signal: options === null || options === void 0 ? void 0 : options.signal
     });
   } catch (e) {
     if (e instanceof Error && e.name === "AbortError") {
@@ -492,12 +487,12 @@ async function streamAtURL(functionsInstance, url, data, options) {
     resultResolver = resolve;
     resultRejecter = reject;
   });
-  options?.signal?.addEventListener("abort", () => {
+  (_a = options === null || options === void 0 ? void 0 : options.signal) === null || _a === void 0 ? void 0 : _a.addEventListener("abort", () => {
     const error = new FunctionsError("cancelled", "Request was cancelled.");
     resultRejecter(error);
   });
   const reader = response.body.getReader();
-  const rstream = createResponseStream(reader, resultResolver, resultRejecter, options?.signal);
+  const rstream = createResponseStream(reader, resultResolver, resultRejecter, options === null || options === void 0 ? void 0 : options.signal);
   return {
     stream: {
       [Symbol.asyncIterator]() {
@@ -554,7 +549,7 @@ function createResponseStream(reader, resultResolver, resultRejecter, signal) {
       let currentText = "";
       return pump();
       async function pump() {
-        if (signal?.aborted) {
+        if (signal === null || signal === void 0 ? void 0 : signal.aborted) {
           const error = new FunctionsError("cancelled", "Request was cancelled");
           controller.error(error);
           resultRejecter(error);
@@ -569,7 +564,7 @@ function createResponseStream(reader, resultResolver, resultRejecter, signal) {
             controller.close();
             return;
           }
-          if (signal?.aborted) {
+          if (signal === null || signal === void 0 ? void 0 : signal.aborted) {
             const error = new FunctionsError("cancelled", "Request was cancelled");
             controller.error(error);
             resultRejecter(error);
@@ -598,7 +593,7 @@ function createResponseStream(reader, resultResolver, resultRejecter, signal) {
   });
 }
 var name = "@firebase/functions";
-var version = "0.13.1";
+var version = "0.12.2";
 var AUTH_INTERNAL_NAME = "auth-internal";
 var APP_CHECK_INTERNAL_NAME = "app-check-internal";
 var MESSAGING_INTERNAL_NAME = "messaging-internal";
@@ -617,7 +612,7 @@ function registerFunctions(variant) {
     /* ComponentType.PUBLIC */
   ).setMultipleInstances(true));
   registerVersion2(name, version, variant);
-  registerVersion2(name, version, "esm2020");
+  registerVersion2(name, version, "esm2017");
 }
 function httpsCallable(functionsInstance, name3, options) {
   return httpsCallable$1(getModularInstance2(functionsInstance), name3, options);

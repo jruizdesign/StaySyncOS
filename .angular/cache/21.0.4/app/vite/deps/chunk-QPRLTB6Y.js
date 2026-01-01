@@ -1,14 +1,9 @@
 import {
+  Logger,
   openDB
-} from "./chunk-WXWJ24DR.js";
-import {
-  __spreadValues
-} from "./chunk-653SOEEV.js";
+} from "./chunk-SSHC6CQW.js";
 
-// node_modules/@firebase/util/dist/postinstall.mjs
-var getDefaultsFromPostinstall = () => void 0;
-
-// node_modules/@firebase/util/dist/index.esm.js
+// node_modules/@firebase/util/dist/index.esm2017.js
 var stringToByteArray$1 = function(str) {
   const out = [];
   let p = 0;
@@ -294,14 +289,20 @@ var getDefaultsFromCookie = () => {
 };
 var getDefaults = () => {
   try {
-    return getDefaultsFromPostinstall() || getDefaultsFromGlobal() || getDefaultsFromEnvVariable() || getDefaultsFromCookie();
+    return getDefaultsFromGlobal() || getDefaultsFromEnvVariable() || getDefaultsFromCookie();
   } catch (e) {
     console.info(`Unable to get __FIREBASE_DEFAULTS__ due to: ${e}`);
     return;
   }
 };
-var getDefaultAppConfig = () => getDefaults()?.config;
-var getExperimentalSetting = (name2) => getDefaults()?.[`_${name2}`];
+var getDefaultAppConfig = () => {
+  var _a;
+  return (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.config;
+};
+var getExperimentalSetting = (name2) => {
+  var _a;
+  return (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a[`_${name2}`];
+};
 var Deferred = class {
   constructor() {
     this.reject = () => {
@@ -337,148 +338,6 @@ var Deferred = class {
     };
   }
 };
-function isCloudWorkstation(url) {
-  try {
-    const host = url.startsWith("http://") || url.startsWith("https://") ? new URL(url).hostname : url;
-    return host.endsWith(".cloudworkstations.dev");
-  } catch {
-    return false;
-  }
-}
-async function pingServer(endpoint) {
-  const result = await fetch(endpoint, {
-    credentials: "include"
-  });
-  return result.ok;
-}
-var emulatorStatus = {};
-function getEmulatorSummary() {
-  const summary = {
-    prod: [],
-    emulator: []
-  };
-  for (const key of Object.keys(emulatorStatus)) {
-    if (emulatorStatus[key]) {
-      summary.emulator.push(key);
-    } else {
-      summary.prod.push(key);
-    }
-  }
-  return summary;
-}
-function getOrCreateEl(id) {
-  let parentDiv = document.getElementById(id);
-  let created = false;
-  if (!parentDiv) {
-    parentDiv = document.createElement("div");
-    parentDiv.setAttribute("id", id);
-    created = true;
-  }
-  return { created, element: parentDiv };
-}
-var previouslyDismissed = false;
-function updateEmulatorBanner(name2, isRunningEmulator) {
-  if (typeof window === "undefined" || typeof document === "undefined" || !isCloudWorkstation(window.location.host) || emulatorStatus[name2] === isRunningEmulator || emulatorStatus[name2] || // If already set to use emulator, can't go back to prod.
-  previouslyDismissed) {
-    return;
-  }
-  emulatorStatus[name2] = isRunningEmulator;
-  function prefixedId(id) {
-    return `__firebase__banner__${id}`;
-  }
-  const bannerId = "__firebase__banner";
-  const summary = getEmulatorSummary();
-  const showError = summary.prod.length > 0;
-  function tearDown() {
-    const element = document.getElementById(bannerId);
-    if (element) {
-      element.remove();
-    }
-  }
-  function setupBannerStyles(bannerEl) {
-    bannerEl.style.display = "flex";
-    bannerEl.style.background = "#7faaf0";
-    bannerEl.style.position = "fixed";
-    bannerEl.style.bottom = "5px";
-    bannerEl.style.left = "5px";
-    bannerEl.style.padding = ".5em";
-    bannerEl.style.borderRadius = "5px";
-    bannerEl.style.alignItems = "center";
-  }
-  function setupIconStyles(prependIcon, iconId) {
-    prependIcon.setAttribute("width", "24");
-    prependIcon.setAttribute("id", iconId);
-    prependIcon.setAttribute("height", "24");
-    prependIcon.setAttribute("viewBox", "0 0 24 24");
-    prependIcon.setAttribute("fill", "none");
-    prependIcon.style.marginLeft = "-6px";
-  }
-  function setupCloseBtn() {
-    const closeBtn = document.createElement("span");
-    closeBtn.style.cursor = "pointer";
-    closeBtn.style.marginLeft = "16px";
-    closeBtn.style.fontSize = "24px";
-    closeBtn.innerHTML = " &times;";
-    closeBtn.onclick = () => {
-      previouslyDismissed = true;
-      tearDown();
-    };
-    return closeBtn;
-  }
-  function setupLinkStyles(learnMoreLink, learnMoreId) {
-    learnMoreLink.setAttribute("id", learnMoreId);
-    learnMoreLink.innerText = "Learn more";
-    learnMoreLink.href = "https://firebase.google.com/docs/studio/preview-apps#preview-backend";
-    learnMoreLink.setAttribute("target", "__blank");
-    learnMoreLink.style.paddingLeft = "5px";
-    learnMoreLink.style.textDecoration = "underline";
-  }
-  function setupDom() {
-    const banner = getOrCreateEl(bannerId);
-    const firebaseTextId = prefixedId("text");
-    const firebaseText = document.getElementById(firebaseTextId) || document.createElement("span");
-    const learnMoreId = prefixedId("learnmore");
-    const learnMoreLink = document.getElementById(learnMoreId) || document.createElement("a");
-    const prependIconId = prefixedId("preprendIcon");
-    const prependIcon = document.getElementById(prependIconId) || document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    if (banner.created) {
-      const bannerEl = banner.element;
-      setupBannerStyles(bannerEl);
-      setupLinkStyles(learnMoreLink, learnMoreId);
-      const closeBtn = setupCloseBtn();
-      setupIconStyles(prependIcon, prependIconId);
-      bannerEl.append(prependIcon, firebaseText, learnMoreLink, closeBtn);
-      document.body.appendChild(bannerEl);
-    }
-    if (showError) {
-      firebaseText.innerText = `Preview backend disconnected.`;
-      prependIcon.innerHTML = `<g clip-path="url(#clip0_6013_33858)">
-<path d="M4.8 17.6L12 5.6L19.2 17.6H4.8ZM6.91667 16.4H17.0833L12 7.93333L6.91667 16.4ZM12 15.6C12.1667 15.6 12.3056 15.5444 12.4167 15.4333C12.5389 15.3111 12.6 15.1667 12.6 15C12.6 14.8333 12.5389 14.6944 12.4167 14.5833C12.3056 14.4611 12.1667 14.4 12 14.4C11.8333 14.4 11.6889 14.4611 11.5667 14.5833C11.4556 14.6944 11.4 14.8333 11.4 15C11.4 15.1667 11.4556 15.3111 11.5667 15.4333C11.6889 15.5444 11.8333 15.6 12 15.6ZM11.4 13.6H12.6V10.4H11.4V13.6Z" fill="#212121"/>
-</g>
-<defs>
-<clipPath id="clip0_6013_33858">
-<rect width="24" height="24" fill="white"/>
-</clipPath>
-</defs>`;
-    } else {
-      prependIcon.innerHTML = `<g clip-path="url(#clip0_6083_34804)">
-<path d="M11.4 15.2H12.6V11.2H11.4V15.2ZM12 10C12.1667 10 12.3056 9.94444 12.4167 9.83333C12.5389 9.71111 12.6 9.56667 12.6 9.4C12.6 9.23333 12.5389 9.09444 12.4167 8.98333C12.3056 8.86111 12.1667 8.8 12 8.8C11.8333 8.8 11.6889 8.86111 11.5667 8.98333C11.4556 9.09444 11.4 9.23333 11.4 9.4C11.4 9.56667 11.4556 9.71111 11.5667 9.83333C11.6889 9.94444 11.8333 10 12 10ZM12 18.4C11.1222 18.4 10.2944 18.2333 9.51667 17.9C8.73889 17.5667 8.05556 17.1111 7.46667 16.5333C6.88889 15.9444 6.43333 15.2611 6.1 14.4833C5.76667 13.7056 5.6 12.8778 5.6 12C5.6 11.1111 5.76667 10.2833 6.1 9.51667C6.43333 8.73889 6.88889 8.06111 7.46667 7.48333C8.05556 6.89444 8.73889 6.43333 9.51667 6.1C10.2944 5.76667 11.1222 5.6 12 5.6C12.8889 5.6 13.7167 5.76667 14.4833 6.1C15.2611 6.43333 15.9389 6.89444 16.5167 7.48333C17.1056 8.06111 17.5667 8.73889 17.9 9.51667C18.2333 10.2833 18.4 11.1111 18.4 12C18.4 12.8778 18.2333 13.7056 17.9 14.4833C17.5667 15.2611 17.1056 15.9444 16.5167 16.5333C15.9389 17.1111 15.2611 17.5667 14.4833 17.9C13.7167 18.2333 12.8889 18.4 12 18.4ZM12 17.2C13.4444 17.2 14.6722 16.6944 15.6833 15.6833C16.6944 14.6722 17.2 13.4444 17.2 12C17.2 10.5556 16.6944 9.32778 15.6833 8.31667C14.6722 7.30555 13.4444 6.8 12 6.8C10.5556 6.8 9.32778 7.30555 8.31667 8.31667C7.30556 9.32778 6.8 10.5556 6.8 12C6.8 13.4444 7.30556 14.6722 8.31667 15.6833C9.32778 16.6944 10.5556 17.2 12 17.2Z" fill="#212121"/>
-</g>
-<defs>
-<clipPath id="clip0_6083_34804">
-<rect width="24" height="24" fill="white"/>
-</clipPath>
-</defs>`;
-      firebaseText.innerText = "Preview backend running in this workspace.";
-    }
-    firebaseText.setAttribute("id", firebaseTextId);
-  }
-  if (document.readyState === "loading") {
-    window.addEventListener("DOMContentLoaded", setupDom);
-  } else {
-    setupDom();
-  }
-}
 function getUA() {
   if (typeof navigator !== "undefined" && typeof navigator["userAgent"] === "string") {
     return navigator["userAgent"];
@@ -492,7 +351,8 @@ function isMobileCordova() {
   !!(window["cordova"] || window["phonegap"] || window["PhoneGap"]) && /ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(getUA());
 }
 function isNode() {
-  const forceEnvironment = getDefaults()?.forceEnvironment;
+  var _a;
+  const forceEnvironment = (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.forceEnvironment;
   if (forceEnvironment === "node") {
     return true;
   } else if (forceEnvironment === "browser") {
@@ -545,7 +405,8 @@ function validateIndexedDBOpenable() {
         preExist = false;
       };
       request.onerror = () => {
-        reject(request.error?.message || "");
+        var _a;
+        reject(((_a = request.error) === null || _a === void 0 ? void 0 : _a.message) || "");
       };
     } catch (error) {
       reject(error);
@@ -812,7 +673,7 @@ function getModularInstance(service) {
   }
 }
 
-// node_modules/@firebase/component/dist/esm/index.esm.js
+// node_modules/@firebase/component/dist/esm/index.esm2017.js
 var Component = class {
   /**
    *
@@ -881,8 +742,9 @@ var Provider = class {
     return this.instancesDeferred.get(normalizedIdentifier).promise;
   }
   getImmediate(options) {
-    const normalizedIdentifier = this.normalizeInstanceIdentifier(options?.identifier);
-    const optional = options?.optional ?? false;
+    var _a;
+    const normalizedIdentifier = this.normalizeInstanceIdentifier(options === null || options === void 0 ? void 0 : options.identifier);
+    const optional = (_a = options === null || options === void 0 ? void 0 : options.optional) !== null && _a !== void 0 ? _a : false;
     if (this.isInitialized(normalizedIdentifier) || this.shouldAutoInitialize()) {
       try {
         return this.getOrInitializeService({
@@ -987,8 +849,9 @@ var Provider = class {
    * @returns a function to unregister the callback
    */
   onInit(callback, identifier) {
+    var _a;
     const normalizedIdentifier = this.normalizeInstanceIdentifier(identifier);
-    const existingCallbacks = this.onInitCallbacks.get(normalizedIdentifier) ?? /* @__PURE__ */ new Set();
+    const existingCallbacks = (_a = this.onInitCallbacks.get(normalizedIdentifier)) !== null && _a !== void 0 ? _a : /* @__PURE__ */ new Set();
     existingCallbacks.add(callback);
     this.onInitCallbacks.set(normalizedIdentifier, existingCallbacks);
     const existingInstance = this.instances.get(normalizedIdentifier);
@@ -1011,7 +874,7 @@ var Provider = class {
     for (const callback of callbacks) {
       try {
         callback(instance, identifier);
-      } catch {
+      } catch (_a) {
       }
     }
   }
@@ -1028,7 +891,7 @@ var Provider = class {
       if (this.component.onInstanceCreated) {
         try {
           this.component.onInstanceCreated(this.container, instanceIdentifier, instance);
-        } catch {
+        } catch (_a) {
         }
       }
     }
@@ -1099,113 +962,7 @@ var ComponentContainer = class {
   }
 };
 
-// node_modules/@firebase/logger/dist/esm/index.esm.js
-var instances = [];
-var LogLevel;
-(function(LogLevel2) {
-  LogLevel2[LogLevel2["DEBUG"] = 0] = "DEBUG";
-  LogLevel2[LogLevel2["VERBOSE"] = 1] = "VERBOSE";
-  LogLevel2[LogLevel2["INFO"] = 2] = "INFO";
-  LogLevel2[LogLevel2["WARN"] = 3] = "WARN";
-  LogLevel2[LogLevel2["ERROR"] = 4] = "ERROR";
-  LogLevel2[LogLevel2["SILENT"] = 5] = "SILENT";
-})(LogLevel || (LogLevel = {}));
-var levelStringToEnum = {
-  "debug": LogLevel.DEBUG,
-  "verbose": LogLevel.VERBOSE,
-  "info": LogLevel.INFO,
-  "warn": LogLevel.WARN,
-  "error": LogLevel.ERROR,
-  "silent": LogLevel.SILENT
-};
-var defaultLogLevel = LogLevel.INFO;
-var ConsoleMethod = {
-  [LogLevel.DEBUG]: "log",
-  [LogLevel.VERBOSE]: "log",
-  [LogLevel.INFO]: "info",
-  [LogLevel.WARN]: "warn",
-  [LogLevel.ERROR]: "error"
-};
-var defaultLogHandler = (instance, logType, ...args) => {
-  if (logType < instance.logLevel) {
-    return;
-  }
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  const method = ConsoleMethod[logType];
-  if (method) {
-    console[method](`[${now}]  ${instance.name}:`, ...args);
-  } else {
-    throw new Error(`Attempted to log a message with an invalid logType (value: ${logType})`);
-  }
-};
-var Logger = class {
-  /**
-   * Gives you an instance of a Logger to capture messages according to
-   * Firebase's logging scheme.
-   *
-   * @param name The name that the logs will be associated with
-   */
-  constructor(name2) {
-    this.name = name2;
-    this._logLevel = defaultLogLevel;
-    this._logHandler = defaultLogHandler;
-    this._userLogHandler = null;
-    instances.push(this);
-  }
-  get logLevel() {
-    return this._logLevel;
-  }
-  set logLevel(val) {
-    if (!(val in LogLevel)) {
-      throw new TypeError(`Invalid value "${val}" assigned to \`logLevel\``);
-    }
-    this._logLevel = val;
-  }
-  // Workaround for setter/getter having to be the same type.
-  setLogLevel(val) {
-    this._logLevel = typeof val === "string" ? levelStringToEnum[val] : val;
-  }
-  get logHandler() {
-    return this._logHandler;
-  }
-  set logHandler(val) {
-    if (typeof val !== "function") {
-      throw new TypeError("Value assigned to `logHandler` must be a function");
-    }
-    this._logHandler = val;
-  }
-  get userLogHandler() {
-    return this._userLogHandler;
-  }
-  set userLogHandler(val) {
-    this._userLogHandler = val;
-  }
-  /**
-   * The functions below are all based on the `console` interface
-   */
-  debug(...args) {
-    this._userLogHandler && this._userLogHandler(this, LogLevel.DEBUG, ...args);
-    this._logHandler(this, LogLevel.DEBUG, ...args);
-  }
-  log(...args) {
-    this._userLogHandler && this._userLogHandler(this, LogLevel.VERBOSE, ...args);
-    this._logHandler(this, LogLevel.VERBOSE, ...args);
-  }
-  info(...args) {
-    this._userLogHandler && this._userLogHandler(this, LogLevel.INFO, ...args);
-    this._logHandler(this, LogLevel.INFO, ...args);
-  }
-  warn(...args) {
-    this._userLogHandler && this._userLogHandler(this, LogLevel.WARN, ...args);
-    this._logHandler(this, LogLevel.WARN, ...args);
-  }
-  error(...args) {
-    this._userLogHandler && this._userLogHandler(this, LogLevel.ERROR, ...args);
-    this._logHandler(this, LogLevel.ERROR, ...args);
-  }
-};
-
-// node_modules/@firebase/app/dist/esm/index.esm.js
+// node_modules/@firebase/app/dist/esm/index.esm2017.js
 var PlatformLoggerServiceImpl = class {
   constructor(container) {
     this.container = container;
@@ -1226,10 +983,10 @@ var PlatformLoggerServiceImpl = class {
 };
 function isVersionServiceProvider(provider) {
   const component = provider.getComponent();
-  return component?.type === "VERSION";
+  return (component === null || component === void 0 ? void 0 : component.type) === "VERSION";
 }
 var name$q = "@firebase/app";
-var version$1 = "0.14.6";
+var version$1 = "0.11.0";
 var logger = new Logger("@firebase/app");
 var name$p = "@firebase/app-compat";
 var name$o = "@firebase/analytics-compat";
@@ -1254,10 +1011,10 @@ var name$6 = "@firebase/remote-config-compat";
 var name$5 = "@firebase/storage";
 var name$4 = "@firebase/storage-compat";
 var name$3 = "@firebase/firestore";
-var name$2 = "@firebase/ai";
+var name$2 = "@firebase/vertexai";
 var name$1 = "@firebase/firestore-compat";
 var name = "firebase";
-var version = "12.6.0";
+var version = "11.3.0";
 var DEFAULT_ENTRY_NAME2 = "[DEFAULT]";
 var PLATFORM_LOG_STRING = {
   [name$q]: "fire-core",
@@ -1393,8 +1150,8 @@ var ERROR_FACTORY = new ErrorFactory("app", "Firebase", ERRORS);
 var FirebaseAppImpl = class {
   constructor(options, config, container) {
     this._isDeleted = false;
-    this._options = __spreadValues({}, options);
-    this._config = __spreadValues({}, config);
+    this._options = Object.assign({}, options);
+    this._config = Object.assign({}, config);
     this._name = config.name;
     this._automaticDataCollectionEnabled = config.automaticDataCollectionEnabled;
     this._container = container;
@@ -1451,10 +1208,7 @@ function initializeApp(_options, rawConfig = {}) {
     const name3 = rawConfig;
     rawConfig = { name: name3 };
   }
-  const config = __spreadValues({
-    name: DEFAULT_ENTRY_NAME2,
-    automaticDataCollectionEnabled: true
-  }, rawConfig);
+  const config = Object.assign({ name: DEFAULT_ENTRY_NAME2, automaticDataCollectionEnabled: false }, rawConfig);
   const name2 = config.name;
   if (typeof name2 !== "string" || !name2) {
     throw ERROR_FACTORY.create("bad-app-name", {
@@ -1495,7 +1249,8 @@ function getApp(name2 = DEFAULT_ENTRY_NAME2) {
   return app;
 }
 function registerVersion(libraryKeyOrName, version2, variant) {
-  let library = PLATFORM_LOG_STRING[libraryKeyOrName] ?? libraryKeyOrName;
+  var _a;
+  let library = (_a = PLATFORM_LOG_STRING[libraryKeyOrName]) !== null && _a !== void 0 ? _a : libraryKeyOrName;
   if (variant) {
     library += `-${variant}`;
   }
@@ -1561,7 +1316,7 @@ async function readHeartbeatsFromIndexedDB(app) {
       logger.warn(e.message);
     } else {
       const idbGetError = ERROR_FACTORY.create("idb-get", {
-        originalErrorMessage: e?.message
+        originalErrorMessage: e === null || e === void 0 ? void 0 : e.message
       });
       logger.warn(idbGetError.message);
     }
@@ -1579,7 +1334,7 @@ async function writeHeartbeatsToIndexedDB(app, heartbeatObject) {
       logger.warn(e.message);
     } else {
       const idbGetError = ERROR_FACTORY.create("idb-set", {
-        originalErrorMessage: e?.message
+        originalErrorMessage: e === null || e === void 0 ? void 0 : e.message
       });
       logger.warn(idbGetError.message);
     }
@@ -1609,13 +1364,14 @@ var HeartbeatServiceImpl = class {
    * already logged, subsequent calls to this function in the same day will be ignored.
    */
   async triggerHeartbeat() {
+    var _a, _b;
     try {
       const platformLogger = this.container.getProvider("platform-logger").getImmediate();
       const agent = platformLogger.getPlatformInfoString();
       const date = getUTCDateString();
-      if (this._heartbeatsCache?.heartbeats == null) {
+      if (((_a = this._heartbeatsCache) === null || _a === void 0 ? void 0 : _a.heartbeats) == null) {
         this._heartbeatsCache = await this._heartbeatsCachePromise;
-        if (this._heartbeatsCache?.heartbeats == null) {
+        if (((_b = this._heartbeatsCache) === null || _b === void 0 ? void 0 : _b.heartbeats) == null) {
           return;
         }
       }
@@ -1641,11 +1397,12 @@ var HeartbeatServiceImpl = class {
    * returns an empty string.
    */
   async getHeartbeatsHeader() {
+    var _a;
     try {
       if (this._heartbeatsCache === null) {
         await this._heartbeatsCachePromise;
       }
-      if (this._heartbeatsCache?.heartbeats == null || this._heartbeatsCache.heartbeats.length === 0) {
+      if (((_a = this._heartbeatsCache) === null || _a === void 0 ? void 0 : _a.heartbeats) == null || this._heartbeatsCache.heartbeats.length === 0) {
         return "";
       }
       const date = getUTCDateString();
@@ -1719,7 +1476,7 @@ var HeartbeatStorageImpl = class {
       return { heartbeats: [] };
     } else {
       const idbHeartbeatObject = await readHeartbeatsFromIndexedDB(this.app);
-      if (idbHeartbeatObject?.heartbeats) {
+      if (idbHeartbeatObject === null || idbHeartbeatObject === void 0 ? void 0 : idbHeartbeatObject.heartbeats) {
         return idbHeartbeatObject;
       } else {
         return { heartbeats: [] };
@@ -1728,26 +1485,28 @@ var HeartbeatStorageImpl = class {
   }
   // overwrite the storage with the provided heartbeats
   async overwrite(heartbeatsObject) {
+    var _a;
     const canUseIndexedDB = await this._canUseIndexedDBPromise;
     if (!canUseIndexedDB) {
       return;
     } else {
       const existingHeartbeatsObject = await this.read();
       return writeHeartbeatsToIndexedDB(this.app, {
-        lastSentHeartbeatDate: heartbeatsObject.lastSentHeartbeatDate ?? existingHeartbeatsObject.lastSentHeartbeatDate,
+        lastSentHeartbeatDate: (_a = heartbeatsObject.lastSentHeartbeatDate) !== null && _a !== void 0 ? _a : existingHeartbeatsObject.lastSentHeartbeatDate,
         heartbeats: heartbeatsObject.heartbeats
       });
     }
   }
   // add heartbeats
   async add(heartbeatsObject) {
+    var _a;
     const canUseIndexedDB = await this._canUseIndexedDBPromise;
     if (!canUseIndexedDB) {
       return;
     } else {
       const existingHeartbeatsObject = await this.read();
       return writeHeartbeatsToIndexedDB(this.app, {
-        lastSentHeartbeatDate: heartbeatsObject.lastSentHeartbeatDate ?? existingHeartbeatsObject.lastSentHeartbeatDate,
+        lastSentHeartbeatDate: (_a = heartbeatsObject.lastSentHeartbeatDate) !== null && _a !== void 0 ? _a : existingHeartbeatsObject.lastSentHeartbeatDate,
         heartbeats: [
           ...existingHeartbeatsObject.heartbeats,
           ...heartbeatsObject.heartbeats
@@ -1790,7 +1549,7 @@ function registerCoreComponents(variant) {
     /* ComponentType.PRIVATE */
   ));
   registerVersion(name$q, version$1, variant);
-  registerVersion(name$q, version$1, "esm2020");
+  registerVersion(name$q, version$1, "esm2017");
   registerVersion("fire-js", "");
 }
 registerCoreComponents("");
@@ -1798,9 +1557,6 @@ registerCoreComponents("");
 export {
   base64Decode,
   getExperimentalSetting,
-  isCloudWorkstation,
-  pingServer,
-  updateEmulatorBanner,
   getUA,
   isMobileCordova,
   isCloudflareWorker,
@@ -1816,8 +1572,6 @@ export {
   createSubscribe,
   getModularInstance,
   Component,
-  LogLevel,
-  Logger,
   _registerComponent,
   _getProvider,
   _removeServiceInstance,
@@ -1826,4 +1580,4 @@ export {
   getApp,
   registerVersion
 };
-//# sourceMappingURL=chunk-XPVU57NH.js.map
+//# sourceMappingURL=chunk-QPRLTB6Y.js.map
