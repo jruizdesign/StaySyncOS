@@ -1,4 +1,18 @@
 {
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
   "functions": [
     {
       "source": "functions",
@@ -7,20 +21,45 @@
         "node_modules",
         ".git",
         "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
+        "firebase-debug.*.log"
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
   ],
-  "emulators": {
-    "dataconnect": {
-      "dataDir": "dataconnect/.dataconnect/pgliteData"
-    }
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
   },
   "dataconnect": {
     "source": "dataconnect"
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "storage": {
+      "port": 9199
+    },
+    "dataconnect": {
+      "port": 9399,
+      "dataDir": "dataconnect/.dataconnect/pgliteData"
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
   }
 }
