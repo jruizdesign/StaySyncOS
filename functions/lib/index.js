@@ -1,33 +1,35 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyRecaptcha = exports.helloWorld = exports.ai = void 0;
-const genkit_1 = require("genkit");
-const firebase_1 = require("@genkit-ai/firebase");
-const googleai_1 = require("@genkit-ai/googleai");
+exports.verifyRecaptcha = void 0;
+// import { genkit, z } from 'genkit';
+// import { enableFirebaseTelemetry } from '@genkit-ai/firebase';
+// import { googleAI } from '@genkit-ai/googleai';
 const https_1 = require("firebase-functions/v2/https");
 const recaptcha_enterprise_1 = require("@google-cloud/recaptcha-enterprise");
-
-(0, firebase_1.enableFirebaseTelemetry)();
-
-// Initialize Genkit
-exports.ai = (0, genkit_1.genkit)({
-    plugins: [
-        (0, googleai_1.googleAI)()
-    ]
-});
-
-// Example flow
-exports.helloWorld = exports.ai.defineFlow({
-    name: 'helloWorld',
-    inputSchema: genkit_1.z.string(),
-    outputSchema: genkit_1.z.string(),
-}, async (subject) => {
-    return `Hello, ${subject}!`;
-});
-
-const client = new recaptcha_enterprise_1.RecaptchaEnterpriseServiceClient();
+// enableFirebaseTelemetry();
+// // Initialize Genkit
+// export const ai = genkit({
+//     plugins: [
+//         googleAI()
+//     ]
+// });
+// // Example flow
+// export const helloWorld = ai.defineFlow(
+//     {
+//         name: 'helloWorld',
+//         inputSchema: z.string(),
+//         outputSchema: z.string(),
+//     },
+//     async (subject) => {
+//         return `Hello, ${subject}!`;
+//     }
+// );
+let client = null;
 exports.verifyRecaptcha = (0, https_1.onCall)(async (request) => {
     var _a, _b, _c, _d;
+    if (!client) {
+        client = new recaptcha_enterprise_1.RecaptchaEnterpriseServiceClient();
+    }
     const token = request.data.token;
     const action = request.data.action;
     // TODO: Move these to environment variables
