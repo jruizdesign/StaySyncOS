@@ -5,10 +5,10 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from './src/services/auth.service';
 
 @Component({
-    selector: 'app-login',
-    standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterLink],
-    template: `
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  template: `
     <div class="login-container">
       <div class="login-card">
         <div class="login-header">
@@ -70,7 +70,7 @@ import { AuthService } from './src/services/auth.service';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host {
       display: block;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -209,49 +209,49 @@ import { AuthService } from './src/services/auth.service';
     `]
 })
 export class LoginComponent {
-    loginForm: FormGroup;
-    isLoading = false;
-    errorMessage = '';
+  loginForm: FormGroup;
+  isLoading = false;
+  errorMessage = '';
 
-    constructor(
-        private fb: FormBuilder,
-        private authService: AuthService,
-        private router: Router
-    ) {
-        this.loginForm = this.fb.group({
-            email: ['', [Validators.required, Validators.email]],
-            password: ['', [Validators.required]]
-        });
-    }
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]]
+    });
+  }
 
-    isFieldInvalid(field: string): boolean {
-        const control = this.loginForm.get(field);
-        return !!(control && control.invalid && (control.dirty || control.touched));
-    }
+  isFieldInvalid(field: string): boolean {
+    const control = this.loginForm.get(field);
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
 
-    async onSubmit() {
-        if (this.loginForm.valid) {
-            this.isLoading = true;
-            this.errorMessage = '';
+  async onSubmit() {
+    if (this.loginForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
 
-            const { email, password } = this.loginForm.value;
+      const { email, password } = this.loginForm.value;
 
-            try {
-                const success = await this.authService.login(email, password);
-                if (success) {
-                    // Router navigation is handled in AuthService, but ensured here just in case? 
-                    // No, usually best to trust service or do it here. Service does it.
-                } else {
-                    this.isLoading = false;
-                    this.errorMessage = 'Invalid email or password. Please try again.';
-                }
-            } catch (e) {
-                this.isLoading = false;
-                this.errorMessage = 'An error occurred. Please try again.';
-                console.error(e);
-            }
+      try {
+        const success = await this.authService.login(email, password);
+        if (success) {
+          // Router navigation is handled in AuthService, but ensured here just in case? 
+          // No, usually best to trust service or do it here. Service does it.
         } else {
-            this.loginForm.markAllAsTouched();
+          this.isLoading = false;
+          this.errorMessage = 'Invalid email or password. Please try again.';
         }
+      } catch (e) {
+        this.isLoading = false;
+        this.errorMessage = 'An error occurred. Please try again.';
+        console.error(e);
+      }
+    } else {
+      this.loginForm.markAllAsTouched();
     }
+  }
 }

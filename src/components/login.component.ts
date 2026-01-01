@@ -1,7 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-login',
@@ -83,6 +85,8 @@ import { AuthService } from '../services/auth.service';
 })
 export class LoginComponent {
   auth = inject(AuthService);
+  private router = inject(Router);
+  private data = inject(DataService);
 
   email = '';
   password = '';
@@ -112,8 +116,15 @@ export class LoginComponent {
     if (!success) {
       this.error.set(true);
       this.errorMessage.set('Authentication failed. Please check your credentials.');
+      this.loading.set(false);
+    } else {
+      // Force data refresh to ensure guards have fresh data
+      try {
+        await this.data.firstHotelQuery.refetch();
+      } catch (err) {
+        console.warn('Data refetch failed', err);
+      }
+      this.router.navigate(['/dashboard']);
     }
-
-    this.loading.set(false);
   }
 }

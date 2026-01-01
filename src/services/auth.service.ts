@@ -82,7 +82,6 @@ export class AuthService {
 
     try {
       await signInWithEmailAndPassword(this.auth, email, pass);
-      this.router.navigate(['/dashboard']);
       return true;
     } catch (e) {
       console.error('Login failed', e);
@@ -99,7 +98,6 @@ export class AuthService {
 
     try {
       await createUserWithEmailAndPassword(this.auth, email, pass);
-      this.router.navigate(['/dashboard']);
       return true;
     } catch (e) {
       console.error('Signup failed', e);
