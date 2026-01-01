@@ -147,11 +147,19 @@ export class AccountingComponent {
   });
 
   totalRevenue() {
-    return this.data.stays().reduce((acc, curr) => acc + curr.totalPaid, 0);
+    let total = 0;
+    for (const s of this.data.stays()) {
+      total += (s.totalPaid || 0);
+    }
+    return total;
   }
 
   totalDebt() {
-    return this.data.activeStaysWithDebt().reduce((acc, curr) => acc + curr.debt, 0);
+    let total = 0;
+    for (const s of this.data.activeStaysWithDebt()) {
+      total += (s.debt || 0);
+    }
+    return total;
   }
 
   financialLogs() {

@@ -6,10 +6,10 @@ import { AuthService } from '../services/auth.service';
 import { AiService } from '../services/ai.service';
 
 @Component({
-  selector: 'app-maintenance',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  template: `
+    selector: 'app-maintenance',
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, FormsModule],
+    template: `
     <div class="p-6 h-full flex flex-col">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
@@ -223,7 +223,7 @@ import { AiService } from '../services/ai.service';
       }
     </div>
   `,
-  styles: [`
+    styles: [`
     @keyframes fade-in {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -232,104 +232,108 @@ import { AiService } from '../services/ai.service';
   `]
 })
 export class MaintenanceComponent {
-  data = inject(DataService);
-  auth = inject(AuthService);
-  ai = inject(AiService);
-  fb = inject(FormBuilder);
+    data = inject(DataService);
+    auth = inject(AuthService);
+    ai = inject(AiService);
+    fb = inject(FormBuilder);
 
-  filterStatus = signal<'Active' | 'All'>('Active');
-  showReportModal = signal(false);
-  submitting = signal(false);
-  
-  selectedRequest = signal<MaintenanceRequest | null>(null);
-  updateStatus: MaintenanceRequest['status'] = 'Pending';
-  updateCost = 0;
-  updateNotes = '';
+    filterStatus = signal<'Active' | 'All'>('Active');
+    showReportModal = signal(false);
+    submitting = signal(false);
 
-  reportForm: FormGroup;
+    selectedRequest = signal<MaintenanceRequest | null>(null);
+    updateStatus: MaintenanceRequest['status'] = 'Pending';
+    updateCost = 0;
+    updateNotes = '';
 
-  constructor() {
-      this.reportForm = this.fb.group({
-          roomId: ['', Validators.required],
-          description: ['', Validators.required],
-          priority: ['Medium', Validators.required]
-      });
-  }
+    reportForm: FormGroup;
 
-  activeRequests = computed(() => this.data.maintenanceRequests().filter(r => r.status !== 'Completed'));
-  
-  filteredRequests = computed(() => {
-      const all = this.data.maintenanceRequests();
-      if (this.filterStatus() === 'Active') {
-          return all.filter(r => r.status !== 'Completed');
-      }
-      return all;
-  });
+    constructor() {
+        this.reportForm = this.fb.group({
+            roomId: ['', Validators.required],
+            description: ['', Validators.required],
+            priority: ['Medium', Validators.required]
+        });
+    }
 
-  highPriorityCount = computed(() => 
-      this.activeRequests().filter(r => r.priority === 'High' || r.priority === 'Emergency').length
-  );
+    activeRequests = computed(() => this.data.maintenanceRequests().filter(r => r.status !== 'Completed'));
 
-  totalCost = computed(() => 
-      this.data.maintenanceRequests().reduce((sum, r) => sum + (r.cost || 0), 0)
-  );
-  
-  resolvedCount = computed(() => 
-     this.data.maintenanceRequests().filter(r => r.status === 'Completed').length
-  );
+    filteredRequests = computed(() => {
+        const all = this.data.maintenanceRequests();
+        if (this.filterStatus() === 'Active') {
+            return all.filter(r => r.status !== 'Completed');
+        }
+        return all;
+    });
 
-  openReportModal() {
-      this.reportForm.reset({ priority: 'Medium' });
-      this.showReportModal.set(true);
-  }
+    highPriorityCount = computed(() =>
+        this.activeRequests().filter(r => r.priority === 'High' || r.priority === 'Emergency').length
+    );
 
-  async submitReport() {
-      if (this.reportForm.valid) {
-          this.submitting.set(true);
-          const val = this.reportForm.value;
-          
-          const newReq = this.data.addMaintenanceRequest({
-              roomId: val.roomId,
-              description: val.description,
-              priority: val.priority,
-              reportedBy: this.auth.currentUser()?.username || 'System'
-          });
+    totalCost = computed(() => {
+        let sum = 0;
+        for (const r of this.data.maintenanceRequests()) {
+            sum += (r.cost || 0);
+        }
+        return sum;
+    });
 
-          if (newReq) {
-              // Simulate AI Email Dispatch
-              const emailBody = await this.ai.draftMaintenanceAlert(newReq);
-              console.log('--- EMAIL SIMULATION ---');
-              console.log(`To: ${this.data.hotelConfig().maintenanceEmail}`);
-              console.log(`Subject: New Work Order - Room ${newReq.roomNumber}`);
-              console.log(emailBody);
-              
-              // Simulate network delay for "sending"
-              await new Promise(r => setTimeout(r, 800));
-              alert(`Work Order dispatched to maintenance team!\n\n(See console for AI generated email)`);
-          }
+    resolvedCount = computed(() =>
+        this.data.maintenanceRequests().filter(r => r.status === 'Completed').length
+    );
 
-          this.submitting.set(false);
-          this.showReportModal.set(false);
-      }
-  }
+    openReportModal() {
+        this.reportForm.reset({ priority: 'Medium' });
+        this.showReportModal.set(true);
+    }
 
-  resolveRequest(req: MaintenanceRequest) {
-      this.selectedRequest.set(req);
-      this.updateStatus = req.status;
-      this.updateCost = req.cost;
-      this.updateNotes = req.notes || '';
-  }
+    async submitReport() {
+        if (this.reportForm.valid) {
+            this.submitting.set(true);
+            const val = this.reportForm.value;
 
-  submitUpdate() {
-      const req = this.selectedRequest();
-      if (req) {
-          this.data.updateMaintenanceRequest(req.id, {
-              status: this.updateStatus,
-              cost: this.updateCost,
-              notes: this.updateNotes,
-              completedAt: this.updateStatus === 'Completed' ? new Date().toISOString() : undefined
-          });
-          this.selectedRequest.set(null);
-      }
-  }
+            const newReq = this.data.addMaintenanceRequest({
+                roomId: val.roomId,
+                description: val.description,
+                priority: val.priority,
+                reportedBy: this.auth.currentUser()?.username || 'System'
+            });
+
+            if (newReq) {
+                // Simulate AI Email Dispatch
+                const emailBody = await this.ai.draftMaintenanceAlert(newReq);
+                console.log('--- EMAIL SIMULATION ---');
+                console.log(`To: ${this.data.hotelConfig().maintenanceEmail}`);
+                console.log(`Subject: New Work Order - Room ${newReq.roomNumber}`);
+                console.log(emailBody);
+
+                // Simulate network delay for "sending"
+                await new Promise(r => setTimeout(r, 800));
+                alert(`Work Order dispatched to maintenance team!\n\n(See console for AI generated email)`);
+            }
+
+            this.submitting.set(false);
+            this.showReportModal.set(false);
+        }
+    }
+
+    resolveRequest(req: MaintenanceRequest) {
+        this.selectedRequest.set(req);
+        this.updateStatus = req.status;
+        this.updateCost = req.cost;
+        this.updateNotes = req.notes || '';
+    }
+
+    submitUpdate() {
+        const req = this.selectedRequest();
+        if (req) {
+            this.data.updateMaintenanceRequest(req.id, {
+                status: this.updateStatus,
+                cost: this.updateCost,
+                notes: this.updateNotes,
+                completedAt: this.updateStatus === 'Completed' ? new Date().toISOString() : undefined
+            });
+            this.selectedRequest.set(null);
+        }
+    }
 }

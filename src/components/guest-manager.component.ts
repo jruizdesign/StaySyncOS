@@ -387,8 +387,7 @@ export class GuestManagerComponent {
     saveGuest() {
         if (this.guestForm.valid) {
             const val = this.guestForm.value;
-            const newGuest: Guest = {
-                id: crypto.randomUUID(),
+            const newGuest = {
                 name: val.name!,
                 email: val.email!,
                 phone: val.phone!,

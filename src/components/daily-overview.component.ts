@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { DataService } from '../services/data.service';
 
 @Component({
-  selector: 'app-daily-overview',
-  standalone: true,
-  imports: [CommonModule],
-  template: `
+    selector: 'app-daily-overview',
+    standalone: true,
+    imports: [CommonModule],
+    template: `
     <div class="p-6 space-y-6">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -115,21 +115,25 @@ import { DataService } from '../services/data.service';
   `
 })
 export class DailyOverviewComponent {
-  data = inject(DataService);
-  today = new Date();
+    data = inject(DataService);
+    today = new Date();
 
-  totalOutstanding = computed(() => {
-    return this.data.activeStaysWithDebt().reduce((sum, item) => sum + (item.debt > 0 ? item.debt : 0), 0);
-  });
+    totalOutstanding = computed(() => {
+        let sum = 0;
+        for (const item of this.data.activeStaysWithDebt()) {
+            if (item.debt > 0) sum += item.debt;
+        }
+        return sum;
+    });
 
-  debtorsCount = computed(() => {
-    return this.data.activeStaysWithDebt().filter(item => item.debt > 0).length;
-  });
+    debtorsCount = computed(() => {
+        return this.data.activeStaysWithDebt().filter(item => item.debt > 0).length;
+    });
 
-  checkoutsToday = computed(() => {
-      const todayStr = new Date().toISOString().split('T')[0];
-      return this.data.activeStaysWithDebt().filter(item => 
-        item.stay.checkOutProjected.startsWith(todayStr)
-      ).length;
-  });
+    checkoutsToday = computed(() => {
+        const todayStr = new Date().toISOString().split('T')[0];
+        return this.data.activeStaysWithDebt().filter(item =>
+            item.stay.checkOutProjected.startsWith(todayStr)
+        ).length;
+    });
 }

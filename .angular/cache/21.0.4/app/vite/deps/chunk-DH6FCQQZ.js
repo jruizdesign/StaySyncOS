@@ -1,7 +1,4 @@
 import {
-  pendingUntilEvent
-} from "./chunk-OYIDUI2F.js";
-import {
   deleteApp,
   getApp,
   getApps,
@@ -12,6 +9,9 @@ import {
   setLogLevel
 } from "./chunk-YWX26FOZ.js";
 import {
+  pendingUntilEvent
+} from "./chunk-U5AZPYUM.js";
+import {
   Inject,
   Injectable,
   NgModule,
@@ -20,7 +20,7 @@ import {
   isDevMode,
   setClassMetadata,
   ɵɵdefineNgModule
-} from "./chunk-UGLG2V2C.js";
+} from "./chunk-A5YYSEEO.js";
 import {
   EnvironmentInjector,
   InjectionToken,
@@ -31,12 +31,14 @@ import {
   Version,
   inject,
   makeEnvironmentProviders,
-  queueScheduler,
   runInInjectionContext,
   ɵɵdefineInjectable,
   ɵɵdefineInjector,
   ɵɵinject
-} from "./chunk-G6I5RPEY.js";
+} from "./chunk-CIW2LLUI.js";
+import {
+  queueScheduler
+} from "./chunk-XYFQ7QOX.js";
 import {
   Observable,
   asyncScheduler,
@@ -46,7 +48,7 @@ import {
   observeOn,
   subscribeOn,
   timer
-} from "./chunk-MUD6KAHP.js";
+} from "./chunk-QJQPERGE.js";
 
 // node_modules/firebase/app/dist/esm/index.esm.js
 var name = "firebase";
@@ -334,4 +336,4 @@ export {
   registerVersion2 as registerVersion,
   setLogLevel2 as setLogLevel
 };
-//# sourceMappingURL=chunk-YMMAOIF5.js.map
+//# sourceMappingURL=chunk-DH6FCQQZ.js.map
