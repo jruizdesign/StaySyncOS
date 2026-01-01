@@ -196,10 +196,26 @@ export class DataService {
   }
 
   async addRoom(room: Omit<Room, 'id' | 'status' | 'hotel'>) {
-    const hotel = this.firstHotelQuery.data()?.hotels?.[0];
+    let hotel = this.firstHotelQuery.data()?.hotels?.[0];
     if (!hotel) {
-      console.error("Cannot add room: No hotel record found.");
-      return;
+      console.log("No hotel record found. Attempting to seed default hotel...");
+      await this.seedData();
+      hotel = this.firstHotelQuery.data()?.hotels?.[0];
+
+      // Double check in case seed failed or query didn't update yet (though Data Connect should be fast)
+      if (!hotel) {
+        // Fallback manual query or wait? For now just log usage
+        console.warn("Hotel creation triggered but query not yet updated. Using default ID if available from seed.");
+        // We can't proceed without ID.
+        // Let's rely on seedData to return or set state?
+        // seedData is void.
+        // Let's defer only if extremely necessary.
+        // For now, if still null, return
+        if (!hotel) {
+          console.error("Cannot add room: No hotel record found even after seeding.");
+          return;
+        }
+      }
     }
 
     try {

@@ -50,19 +50,37 @@ import { AuthService } from '../services/auth.service';
                  </div>
               </div>
               
-              <div class="flex items-center justify-between pt-6 mt-2 border-t border-gray-50">
-                  <div class="flex items-center gap-3">
-                     <div class="relative flex items-center">
-                        <input type="checkbox" formControlName="demoMode" id="demoMode" class="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-gray-300 transition-all checked:border-indigo-600 checked:bg-indigo-600">
-                        <svg class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                     </div>
-                     <label for="demoMode" class="text-sm font-medium text-gray-600 cursor-pointer select-none">Demo / Training Mode</label>
-                  </div>
-                  <button type="submit" [disabled]="configForm.pristine" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all font-medium">
-                      Save Changes
-                  </button>
-              </div>
+                  <!-- Checkbox removed -->
+              <div class="flex justify-end pt-6 mt-2 border-t border-gray-50">
+                   <button type="submit" [disabled]="configForm.pristine" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all font-medium">
+                       Save Changes
+                   </button>
+               </div>
            </form>
+        </div>
+        
+        <!-- Environment Mode (New Separate Card) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 hover:shadow-md transition-shadow duration-300 relative overflow-hidden">
+           <div class="absolute top-0 right-0 p-4 opacity-5">
+               <svg class="w-24 h-24 text-indigo-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+           </div>
+           <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-3">
+             <div class="p-2 bg-violet-50 rounded-lg text-violet-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+             </div>
+             System Mode
+           </h2>
+           <p class="text-sm text-gray-500 mb-6 relative z-10">Switch between training mode (with sample data) and production mode. <br><span class="text-rose-600 font-bold">Note: Switching modes will reset the database.</span></p>
+           
+           <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100 relative z-10">
+              <div class="relative flex items-center">
+                 <input type="checkbox" [checked]="data.hotelConfig().demoMode" (change)="toggleDemoMode($event)" id="demoModeToggle" class="peer h-6 w-6 cursor-pointer appearance-none rounded-md border border-gray-300 transition-all checked:border-violet-600 checked:bg-violet-600">
+                 <svg class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <label for="demoModeToggle" class="font-bold text-gray-700 cursor-pointer select-none">
+                  {{ data.hotelConfig().demoMode ? 'Training / Demo Mode' : 'Production Mode' }}
+              </label>
+           </div>
         </div>
 
         <!-- Data Management -->
@@ -300,50 +318,43 @@ export class SettingsComponent {
             name: [config.name, Validators.required],
             address: [config.address, Validators.required],
             email: [config.email, [Validators.required, Validators.email]],
-            phone: [config.phone, Validators.required],
-            demoMode: [config.demoMode]
+            phone: [config.phone, Validators.required]
         });
     }
 
     updateConfig() {
         if (this.configForm.valid) {
             const newConfig = this.configForm.value;
-            const oldConfig = this.data.hotelConfig();
+            // Merge form data with existing config to preserve other fields like demoMode/maintenanceEmail if they aren't in form
+            const fullConfig = { ...this.data.hotelConfig(), ...newConfig };
 
-            // Handle Demo Mode Toggle Workflow
-            if (newConfig.demoMode !== oldConfig.demoMode) {
-                if (newConfig.demoMode) {
-                    // Enabling Demo Mode
-                    if (confirm("Enable Demo Mode? This will wipe your current data and load sample data.")) {
-                        this.data.factoryReset(true);
-                    } else {
-                        // Revert checkbox in UI if cancelled
-                        this.configForm.patchValue({ demoMode: false });
-                        return;
-                    }
-                } else {
-                    // Disabling Demo Mode (Going Real)
-                    if (confirm("Disable Demo Mode? This will WIPE ALL MOCK DATA to prepare for real usage.")) {
-                        this.data.factoryReset(false); // Wipes data, sets demoMode=false in config internally
-                        // We don't save the form immediately here because factoryReset handles the config signal
-                        // But we want to trigger the wizard
-                        this.showBulkWizard.set(true);
-                        // We can return early as factoryReset updated the config signal already
-                        return;
-                    } else {
-                        // Revert
-                        this.configForm.patchValue({ demoMode: true });
-                        return;
-                    }
-                }
-            }
-
-            this.data.updateHotelDetails(newConfig);
+            this.data.updateHotelDetails(fullConfig);
             this.configForm.markAsPristine();
+            alert('Property profile updated successfully.');
+        }
+    }
 
-            // Only alert if we didn't just switch modes (which has its own prompts)
-            if (newConfig.demoMode === oldConfig.demoMode) {
-                alert('Property profile updated successfully.');
+    toggleDemoMode(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const enableDemo = input.checked;
+        const oldState = !enableDemo; // if we clicked to checked, old was unchecked
+
+        if (enableDemo) {
+            // Enabling Demo Mode
+            if (confirm("Enable Demo Mode? This will wipe your current data and load sample data.")) {
+                this.data.factoryReset(true);
+            } else {
+                // Revert checkbox in UI if cancelled
+                input.checked = false;
+            }
+        } else {
+            // Disabling Demo Mode (Going Real)
+            if (confirm("Disable Demo Mode? This will WIPE ALL MOCK DATA to prepare for real usage.")) {
+                this.data.factoryReset(false);
+                this.showBulkWizard.set(true);
+            } else {
+                // Revert
+                input.checked = true;
             }
         }
     }
