@@ -72,6 +72,7 @@ export const routes: Routes = [
     { path: '', component: LandingComponent, pathMatch: 'full' },
 
     // Public Routes
+    { path: 'digital-solutions', component: HomeComponent },
     { path: 'it-cybersecurity', component: ItCybersecurityComponent },
     { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
 

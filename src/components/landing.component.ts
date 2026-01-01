@@ -15,6 +15,7 @@ import { RouterLink } from '@angular/router';
           <span class="logo-text">StaySync OS</span>
         </div>
         <div class="nav-links">
+          <a routerLink="/digital-solutions" class="btn-link">Digital Solutions</a>
           <a routerLink="/it-cybersecurity" class="btn-link">IT & Cybersecurity</a>
           <!-- Link to existing app login -->
           <a routerLink="/login" class="btn-login">Login to Property</a>
