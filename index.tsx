@@ -12,6 +12,9 @@ import { MaintenanceComponent } from './src/components/maintenance.component';
 import { AccountingComponent } from './src/components/accounting.component';
 import { LogsComponent } from './src/components/logs.component';
 import { SettingsComponent } from './src/components/settings.component';
+import { SetupComponent } from './src/components/setup.component';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { filter, map, take } from 'rxjs/operators';
 import { LoginComponent } from './src/components/login.component';
 import { DocumentCenterComponent } from './src/components/document-center.component';
 import { AuthService } from './src/services/auth.service';
@@ -24,7 +27,6 @@ import { provideDataConnect, getDataConnect } from '@angular/fire/data-connect';
 import { firebaseConfig } from './src/firebase-config';
 import { connectorConfig } from './src/dataconnect-generated';
 import { provideAppCheck, initializeAppCheck, ReCaptchaEnterpriseProvider } from '@angular/fire/app-check';
-import { map } from 'rxjs/operators';
 
 const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
@@ -52,19 +54,39 @@ const loginGuard: CanActivateFn = () => {
   );
 };
 
+const setupGuard: CanActivateFn = () => {
+  const data = inject(DataService);
+  const router = inject(Router);
+
+  // Check if hotel exists. Wait for data to be defined.
+  // Note: firstHotelQuery.data is a signal.
+  return toObservable(data.firstHotelQuery.data).pipe(
+    filter(d => d !== undefined),
+    take(1),
+    map(d => {
+      const hasHotel = (d?.hotels?.length || 0) > 0;
+      if (hasHotel) {
+        return true;
+      }
+      return router.parseUrl('/setup');
+    })
+  );
+};
+
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
-  { path: 'overview', component: DailyOverviewComponent, canActivate: [authGuard] },
-  { path: 'rooms', component: RoomManagerComponent, canActivate: [authGuard] },
-  { path: 'guests', component: GuestManagerComponent, canActivate: [authGuard] },
-  { path: 'staff', component: StaffManagerComponent, canActivate: [authGuard] },
-  { path: 'documents', component: DocumentCenterComponent, canActivate: [authGuard] },
-  { path: 'maintenance', component: MaintenanceComponent, canActivate: [authGuard] },
-  { path: 'accounting', component: AccountingComponent, canActivate: [authGuard] },
-  { path: 'logs', component: LogsComponent, canActivate: [authGuard] },
-  { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
+  { path: 'setup', component: SetupComponent, canActivate: [authGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard, setupGuard] },
+  { path: 'overview', component: DailyOverviewComponent, canActivate: [authGuard, setupGuard] },
+  { path: 'rooms', component: RoomManagerComponent, canActivate: [authGuard, setupGuard] },
+  { path: 'guests', component: GuestManagerComponent, canActivate: [authGuard, setupGuard] },
+  { path: 'staff', component: StaffManagerComponent, canActivate: [authGuard, setupGuard] },
+  { path: 'documents', component: DocumentCenterComponent, canActivate: [authGuard, setupGuard] },
+  { path: 'maintenance', component: MaintenanceComponent, canActivate: [authGuard, setupGuard] },
+  { path: 'accounting', component: AccountingComponent, canActivate: [authGuard, setupGuard] },
+  { path: 'logs', component: LogsComponent, canActivate: [authGuard, setupGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [authGuard, setupGuard] },
 ];
 
 import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';

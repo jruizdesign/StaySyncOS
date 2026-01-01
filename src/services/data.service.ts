@@ -200,18 +200,15 @@ export class DataService {
     let hotel = this.firstHotelQuery.data()?.hotels?.[0];
     if (!hotel) {
       console.log("No hotel record found. Attempting to seed default hotel...");
-      await this.seedData();
-      hotel = this.firstHotelQuery.data()?.hotels?.[0];
+      const seededHotel = await this.seedData();
+      if (seededHotel) {
+        hotel = seededHotel as any;
+      }
 
       // Double check in case seed failed or query didn't update yet (though Data Connect should be fast)
       if (!hotel) {
-        // Fallback manual query or wait? For now just log usage
         console.warn("Hotel creation triggered but query not yet updated. Using default ID if available from seed.");
-        // We can't proceed without ID.
-        // Let's rely on seedData to return or set state?
-        // seedData is void.
-        // Let's defer only if extremely necessary.
-        // For now, if still null, return
+
         if (!hotel) {
           console.error("Cannot add room: No hotel record found even after seeding.");
           return;
@@ -297,17 +294,21 @@ export class DataService {
           address: "123 Luxury Blvd, Metropolis, NY",
           propertyId: "PROP-001"
         });
-        if (res.data?.hotel_insert?.id) {
-          hotel = { id: res.data.hotel_insert.id, name: "StaySyncOS Demo Hotel" };
+        // The mutation returns the UUID string directly in the generated SDK for scalar returns
+        // @ts-ignore - The types might be slightly off depending on generation but at runtime this is the ID
+        const newId = res.data?.hotel_insert as unknown as string;
+
+        if (newId) {
+          hotel = { id: newId, name: "StaySyncOS Demo Hotel" };
           this.log('System', 'Initialization', 'Created default hotel record.');
         }
       } catch (e) {
         console.error("Failed to create hotel", e);
-        return;
+        return undefined;
       }
     }
 
-    if (!hotel) return;
+    if (!hotel) return undefined;
 
     // 2. Seed Rooms if empty
     if ((this.rooms()?.length || 0) === 0) {
