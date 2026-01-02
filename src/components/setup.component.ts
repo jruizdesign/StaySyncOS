@@ -2,6 +2,7 @@ import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 import { DataService } from '../services/data.service';
 
 @Component({
@@ -26,6 +27,25 @@ import { DataService } from '../services/data.service';
           <h1 class="text-3xl font-bold text-white tracking-tight">System Setup</h1>
           <p class="text-slate-400 mt-2">Initialize your property details to get started.</p>
         </div>
+
+        <!-- Recovery / Link Existing -->
+        @if (existingHotel()) {
+          <div class="bg-indigo-600/20 border border-indigo-500/50 rounded-2xl p-6 mb-8 text-center animate-fade-in">
+             <div class="text-indigo-300 font-medium mb-2">We found an existing hotel</div>
+             <div class="text-white text-xl font-bold mb-4">{{ existingHotel().name }}</div>
+             <p class="text-indigo-200/80 text-sm mb-6">Is this your property? You can link your account to it immediately.</p>
+             <button (click)="linkExisting()" [disabled]="loading()" 
+                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-lg shadow-lg shadow-indigo-900/50 transition-all">
+                {{ loading() ? 'Linking...' : 'Yes, Access Dashboard' }}
+             </button>
+          </div>
+          
+          <div class="relative flex py-5 items-center">
+              <div class="flex-grow border-t border-slate-700"></div>
+              <span class="flex-shrink-0 mx-4 text-slate-500 text-sm">Or create new</span>
+              <div class="flex-grow border-t border-slate-700"></div>
+          </div>
+        }
 
         <!-- Setup Card -->
         <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
@@ -69,6 +89,12 @@ import { DataService } from '../services/data.service';
         <p class="text-center text-slate-500 text-xs mt-8">
           Initial configuration for admin access.
         </p>
+        
+        <div class="text-center mt-4">
+          <button (click)="logout()" class="text-slate-400 hover:text-white text-sm underline">
+            Wrong account? Logout
+          </button>
+        </div>
       </div>
     </div>
   `,
@@ -83,6 +109,7 @@ import { DataService } from '../services/data.service';
 export class SetupComponent {
   data = inject(DataService);
   router = inject(Router);
+  auth = inject(AuthService); // Inject Auth Service
 
   name = 'StaySyncOS Hotel';
   address = '';
@@ -92,6 +119,9 @@ export class SetupComponent {
   error = signal(false);
   errorMessage = signal('');
 
+  // Signal for recovery mode
+  existingHotel = signal<any>(null);
+
   constructor() {
     // If hotel already exists, redirect away
     effect(() => {
@@ -100,6 +130,31 @@ export class SetupComponent {
         this.router.navigate(['/dashboard']);
       }
     });
+
+    // Check for an existing hotel globally (Account Recovery)
+    effect(() => {
+      const hotels = this.data.firstHotelQuery.data()?.hotels;
+      if (hotels && hotels.length > 0) {
+        console.log('[SetupComponent] Found existing hotel:', hotels[0]);
+        this.existingHotel.set(hotels[0]);
+      }
+    });
+  }
+
+  async linkExisting() {
+    const h = this.existingHotel();
+    if (!h) return;
+
+    this.loading.set(true);
+    try {
+      await this.data.linkHotelToUser(h.id);
+      // Wait for propagation
+      setTimeout(() => this.router.navigate(['/dashboard']), 500);
+    } catch (e: any) {
+      this.error.set(true);
+      this.errorMessage.set(e.message);
+      this.loading.set(false);
+    }
   }
 
   async onSubmit(e: Event) {
@@ -127,5 +182,9 @@ export class SetupComponent {
       this.errorMessage.set(err.message || "Failed to create hotel record.");
       this.loading.set(false);
     }
+  }
+  async logout() {
+    await this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }

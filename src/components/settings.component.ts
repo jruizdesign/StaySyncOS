@@ -323,14 +323,27 @@ export class SettingsComponent {
     }
 
     updateConfig() {
+        console.log('[Settings] Updating config. Valid:', this.configForm.valid, 'Errors:', this.configForm.errors);
+
         if (this.configForm.valid) {
             const newConfig = this.configForm.value;
             // Merge form data with existing config to preserve other fields like demoMode/maintenanceEmail if they aren't in form
             const fullConfig = { ...this.data.hotelConfig(), ...newConfig };
 
+            console.log('[Settings] Saving config:', fullConfig);
             this.data.updateHotelDetails(fullConfig);
             this.configForm.markAsPristine();
             alert('Property profile updated successfully.');
+        } else {
+            // Find invalid controls
+            const controls = this.configForm.controls;
+            let errors = '';
+            for (const name in controls) {
+                if (controls[name].invalid) {
+                    errors += `${name} is invalid. `;
+                }
+            }
+            alert('Cannot save changes: ' + errors);
         }
     }
 

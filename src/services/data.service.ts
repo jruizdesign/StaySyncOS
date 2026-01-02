@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { AiService } from './ai.service';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus } from '../dataconnect-generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel } from '../dataconnect-generated/angular';
 import { ListAvailableRoomsData } from '../dataconnect-generated';
 
 // Interfaces
@@ -169,11 +169,26 @@ export class DataService {
     () => ({ enabled: !!this.currentHotelId() })
   );
 
+  // Query to find any existing hotel (recovery mode)
+  firstHotelQuery = injectGetFirstHotel();
+
   createRoomMut = injectCreateRoom();
   createGuestMut = injectCreateGuest();
   createBookingMut = injectCreateBooking();
   createHotelMut = injectCreateHotel();
   updateRoomStatusMut = injectUpdateRoomStatus();
+
+  async linkHotelToUser(hotelId: string) {
+    const user = this.auth.currentUser();
+    // Also try auth instance if signal is empty
+    const uid = user?.id || this.auth.auth.currentUser?.uid;
+
+    if (!uid) throw new Error("No user logged in to link.");
+
+    await setDoc(doc(this.firestore, `users/${uid}`), { hotelId }, { merge: true });
+    this.log('System', 'Recovery', `User linked to existing hotel ${hotelId}`);
+    return true;
+  }
 
   // Signals
   rooms = computed(() => this.roomsQuery.data()?.rooms ?? []);
@@ -451,9 +466,16 @@ export class DataService {
 
   updateHotelDetails(details: Partial<HotelConfig>) {
     const hotelId = this.currentHotelId();
-    if (!hotelId) return;
+    console.log('[DataService] updateHotelDetails id:', hotelId, 'data:', details);
+    if (!hotelId) {
+      console.error('[DataService] updateHotelDetails failed: No hotel linked.');
+      return;
+    }
 
-    setDoc(doc(this.firestore, 'hotelConfigs', hotelId), details, { merge: true });
+    setDoc(doc(this.firestore, 'hotelConfigs', hotelId), details, { merge: true })
+      .then(() => console.log('[DataService] Hotel details saved to Firestore'))
+      .catch(err => console.error('[DataService] Hotel details save failed', err));
+
     this.log('System', 'Config Update', 'Hotel details updated.');
   }
 
