@@ -11,8 +11,8 @@ import { AuthService } from '../services/auth.service';
 import { DataService } from '../services/data.service';
 
 // Components
-import { HomeComponent } from '../../home.component';
-import { ItCybersecurityComponent } from '../../it-cybersecurity.component';
+import { HomeComponent } from '../components/home.component';
+import { ItCybersecurityComponent } from '../components/it-cybersecurity.component';
 import { SetupComponent } from '../components/setup.component';
 import { LoginComponent } from '../components/login.component';
 import { DashboardComponent } from '../components/dashboard.component';
@@ -28,33 +28,37 @@ import { DocumentCenterComponent } from '../components/document-center.component
 import { LandingComponent } from '../components/landing.component';
 
 // Guards
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (route, state) => {
     const auth = inject(AuthService);
     const router = inject(Router);
     return auth.user$.pipe(
         map(user => {
+            console.log('[AuthGuard] Checking user:', user?.uid, 'for url:', state.url);
             if (user) {
                 return true;
             }
+            console.log('[AuthGuard] No user, redirecting to /login');
             return router.parseUrl('/login');
         })
     );
 };
 
-export const loginGuard: CanActivateFn = () => {
+export const loginGuard: CanActivateFn = (route, state) => {
     const auth = inject(AuthService);
     const router = inject(Router);
     return auth.user$.pipe(
         map(user => {
+            console.log('[LoginGuard] Checking user:', user?.uid);
             if (!user) {
                 return true;
             }
+            console.log('[LoginGuard] User found, redirecting to /dashboard');
             return router.parseUrl('/dashboard');
         })
     );
 };
 
-export const setupGuard: CanActivateFn = () => {
+export const setupGuard: CanActivateFn = (route, state) => {
     const data = inject(DataService);
     const auth = inject(AuthService);
     const router = inject(Router);
@@ -65,6 +69,7 @@ export const setupGuard: CanActivateFn = () => {
         filter(u => u !== undefined),
         take(1),
         switchMap(user => {
+            console.log('[SetupGuard] Checking user:', user?.uid);
             if (!user) {
                 return of(router.parseUrl('/login'));
             }
@@ -73,10 +78,12 @@ export const setupGuard: CanActivateFn = () => {
             return docData(doc(firestore, `users/${user.uid}`)).pipe(
                 take(1),
                 map((profile: any) => {
+                    console.log('[SetupGuard] Profile:', profile);
                     // If permissions or doc doesn't exist, profile might be undefined
                     if (profile && profile.hotelId) {
                         return true;
                     }
+                    console.log('[SetupGuard] No hotelId, redirecting to /setup');
                     return router.parseUrl('/setup');
                 })
             );
