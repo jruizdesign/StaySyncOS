@@ -353,7 +353,39 @@ export class DataService {
   // Modified to be used by SetupComponent specifically
   async createHotelForUser(name: string, address: string, propertyId: string) {
     const user = this.auth.currentUser();
-    if (!user) return undefined;
+    console.log('[DataService] creating hotel for user:', user);
+
+    if (!user) {
+      console.error('[DataService] No user found directly in signal. Checking observable...');
+      // Fallback: Check if observable has it (signal sync issue?)
+      const u = this.auth.auth.currentUser;
+      if (u) {
+        console.log('[DataService] Found user in SDK directly:', u.uid);
+        // Proceed with SDK user ID if signal is lagging
+        try {
+          const res = await this.createHotelMut.mutateAsync({
+            name,
+            address,
+            propertyId
+          });
+
+          // @ts-ignore
+          const newId = res.data?.hotel_insert as unknown as string;
+
+          if (newId) {
+            await setDoc(doc(this.firestore, `users/${u.uid}`), { hotelId: newId }, { merge: true });
+            this.log('System', 'Initialization', 'Created hotel and linked to user.');
+            await this.seedRooms(newId);
+            this.seedStaff(newId);
+            return newId;
+          }
+        } catch (e) {
+          console.error("Failed to create hotel (SDK user)", e);
+          throw e;
+        }
+      }
+      return undefined;
+    }
 
     try {
       const res = await this.createHotelMut.mutateAsync({
@@ -377,6 +409,7 @@ export class DataService {
       }
     } catch (e) {
       console.error("Failed to create hotel", e);
+      throw e; // Re-throw to show in UI
     }
     return undefined;
   }

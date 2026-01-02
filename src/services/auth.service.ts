@@ -22,7 +22,7 @@ declare global {
   providedIn: 'root'
 })
 export class AuthService {
-  private auth = inject(Auth);
+  public auth = inject(Auth);
   private router = inject(Router);
   private functions = inject(Functions);
 
