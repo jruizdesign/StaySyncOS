@@ -1,7 +1,10 @@
 import { Routes, CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { filter, map, take } from 'rxjs/operators';
+import { filter, map, take, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { doc } from 'firebase/firestore';
+import { docData } from '@angular/fire/firestore';
 
 // Services
 import { AuthService } from '../services/auth.service';
@@ -53,16 +56,30 @@ export const loginGuard: CanActivateFn = () => {
 
 export const setupGuard: CanActivateFn = () => {
     const data = inject(DataService);
+    const auth = inject(AuthService);
     const router = inject(Router);
+    const firestore = data.firestore; // Use the same Firestore instance
 
-    return toObservable(data.currentHotelQuery.data).pipe(
-        filter(d => d !== undefined),
+    return auth.user$.pipe(
+        // Wait for auth to be determined (null or user)
+        filter(u => u !== undefined),
         take(1),
-        map((d: any) => {
-            if (d?.hotel) {
-                return true;
+        switchMap(user => {
+            if (!user) {
+                return of(router.parseUrl('/login'));
             }
-            return router.parseUrl('/setup');
+
+            // Check if user has a hotelId in their profile
+            return docData(doc(firestore, `users/${user.uid}`)).pipe(
+                take(1),
+                map((profile: any) => {
+                    // If permissions or doc doesn't exist, profile might be undefined
+                    if (profile && profile.hotelId) {
+                        return true;
+                    }
+                    return router.parseUrl('/setup');
+                })
+            );
         })
     );
 };
