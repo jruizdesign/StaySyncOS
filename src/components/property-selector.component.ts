@@ -62,7 +62,11 @@ import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
 
             @if (!loading() && hotels().length === 0) {
                 <div class="text-center py-12 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl">
-                    <p class="text-slate-400">No properties found linked to your account.</p>
+                    <p class="text-slate-400 mb-6 font-medium">No properties found in the database.</p>
+                    <button (click)="createDemoHotel()" 
+                        class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-900/50 transition-all transform hover:scale-105 active:scale-95">
+                        Create Initial Property
+                    </button>
                 </div>
             }
         </div>
@@ -170,7 +174,22 @@ export class PropertySelectorComponent {
         }
     }
 
+    async createDemoHotel() {
+        this.loading.set(true);
+        try {
+            console.log('[PropertySelector] Creating initial property...');
+            const newId = await this.data.createHotelForUser('StaySync Grand Hotel', '777 Broadway, New York, NY', 'PROP-001');
+            console.log('[PropertySelector] Created hotel ID:', newId);
+            await this.loadAllHotels();
+        } catch (err) {
+            console.error('[PropertySelector] Failed to create demo hotel', err);
+        } finally {
+            this.loading.set(false);
+        }
+    }
+
     selectHotel(id: string) {
+        console.log('[PropertySelector] Selecting hotel:', id);
         this.data.selectedHotelId.set(id);
         this.router.navigate(['/dashboard']);
     }

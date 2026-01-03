@@ -430,8 +430,7 @@ export class DataService {
             propertyId
           });
 
-          // @ts-ignore
-          const newId = res.data?.hotel_insert as unknown as string;
+          const newId = res.data?.hotel_insert.id;
 
           if (newId) {
             await setDoc(doc(this.firestore, `users/${u.uid}`), { hotelId: newId }, { merge: true });
@@ -455,8 +454,7 @@ export class DataService {
         propertyId
       });
 
-      // @ts-ignore
-      const newId = res.data?.hotel_insert as unknown as string;
+      const newId = res.data?.hotel_insert.id;
 
       if (newId) {
         // Link to User
