@@ -6,10 +6,10 @@ import { AuthService } from '../services/auth.service';
 import { AiService } from '../services/ai.service';
 
 @Component({
-  selector: 'app-document-center',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  template: `
+    selector: 'app-document-center',
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, FormsModule],
+    template: `
     <div class="p-6 h-full flex flex-col">
       <div class="flex justify-between items-center mb-6">
         <div>
@@ -92,72 +92,86 @@ import { AiService } from '../services/ai.service';
         </div>
       }
 
-      <!-- Document Grid -->
-      <div class="bg-gray-50 rounded-xl border border-gray-200 flex-1 overflow-y-auto p-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            @for (doc of filteredDocs(); track doc.id) {
-                <div class="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-all group relative flex flex-col h-full"
-                    [class.border-indigo-500]="selectedDocIds().has(doc.id)"
-                    [class.ring-2]="selectedDocIds().has(doc.id)"
-                    [class.ring-indigo-200]="selectedDocIds().has(doc.id)"
-                    [class.border-gray-200]="!selectedDocIds().has(doc.id)">
-                    
-                    <!-- Selection Checkbox -->
-                    <div class="absolute top-2 left-2 z-20" (click)="$event.stopPropagation()">
-                        <input type="checkbox" [checked]="selectedDocIds().has(doc.id)" (change)="toggleSelection(doc.id)"
-                        class="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer shadow-sm bg-white/90">
-                    </div>
-
-                    <!-- Preview -->
-                    <div class="h-32 bg-gray-100 flex items-center justify-center overflow-hidden relative shrink-0">
-                        @if (doc.fileType.startsWith('image/')) {
-                            <img [src]="doc.data" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity">
-                        } @else {
-                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                        }
-                        
-                        <!-- Actions Overlay (Only if not selected to avoid confusion, or keep both) -->
-                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2"
-                             [class.hidden]="selectedDocIds().has(doc.id)"> <!-- Hide overlay if selected so checkbox is clear context -->
-                             <a [href]="doc.data" [download]="doc.title" class="p-2 bg-white rounded-full text-gray-800 hover:text-indigo-600 transition-colors" title="Download">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                             </a>
-                             <button (click)="deleteDoc(doc.id)" class="p-2 bg-white rounded-full text-gray-800 hover:text-rose-600 transition-colors" title="Delete">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                             </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Info -->
-                    <div class="p-3 flex-1 flex flex-col cursor-pointer" (click)="toggleSelection(doc.id)">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-[10px] font-bold uppercase tracking-wide text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">{{ doc.category }}</span>
-                            <span class="text-[10px] text-gray-400">{{ doc.uploadedAt | date:'shortDate' }}</span>
-                        </div>
-                        <h3 class="font-medium text-gray-800 truncate text-sm mb-1" [title]="doc.title">{{ doc.title }}</h3>
-                        
-                        <!-- AI Tags -->
-                        <div class="flex flex-wrap gap-1 mb-2">
-                            @for (tag of doc.tags.slice(0, 3); track tag) {
-                                <span class="text-[10px] bg-gray-100 text-gray-500 px-1 rounded">{{ tag }}</span>
-                            }
-                        </div>
-
-                        <!-- AI Summary -->
-                        @if (doc.summary) {
-                           <p class="text-xs text-gray-500 line-clamp-2 mt-auto italic" title="{{doc.summary}}">"{{ doc.summary }}"</p>
-                        }
-
-                        <div class="text-[10px] text-gray-400 mt-2 pt-2 border-t border-gray-100">By {{ doc.uploadedBy }}</div>
-                    </div>
+      <!-- Categorized Document List -->
+      <div class="bg-gray-50 rounded-xl border border-gray-200 flex-1 overflow-y-auto p-6 space-y-8">
+        @for (group of displayGroups(); track group.category) {
+            <div class="animate-fade-in">
+                <div class="flex items-center gap-3 mb-4">
+                    <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider">{{ group.category }}</h2>
+                    <div class="h-px bg-gray-200 flex-1"></div>
+                    <span class="text-xs text-gray-400">{{ group.docs.length }} files</span>
                 </div>
-            } @empty {
-                <div class="col-span-full flex flex-col items-center justify-center py-12 text-gray-400">
-                    <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/></svg>
-                    <p>No documents found.</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    @for (doc of group.docs; track doc.id) {
+                        <div class="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-all group relative flex flex-col h-full"
+                            [class.border-indigo-500]="selectedDocIds().has(doc.id)"
+                            [class.ring-2]="selectedDocIds().has(doc.id)"
+                            [class.ring-indigo-200]="selectedDocIds().has(doc.id)"
+                            [class.border-gray-200]="!selectedDocIds().has(doc.id)">
+                            
+                            <!-- Selection Checkbox -->
+                            <div class="absolute top-2 left-2 z-20" (click)="$event.stopPropagation()">
+                                <input type="checkbox" [checked]="selectedDocIds().has(doc.id)" (change)="toggleSelection(doc.id)"
+                                class="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer shadow-sm bg-white/90">
+                            </div>
+        
+                            <!-- Thumbnail / Icon (Masked) -->
+                            <div class="h-32 bg-gray-50 flex items-center justify-center overflow-hidden relative shrink-0 cursor-pointer" (click)="viewDoc.set(doc)">
+                                <div class="flex flex-col items-center justify-center text-gray-400 group-hover:text-indigo-500 transition-colors">
+                                    <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span class="text-[10px] uppercase font-bold tracking-wider opacity-60">Click to View</span>
+                                </div>
+                                
+                                <!-- Actions Overlay -->
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2"
+                                     (click)="$event.stopPropagation()">
+                                     <button (click)="viewDoc.set(doc)" class="p-2 bg-white rounded-full text-gray-800 hover:text-indigo-600 transition-colors" title="View Securely">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                     </button>
+                                     <a [href]="doc.data" [download]="doc.title" class="p-2 bg-white rounded-full text-gray-800 hover:text-indigo-600 transition-colors" title="Download">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                     </a>
+                                     <button (click)="deleteDoc(doc.id)" class="p-2 bg-red-100 rounded-full text-red-600 hover:bg-red-200 transition-colors" title="Delete">
+                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                     </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Info -->
+                            <div class="p-3 flex-1 flex flex-col cursor-pointer" (click)="toggleSelection(doc.id)">
+                                <div class="flex justify-between items-start mb-1">
+                                    <span class="text-[10px] text-gray-400">{{ doc.uploadedAt | date:'shortDate' }}</span>
+                                </div>
+                                <h3 class="font-medium text-gray-800 truncate text-sm mb-1 hover:text-indigo-600 transition-colors" [title]="doc.title" (click)="viewDoc.set(doc); $event.stopPropagation()">{{ doc.title }}</h3>
+                                
+                                <!-- AI Tags -->
+                                <div class="flex flex-wrap gap-1 mb-2">
+                                    @for (tag of doc.tags.slice(0, 3); track tag) {
+                                        <span class="text-[10px] bg-gray-100 text-gray-500 px-1 rounded">{{ tag }}</span>
+                                    }
+                                </div>
+        
+                                <!-- AI Summary -->
+                                @if (doc.summary) {
+                                   <p class="text-xs text-gray-500 line-clamp-2 mt-auto italic" title="{{doc.summary}}">"{{ doc.summary }}"</p>
+                                }
+        
+                                <div class="text-[10px] text-gray-400 mt-2 pt-2 border-t border-gray-100">By {{ doc.uploadedBy }}</div>
+                            </div>
+                        </div>
+                    }
                 </div>
-            }
-        </div>
+            </div>
+        } @empty {
+            <div class="flex flex-col items-center justify-center py-12 text-gray-400 h-full">
+                <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/></svg>
+                <p>No documents found matching your filters.</p>
+                @if (searchTerm()) {
+                    <button (click)="searchTerm.set('')" class="mt-2 text-indigo-500 text-sm hover:underline">Clear Search</button>
+                }
+            </div>
+        }
       </div>
 
       <!-- Upload Modal -->
@@ -177,6 +191,15 @@ import { AiService } from '../services/ai.service';
                         <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
                         <select formControlName="category" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white">
                             <option *ngFor="let cat of categories.slice(1)" [value]="cat">{{ cat }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Related Guest (Optional)</label>
+                        <select formControlName="guestId" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white">
+                            <option value="">None</option>
+                            @for (guest of data.guests(); track guest.id) {
+                                <option [value]="guest.id">{{ guest.name }}</option>
+                            }
                         </select>
                     </div>
                     <div>
@@ -244,9 +267,35 @@ import { AiService } from '../services/ai.service';
           </div>
       }
 
+    <!-- Secure View Modal -->
+    @if (viewDoc()) {
+        <div class="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4" (click)="viewDoc.set(null)">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden animate-fade-in flex flex-col max-h-[90vh]" (click)="$event.stopPropagation()">
+                <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <div>
+                        <h3 class="font-bold text-gray-800">{{ viewDoc()?.title }}</h3>
+                        <p class="text-xs text-gray-500">Secure Viewer • {{ viewDoc()?.category }}</p>
+                    </div>
+                    <button (click)="viewDoc.set(null)" class="text-gray-400 hover:text-gray-600">&times;</button>
+                </div>
+                <div class="flex-1 bg-gray-100 overflow-auto p-4 flex items-center justify-center">
+                     @if (viewDoc()?.fileType?.startsWith('image/')) {
+                         <img [src]="viewDoc()?.data" class="max-w-full max-h-full object-contain shadow-lg">
+                     } @else {
+                         <div class="text-center">
+                            <svg class="w-24 h-24 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <p class="text-gray-500">Preview not available for this file type.</p>
+                            <a [href]="viewDoc()?.data" [download]="viewDoc()?.title" class="inline-block mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Download to View</a>
+                         </div>
+                     }
+                </div>
+            </div>
+        </div>
+      }
+
     </div>
   `,
-  styles: [`
+    styles: [`
     @keyframes fade-in {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -255,273 +304,250 @@ import { AiService } from '../services/ai.service';
   `]
 })
 export class DocumentCenterComponent implements OnDestroy {
-  data = inject(DataService);
-  auth = inject(AuthService);
-  ai = inject(AiService);
-  fb = inject(FormBuilder);
+    data = inject(DataService);
+    auth = inject(AuthService);
+    ai = inject(AiService);
+    fb = inject(FormBuilder);
 
-  @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
-  @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
+    @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 
-  categories: string[] = ['All', 'ID', 'Contract', 'Invoice', 'Report', 'Other'];
-  filterCategory = signal('All');
-  searchTerm = signal('');
-  
-  // Selection State
-  selectedDocIds = signal<Set<string>>(new Set());
+    categories: string[] = ['All', 'ID', 'Contract', 'Invoice', 'Report', 'Other'];
+    filterCategory = signal('All');
+    searchTerm = signal('');
 
-  // Upload State
-  showUploadModal = signal(false);
-  uploadForm: FormGroup;
-  selectedFileBase64: string | null = null;
-  selectedFileType: string = '';
+    groupedDocuments = computed(() => {
+        const docs = this.data.storedDocuments();
+        const term = this.searchTerm().toLowerCase();
 
-  // Scan State
-  showScanModal = signal(false);
-  scanTitle = 'Scanned Document';
-  mediaStream: MediaStream | null = null;
-  cameraError: string | null = null;
+        let filtered = docs;
+        if (term) {
+            filtered = docs.filter(d =>
+                d.title.toLowerCase().includes(term) ||
+                d.tags.some(t => t.toLowerCase().includes(term))
+            );
+        }
 
-  constructor() {
-      this.uploadForm = this.fb.group({
-          title: ['', Validators.required],
-          category: ['Other', Validators.required]
-      });
-  }
+        const groups: Record<string, StoredDocument[]> = {};
+        // Initialize groups
+        this.categories.slice(1).forEach(c => groups[c] = []); // IDs, Contracts etc
+        groups['Other'] = []; // Ensure Other exists
 
-  ngOnDestroy() {
-      this.stopCamera();
-  }
+        filtered.forEach(d => {
+            const cat = this.categories.includes(d.category) ? d.category : 'Other';
+            if (!groups[cat]) groups[cat] = [];
+            groups[cat].push(d);
+        });
 
-  filteredDocs = computed(() => {
-      const docs = this.data.storedDocuments();
-      const cat = this.filterCategory();
-      const term = this.searchTerm().toLowerCase();
-
-      return docs.filter(d => {
-          const matchCat = cat === 'All' || d.category === cat;
-          const matchTerm = !term || d.title.toLowerCase().includes(term) || d.tags.some(t => t.toLowerCase().includes(term));
-          return matchCat && matchTerm;
-      });
-  });
-
-  // --- Selection Logic ---
-  isAllSelected = computed(() => {
-    const filtered = this.filteredDocs();
-    return filtered.length > 0 && filtered.every(d => this.selectedDocIds().has(d.id));
-  });
-
-  toggleSelection(id: string) {
-    this.selectedDocIds.update(set => {
-        const newSet = new Set(set);
-        if (newSet.has(id)) newSet.delete(id);
-        else newSet.add(id);
-        return newSet;
+        // Remove empty groups if not searching, or keep them? 
+        // Let's return list of { category: string, docs: StoredDocument[] }
+        return Object.entries(groups)
+            .map(([category, docs]) => ({ category, docs }))
+            .filter(g => g.docs.length > 0 || (term === '' && this.filterCategory() === 'All'));
+        // Simplified: just return all non-empty for now
     });
-  }
 
-  toggleSelectAll() {
-      const filtered = this.filteredDocs();
-      const allSelected = this.isAllSelected();
-      
-      this.selectedDocIds.update(set => {
-          const newSet = new Set(set);
-          if (allSelected) {
-              filtered.forEach(d => newSet.delete(d.id));
-          } else {
-              filtered.forEach(d => newSet.add(d.id));
-          }
-          return newSet;
-      });
-  }
+    displayGroups = computed(() => {
+        const allGroups = this.groupedDocuments();
+        const activeCat = this.filterCategory();
 
-  clearSelection() {
-      this.selectedDocIds.set(new Set());
-  }
+        if (activeCat === 'All') return allGroups.filter(g => g.docs.length > 0);
+        return allGroups.filter(g => g.category === activeCat);
+    });
 
-  async bulkAnalyze() {
-      const ids = Array.from(this.selectedDocIds());
-      if (ids.length === 0) return;
-      
-      const docs = this.data.storedDocuments().filter(d => ids.includes(d.id));
-      
-      if (confirm(`Start AI Analysis for ${docs.length} documents? This may take a moment.`)) {
-          this.clearSelection();
-          // Process in sequence to avoid rate limits
-          for (const doc of docs) {
-              await this.performAnalysis(doc);
-          }
-          alert('Batch analysis complete.');
-      }
-  }
+    selectedDocIds = signal<Set<string>>(new Set());
+    viewDoc = signal<StoredDocument | null>(null);
 
-  bulkDelete() {
-      const ids = Array.from(this.selectedDocIds());
-      if (ids.length === 0) return;
+    // Upload State
+    showUploadModal = signal(false);
+    uploadForm: FormGroup;
+    selectedFileBase64: string | null = null;
+    selectedFileType: string = '';
 
-      if (confirm(`Permanently delete ${ids.length} documents?`)) {
-          ids.forEach(id => this.data.deleteDocument(id));
-          this.clearSelection();
-      }
-  }
+    // Scan State
+    showScanModal = signal(false);
+    scanTitle = 'Scanned Document';
+    mediaStream: MediaStream | null = null;
+    cameraError: string | null = null;
 
-  // --- Upload Logic ---
-  openUploadModal() {
-      this.uploadForm.reset({ category: 'Other' });
-      this.selectedFileBase64 = null;
-      this.showUploadModal.set(true);
-  }
+    constructor() {
+        this.uploadForm = this.fb.group({
+            title: ['', Validators.required],
+            category: ['Other', Validators.required],
+            guestId: ['']
+        });
+    }
 
-  onFileSelected(event: Event) {
-      const input = event.target as HTMLInputElement;
-      if (input.files && input.files.length > 0) {
-          const file = input.files[0];
-          
-          if (file.size > 5 * 1024 * 1024) { // 5MB limit
-              alert('File too large (Max 5MB)');
-              input.value = '';
-              return;
-          }
+    // Toggle logic
+    toggleSelection(docId: string) {
+        this.selectedDocIds.update(set => {
+            const newSet = new Set(set);
+            if (newSet.has(docId)) newSet.delete(docId);
+            else newSet.add(docId);
+            return newSet;
+        });
+    }
 
-          this.selectedFileType = file.type;
-          const reader = new FileReader();
-          reader.onload = (e) => {
-              this.selectedFileBase64 = e.target?.result as string;
-          };
-          reader.readAsDataURL(file);
-      }
-  }
+    isAllSelected() {
+        const hasDocs = this.filteredDocs().length > 0;
+        return hasDocs && this.filteredDocs().every(d => this.selectedDocIds().has(d.id));
+    }
 
-  async submitUpload() {
-      if (this.uploadForm.valid && this.selectedFileBase64) {
-          const newDoc = this.data.uploadDocument({
-              title: this.uploadForm.get('title')?.value,
-              category: this.uploadForm.get('category')?.value,
-              uploadedBy: this.auth.currentUser()?.username || 'Unknown',
-              fileType: this.selectedFileType,
-              data: this.selectedFileBase64,
-              tags: []
-          });
-          
-          this.showUploadModal.set(false);
+    toggleSelectAll() {
+        if (this.isAllSelected()) {
+            this.selectedDocIds.set(new Set());
+        } else {
+            const allIds = this.filteredDocs().map(d => d.id);
+            this.selectedDocIds.set(new Set(allIds));
+        }
+    }
 
-          // AI Analysis (Async)
-          this.performAnalysis(newDoc);
-      }
-  }
+    filteredDocs() {
+        // Flatten displayGroups for legacy checkbox logic if needed, or update logic
+        // For simple select all, we can just grab everything from filtered list
+        return this.displayGroups().flatMap(g => g.docs);
+    }
 
-  deleteDoc(id: string) {
-      if (confirm('Delete this document?')) {
-          this.data.deleteDocument(id);
-      }
-  }
+    clearSelection() {
+        this.selectedDocIds.set(new Set());
+    }
 
-  // --- Scan Logic ---
-  openScanModal() {
-      this.scanTitle = `Scan ${new Date().toLocaleTimeString()}`;
-      this.showScanModal.set(true);
-      this.cameraError = null;
-      // Wait for view to init
-      setTimeout(() => this.startCamera(), 100);
-  }
+    // Actions
+    bulkDelete() {
+        const ids = Array.from(this.selectedDocIds());
+        if (!confirm(`Delete ${ids.length} documents?`)) return;
 
-  closeScanModal() {
-      this.stopCamera();
-      this.showScanModal.set(false);
-  }
+        ids.forEach(id => this.data.deleteDocument(id));
+        this.clearSelection();
+    }
 
-  async startCamera() {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-          try {
-              this.mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-              if (this.videoElement) {
-                  this.videoElement.nativeElement.srcObject = this.mediaStream;
-              }
-              this.cameraError = null;
-          } catch (error) {
-              console.error(error);
-              this.cameraError = "Could not access camera. Check permissions.";
-          }
-      } else {
-          this.cameraError = "Camera API not supported in this browser.";
-      }
-  }
+    async bulkAnalyze() {
+        alert('AI Bulk Analysis started... (Implementation pending)');
+    }
 
-  stopCamera() {
-      if (this.mediaStream) {
-          this.mediaStream.getTracks().forEach(track => track.stop());
-          this.mediaStream = null;
-      }
-  }
+    deleteDoc(id: string) {
+        if (confirm('Delete this document?')) {
+            this.data.deleteDocument(id);
+        }
+    }
 
-  captureImage() {
-      if (this.videoElement && this.canvasElement) {
-          const video = this.videoElement.nativeElement;
-          const canvas = this.canvasElement.nativeElement;
-          
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          
-          const context = canvas.getContext('2d');
-          if (context) {
-              context.drawImage(video, 0, 0, canvas.width, canvas.height);
-              
-              // Convert to data URL
-              const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-              
-              // Save
-              const newDoc = this.data.uploadDocument({
-                  title: this.scanTitle,
-                  category: 'Other', // Default for scans
-                  uploadedBy: this.auth.currentUser()?.username || 'Scanner',
-                  fileType: 'image/jpeg',
-                  data: dataUrl,
-                  tags: ['scanned']
-              });
+    // Upload Logic
+    openUploadModal() {
+        this.showUploadModal.set(true);
+        this.selectedFileBase64 = null;
+        this.uploadForm.reset({ category: 'Other', title: '' });
+    }
 
-              this.closeScanModal();
-              this.performAnalysis(newDoc);
-          }
-      }
-  }
+    onFileSelected(event: any) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-  simulateScan() {
-     // For environments without camera hardware
-     const canvas = document.createElement('canvas');
-     canvas.width = 640;
-     canvas.height = 480;
-     const ctx = canvas.getContext('2d');
-     if (ctx) {
-         ctx.fillStyle = '#f3f4f6';
-         ctx.fillRect(0,0,640,480);
-         ctx.fillStyle = '#3730a3';
-         ctx.font = '30px Arial';
-         ctx.fillText('Simulated Scan Document', 150, 240);
-         const dataUrl = canvas.toDataURL('image/jpeg');
-         
-         const newDoc = this.data.uploadDocument({
-             title: this.scanTitle + ' (Sim)',
-             category: 'Other',
-             uploadedBy: this.auth.currentUser()?.username || 'Scanner',
-             fileType: 'image/jpeg',
-             data: dataUrl,
-             tags: ['simulated']
-         });
-         this.closeScanModal();
-         this.performAnalysis(newDoc);
-     }
-  }
+        this.selectedFileType = file.type;
+        const reader = new FileReader();
+        reader.onload = () => {
+            this.selectedFileBase64 = reader.result as string;
+            // Auto-fill title if empty
+            if (!this.uploadForm.get('title')?.value) {
+                this.uploadForm.patchValue({ title: file.name });
+            }
+        };
+        reader.readAsDataURL(file);
+    }
 
-  async performAnalysis(doc: StoredDocument) {
-      console.log('Starting AI analysis for', doc.title);
-      const analysis = await this.ai.analyzeDocument(doc.data);
-      if (analysis && (analysis.tags || analysis.summary)) {
-          this.data.updateDocument(doc.id, {
-              title: analysis.title || doc.title,
-              category: analysis.category as any || doc.category,
-              tags: analysis.tags || doc.tags,
-              summary: analysis.summary
-          });
-      }
-  }
+    async submitUpload() {
+        if (this.uploadForm.invalid || !this.selectedFileBase64) return;
+
+        const formVal = this.uploadForm.value;
+
+        // Optimistic UI or wait?
+        this.data.uploadDocument({
+            title: formVal.title,
+            category: formVal.category,
+            uploadedBy: this.auth.currentUser()?.username || 'Unknown',
+            fileType: this.selectedFileType,
+            data: this.selectedFileBase64,
+            guestId: this.uploadForm.get('guestId')?.value || undefined,
+            tags: []
+        });
+
+        // Trigger AI analysis in background
+        // this.performAnalysis(this.selectedFileBase64); // Todo: get ID of new doc
+
+        this.showUploadModal.set(false);
+    }
+
+    // Camera Logic
+    async openScanModal() {
+        this.showScanModal.set(true);
+        this.scanTitle = 'Scanned Document';
+        await this.startCamera();
+    }
+
+    async startCamera() {
+        this.cameraError = null;
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment' }
+            });
+            this.mediaStream = stream;
+            if (this.videoElement) {
+                this.videoElement.nativeElement.srcObject = stream;
+            }
+        } catch (err) {
+            console.error(err);
+            this.cameraError = 'Could not access camera. Please allow permissions.';
+        }
+    }
+
+    captureImage() {
+        if (!this.videoElement || !this.canvasElement) return;
+
+        const video = this.videoElement.nativeElement;
+        const canvas = this.canvasElement.nativeElement;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(video, 0, 0);
+
+        const base64 = canvas.toDataURL('image/jpeg', 0.8);
+
+        // Save
+        this.data.uploadDocument({
+            title: this.scanTitle,
+            category: 'Other',
+            uploadedBy: this.auth.currentUser()?.username || 'Scanner',
+            fileType: 'image/jpeg',
+            data: base64,
+            tags: ['scanned']
+        });
+
+        this.closeScanModal();
+    }
+
+    simulateScan() {
+        // Mock scan
+        this.data.uploadDocument({
+            title: 'Simulated Scan ' + new Date().toLocaleTimeString(),
+            category: 'Other',
+            uploadedBy: 'Simulated Scanner',
+            fileType: 'image/fake',
+            data: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // Gray pixel
+            tags: ['simulated']
+        });
+        this.closeScanModal();
+    }
+
+    closeScanModal() {
+        if (this.mediaStream) {
+            this.mediaStream.getTracks().forEach(t => t.stop());
+            this.mediaStream = null;
+        }
+        this.showScanModal.set(false);
+    }
+
+    ngOnDestroy() {
+        this.closeScanModal(); // Cleanup camera
+    }
 }

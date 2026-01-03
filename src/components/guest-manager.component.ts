@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataService, Guest, FinancialDocument, Room } from '../services/data.service';
+import { DataService, Guest, FinancialDocument, Room, StoredDocument } from '../services/data.service';
 import { AiService } from '../services/ai.service';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormsModule } from '@angular/forms';
 import { DocumentViewerComponent } from './document-viewer.component';
@@ -57,16 +57,20 @@ import { DocumentViewerComponent } from './document-viewer.component';
                   <td class="p-4">
                     @if (guest.currentStayId) {
                       <span class="px-2 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">Checked In</span>
+                    } @else if (getReservedStay(guest.id)) {
+                      <span class="px-2 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 border border-indigo-200">Reserved</span>
                     } @else {
                       <span class="px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">Inactive</span>
                     }
                   </td>
                   <td class="p-4 text-gray-600">{{ guest.history.length }} past stays</td>
                   <td class="p-4 text-right flex justify-end items-center gap-2" (click)="$event.stopPropagation()">
-                    @if (!guest.currentStayId) {
-                       <button (click)="openBookingModal(guest)" class="text-indigo-600 hover:bg-indigo-50 px-3 py-1 rounded transition-colors text-xs font-semibold border border-transparent hover:border-indigo-100">Book Now</button>
-                    } @else {
+                    @if (guest.currentStayId) {
                        <button (click)="checkOut(guest)" class="text-rose-600 hover:bg-rose-50 px-3 py-1 rounded transition-colors text-xs font-semibold border border-transparent hover:border-rose-100">Check Out</button>
+                    } @else if (getReservedStay(guest.id)) {
+                       <button (click)="checkInGuest(getReservedStay(guest.id)!)" class="text-indigo-600 hover:bg-indigo-50 px-3 py-1 rounded transition-colors text-xs font-semibold border border-transparent hover:border-indigo-100">Check In</button>
+                    } @else {
+                       <button (click)="openBookingModal(guest)" class="text-indigo-600 hover:bg-indigo-50 px-3 py-1 rounded transition-colors text-xs font-semibold border border-transparent hover:border-indigo-100">Book Now</button>
                     }
                   </td>
                 </tr>
@@ -175,25 +179,91 @@ import { DocumentViewerComponent } from './document-viewer.component';
 
                          <div class="flex-1 overflow-y-auto p-6 bg-gray-50/30">
                              @if (activeTab() === 'docs') {
-                                 <div class="space-y-2">
-                                     @for (doc of getGuestDocs(selectedGuest()!.id); track doc.id) {
-                                         <div (click)="viewDocument(doc)" class="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-300 hover:shadow-sm cursor-pointer transition-all flex justify-between items-center group">
-                                             <div class="flex items-center gap-3">
-                                                 <div class="p-2 bg-gray-100 rounded text-gray-500 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                                 </div>
-                                                 <div>
-                                                     <div class="font-medium text-gray-800">{{ doc.type }} #{{ doc.number }}</div>
-                                                     <div class="text-xs text-gray-500">{{ doc.date | date:'mediumDate' }} • \${{ doc.totalAmount | number }}</div>
-                                                 </div>
-                                             </div>
-                                             <svg class="w-5 h-5 text-gray-300 group-hover:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                         </div>
-                                     } @empty {
-                                         <div class="text-center py-12 text-gray-400">No documents found for this guest.</div>
-                                     }
-                                 </div>
-                             } @else {
+<div class="space-y-6">
+    <!-- Uploaded Files (IDs, Contracts) -->
+    <div>
+        <div class="flex justify-between items-center mb-3">
+            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Uploaded Files</h4>
+            <span class="text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">{{
+                getGuestStoredDocs(selectedGuest()!.id).length }} files</span>
+        </div>
+        <div class="grid grid-cols-1 gap-2">
+            @for (file of getGuestStoredDocs(selectedGuest()!.id); track file.id) {
+            <div
+                class="bg-white p-3 rounded-lg border border-gray-200 hover:border-indigo-300 transition-all flex justify-between items-center group">
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <!-- Thumbnail or Icon -->
+                    <div
+                        class="w-10 h-10 rounded bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden border border-gray-100">
+                        @if (file.fileType.startsWith('image/')) {
+                        <img [src]="file.data" class="w-full h-full object-cover">
+                        } @else {
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        }
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-gray-800 truncate text-sm">{{ file.title }}</span>
+                            <span class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded"
+                                [class.bg-indigo-100]="file.category === 'ID'"
+                                [class.text-indigo-700]="file.category === 'ID'"
+                                [class.bg-gray-100]="file.category !== 'ID'"
+                                [class.text-gray-600]="file.category !== 'ID'">
+                                {{ file.category }}
+                            </span>
+                        </div>
+                        <div class="text-xs text-gray-500 truncate">{{ file.uploadedAt | date:'mediumDate' }}</div>
+                    </div>
+                </div>
+                <a [href]="file.data" [download]="file.title"
+                    class="p-2 text-gray-400 hover:text-indigo-600 transition-colors" title="Download">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                </a>
+            </div>
+            } @empty {
+            <div class="text-sm text-gray-400 italic py-2">No files uploaded.</div>
+            }
+        </div>
+    </div>
+
+    <!-- Financial Documents -->
+    <div>
+        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Financial Records</h4>
+        <div class="space-y-2">
+            @for (doc of getGuestDocs(selectedGuest()!.id); track doc.id) {
+            <div (click)="viewDocument(doc)"
+                class="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-300 hover:shadow-sm cursor-pointer transition-all flex justify-between items-center group">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="p-2 bg-gray-100 rounded text-gray-500 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-800">{{ doc.type }} #{{ doc.number }}</div>
+                        <div class="text-xs text-gray-500">{{ doc.date | date:'mediumDate' }} • \${{ doc.totalAmount |
+                            number }}</div>
+                    </div>
+                </div>
+                <svg class="w-5 h-5 text-gray-300 group-hover:text-indigo-400" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+            } @empty {
+            <div class="text-center py-4 text-gray-400 text-sm">No accounts/invoices found.</div>
+            }
+        </div>
+    </div>
+</div>                             } @else {
                                  <div class="space-y-4">
                                      @for (stay of selectedGuest()?.history; track stay.id) {
                                          <div class="bg-white p-4 rounded-lg border border-gray-200">
@@ -266,11 +336,11 @@ import { DocumentViewerComponent } from './document-viewer.component';
                                 [class.ring-indigo-500]="bookingForm.get('roomId')?.value === room.id">
                                   <div class="flex items-center gap-2">
                                       <input type="radio" formControlName="roomId" [value]="room.id" class="hidden">
-                                      <span class="font-bold text-gray-800">Room {{ room.number }}</span>
+                                      <span class="font-bold text-gray-800">Room {{ room.roomNumber }}</span>
                                   </div>
                                   <div class="text-xs text-gray-500 flex justify-between">
-                                      <span>{{ room.type }}</span>
-                                      <span class="font-medium text-emerald-600">\${{ room.price }}</span>
+                                      <span>{{ room.roomType }}</span>
+                                      <span class="font-medium text-emerald-600">\${{ room.dailyRate }}</span>
                                   </div>
                               </label>
                           } @empty {
@@ -338,6 +408,7 @@ export class GuestManagerComponent {
     selectedGuest = signal<Guest | null>(null);
     activeTab = signal<'docs' | 'history'>('docs');
     viewDoc = signal<FinancialDocument | null>(null);
+    viewStoredDoc = signal<StoredDocument | null>(null);
 
     // Helpers
     createdDoc = signal<FinancialDocument | null>(null);
@@ -412,17 +483,40 @@ export class GuestManagerComponent {
         return this.data.documents().filter(d => d.guestId === guestId);
     }
 
+    getGuestStoredDocs(guestId: string) {
+        return this.data.storedDocuments().filter(d => d.guestId === guestId);
+    }
+
+    getGuestDocsByCategory(guestId: string, category: string) {
+        return this.data.storedDocuments().filter(d => d.guestId === guestId && d.category === category);
+    }
+
+
+
     getRoomNumber(stayId?: string | null) {
         if (!stayId) return 'Unknown';
         const stay = this.data.stays().find(s => s.id === stayId);
         const room = this.data.rooms().find(r => r.id === stay?.roomId);
-        return room?.number || 'Unknown';
+        return room?.roomNumber || 'Unknown';
+    }
+
+    getReservedStay(guestId: string) {
+        return this.data.stays().find(s => s.guestId === guestId && s.status === 'Reserved');
+    }
+
+    async checkInGuest(stay: any) {
+        try {
+            await this.data.checkIn(stay.id);
+            alert('Guest successfully checked in!');
+        } catch (e: any) {
+            alert(e.message);
+        }
     }
 
     getRoomNumberByStay(stay: any) {
         // For history items, roomId is stored in stay object
         const room = this.data.rooms().find(r => r.id === stay.roomId);
-        return room ? room.number : 'Unknown'; // Might be deleted room, etc.
+        return room ? room.roomNumber : 'Unknown'; // Might be deleted room, etc.
     }
 
     viewDocument(doc: FinancialDocument) {

@@ -14,7 +14,7 @@ import { DataService, Room, Guest, Stay } from '../services/data.service';
           <h1 class="text-2xl font-bold text-gray-800">Room Management</h1>
           <p class="text-gray-500 text-sm">Configure hotel inventory</p>
         </div>
-        <button (click)="toggleWizard()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow transition-colors" disabled>
+        <button (click)="toggleWizard()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow transition-colors">
           {{ showWizard() ? 'Cancel Creation' : '+ New Room' }}
         </button>
       </div>
@@ -227,7 +227,7 @@ import { DataService, Room, Guest, Stay } from '../services/data.service';
 export class RoomManagerComponent {
   data = inject(DataService);
   fb = inject(FormBuilder);
-  
+
   showWizard = signal(false);
   step = signal(1);
 
@@ -256,12 +256,24 @@ export class RoomManagerComponent {
     this.step.update(s => s - 1);
   }
 
-  submitRoom() {
-    // TODO: Re-enable when mutations are available
+  async submitRoom() {
+    if (this.roomForm.invalid) return;
+
+    const val = this.roomForm.value;
+    await this.data.addRoom({
+      roomNumber: val.roomNumber,
+      roomType: val.roomType,
+      dailyRate: val.dailyRate,
+      capacity: 2 // Default since form doesn't have it
+    } as any);
+
+    this.toggleWizard();
+    this.roomForm.reset({ roomType: 'Single', dailyRate: 100 });
   }
 
-  updateStatus(roomId: string, event: Event) {
-    // TODO: Re-enable when mutations are available
+  async updateStatus(roomId: string, event: Event) {
+    const select = event.target as HTMLSelectElement;
+    await this.data.updateRoomStatus(roomId, select.value);
   }
 
   handleRoomClick(room: Room) {
@@ -269,22 +281,22 @@ export class RoomManagerComponent {
 
     // Find the active stay information
     const debtInfo = this.data.activeStaysWithDebt().find(item => item.room?.id === room.id);
-    
+
     if (debtInfo) {
-        this.showFullDetails.set(false);
-        this.selectedGlance.set({
-            room: room,
-            guest: debtInfo.guest,
-            stay: debtInfo.stay,
-            debt: debtInfo.debt
-        });
+      this.showFullDetails.set(false);
+      this.selectedGlance.set({
+        room: room,
+        guest: debtInfo.guest,
+        stay: debtInfo.stay,
+        debt: debtInfo.debt
+      });
     } else {
-        // Fallback if data sync is weird (shouldn't happen often)
-        this.selectedGlance.set({ room: room });
+      // Fallback if data sync is weird (shouldn't happen often)
+      this.selectedGlance.set({ room: room });
     }
   }
 
   toggleDetails() {
-      this.showFullDetails.update(v => !v);
+    this.showFullDetails.update(v => !v);
   }
 }

@@ -33,7 +33,7 @@ export interface Stay {
   checkOutActual?: string | null;
   ratePerNight: number;
   totalPaid: number;
-  status: 'Active' | 'Completed' | 'Cancelled';
+  status: 'Active' | 'Completed' | 'Cancelled' | 'Reserved';
   isIndefinite?: boolean;
 }
 
@@ -127,6 +127,7 @@ export interface StoredDocument {
   fileType: string; // mime type
   data: string; // Base64
   tags: string[];
+  guestId?: string; // Optional link to guest
   summary?: string;
 }
 
@@ -191,7 +192,13 @@ export class DataService {
   }
 
   // Signals
-  rooms = computed(() => this.roomsQuery.data()?.rooms ?? []);
+  rooms = computed(() => {
+    const data = this.roomsQuery.data();
+    if (data?.rooms) {
+      console.log('[DataService] Rooms updated:', data.rooms.length);
+    }
+    return data?.rooms ?? [];
+  });
 
   guests = toSignal(
     toObservable(this.currentHotelId).pipe(
@@ -310,9 +317,10 @@ export class DataService {
     addDoc(collection(this.firestore, 'logs'), entry);
   }
 
-  async addRoom(room: Omit<Room, 'id' | 'status' | 'hotel'>) {
+  async addRoom(room: Omit<Room, 'id' | 'hotel' | 'status'> & { status?: string }) {
     const hotelId = this.currentHotelId();
 
+    console.log('[DataService] Adding room:', room);
     if (!hotelId) {
       console.error("Cannot add room: No hotel linked to user.");
       return;
@@ -323,13 +331,15 @@ export class DataService {
         hotelId: hotelId,
         roomNumber: room.roomNumber,
         roomType: room.roomType,
-        status: 'Available',
-        dailyRate: room.dailyRate ?? 100,
+        status: room.status || 'Available',
+        dailyRate: room.dailyRate,
         capacity: room.capacity ?? 2
       });
-      this.log('Room', 'Room Created', `Room ${room.roomNumber} added.`);
+      this.log('Room', 'Create', `Room ${room.roomNumber} added.`);
+      this.roomsQuery.refetch();
     } catch (e) {
-      console.error("Failed to add room", e);
+      this.log('Room', 'Error', 'Failed to add room');
+      console.error("Error adding room", e);
     }
   }
 
@@ -451,17 +461,17 @@ export class DataService {
   }
 
   private seedStaff(hotelIdInput?: string) {
-    const hotelId = hotelIdInput || this.currentHotelId();
-    if (!hotelId) return;
-    if (this.staff().length > 0) return;
+    // const hotelId = hotelIdInput || this.currentHotelId();
+    // if (!hotelId) return;
+    // if (this.staff().length > 0) return;
 
-    const staff: Staff[] = [
-      { id: crypto.randomUUID(), hotelId, name: 'Alice Manager', role: 'Manager', pin: '1234', status: 'Active', currentStatus: 'Clocked Out' },
-      { id: crypto.randomUUID(), hotelId, name: 'Bob Reception', role: 'Reception', pin: '0000', status: 'Active', currentStatus: 'Clocked Out' },
-      { id: crypto.randomUUID(), hotelId, name: 'Charlie Clean', role: 'Housekeeping', pin: '1111', status: 'Active', currentStatus: 'Clocked Out' },
-      { id: crypto.randomUUID(), hotelId, name: 'Mike Fixit', role: 'Maintenance', pin: '2222', status: 'Active', currentStatus: 'Clocked Out' },
-    ];
-    staff.forEach(s => setDoc(doc(this.firestore, 'staff', s.id), s));
+    // const staff: Staff[] = [
+    //   { id: crypto.randomUUID(), hotelId, name: 'Alice Manager', role: 'Manager', pin: '1234', status: 'Active', currentStatus: 'Clocked Out' },
+    //   { id: crypto.randomUUID(), hotelId, name: 'Bob Reception', role: 'Reception', pin: '0000', status: 'Active', currentStatus: 'Clocked Out' },
+    //   { id: crypto.randomUUID(), hotelId, name: 'Charlie Clean', role: 'Housekeeping', pin: '1111', status: 'Active', currentStatus: 'Clocked Out' },
+    //   { id: crypto.randomUUID(), hotelId, name: 'Mike Fixit', role: 'Maintenance', pin: '2222', status: 'Active', currentStatus: 'Clocked Out' },
+    // ];
+    // staff.forEach(s => setDoc(doc(this.firestore, 'staff', s.id), s));
   }
 
   updateHotelDetails(details: Partial<HotelConfig>) {
@@ -720,21 +730,43 @@ export class DataService {
       checkOutProjected: checkOut || new Date(new Date(checkIn).getTime() + 24 * 60 * 60 * 1000).toISOString(),
       ratePerNight: this.rooms().find(r => r.id === roomId)?.dailyRate || 100,
       totalPaid: 0,
-      status: 'Active',
+      status: 'Reserved',
       isIndefinite: !checkOut
     };
 
-    // Save/Update Guest
-    const updatedGuest = { ...guest, currentStayId: stay.id, history: [...guest.history, stay] };
+    // Save/Update Guest (Add to history, but DO NOT check in yet)
+    const updatedGuest = { ...guest, history: [...guest.history, stay] };
     this.updateGuest(updatedGuest);
 
     // Create Stay
     this.createStay(stay);
 
-    // Update Room Status
+    // Update Room Status (Blocked)
     this.updateRoomStatus(stay.roomId, 'Occupied');
 
-    this.log('Guest', 'Check In', `Guest ${guest.name} checked into Room (ID: ${stay.roomId})`);
+    this.log('Guest', 'Reservation', `Guest ${guest.name} reserved Room (ID: ${stay.roomId})`);
+  }
+
+  async checkIn(stayId: string) {
+    const stay = this.stays().find(s => s.id === stayId);
+    if (!stay) throw new Error("Stay not found");
+
+    // 1. Verify ID Document
+    const hasID = this.storedDocuments().some(d => d.guestId === stay.guestId && d.category === 'ID');
+    if (!hasID) {
+      throw new Error("Missing ID Document. Please upload guest ID before check-in.");
+    }
+
+    // 2. Update Stay Status
+    await updateDoc(doc(this.firestore, 'stays', stayId), { status: 'Active' });
+
+    // 3. Update Guest Status
+    const guest = this.guests().find(g => g.id === stay.guestId);
+    if (guest) {
+      await updateDoc(doc(this.firestore, 'guests', guest.id), { currentStayId: stayId });
+    }
+
+    this.log('Guest', 'Check In', `Guest checked in (Stay ${stayId})`);
   }
 
   async checkOut(stayId: string, roomId?: string, guestId?: string) {

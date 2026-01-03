@@ -145,7 +145,7 @@ import { AiService } from '../services/ai.service';
                         <label class="block text-sm font-medium text-gray-700 mb-1">Room</label>
                         <select formControlName="roomId" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white">
                             @for (room of data.rooms(); track room.id) {
-                                <option [value]="room.id">Room {{ room.number }} ({{ room.status }})</option>
+                                <option [value]="room.id">Room {{ room.roomNumber }} ({{ room.status }})</option>
                             }
                         </select>
                     </div>

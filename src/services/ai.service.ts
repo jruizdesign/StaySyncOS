@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GoogleGenAI, Type } from "@google/genai";
 import { MaintenanceRequest, FinancialDocument } from './data.service';
+import { environment } from '../environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,9 @@ export class AiService {
 
   constructor() {
     // Safe API Key retrieval (placeholder for now)
-    const key = ''; // TODO: Configure via environment.ts or similar
-    this.apiKey = key;
-    this.ai = new GoogleGenAI({ apiKey: key });
+    // Safe API Key retrieval
+    this.apiKey = environment.geminiApiKey;
+    this.ai = new GoogleGenAI({ apiKey: this.apiKey });
   }
 
   async generateDailyReport(logs: string, debts: string): Promise<string> {
