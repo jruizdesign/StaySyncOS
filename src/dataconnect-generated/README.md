@@ -21,6 +21,8 @@ This README will guide you through the process of using the generated JavaScript
   - [*UpdateRoomStatus*](#updateroomstatus)
   - [*CreateGuest*](#createguest)
   - [*CreateBooking*](#createbooking)
+  - [*UpsertUser*](#upsertuser)
+  - [*LinkUserToHotel*](#linkusertohotel)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `default`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -1208,6 +1210,233 @@ console.log(data.booking_insert);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.booking_insert);
+});
+```
+
+## UpsertUser
+You can execute the `UpsertUser` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+upsertUser(vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+
+interface UpsertUserRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+}
+export const upsertUserRef: UpsertUserRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+upsertUser(dc: DataConnect, vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+
+interface UpsertUserRef {
+  ...
+  (dc: DataConnect, vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+}
+export const upsertUserRef: UpsertUserRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the upsertUserRef:
+```typescript
+const name = upsertUserRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpsertUser` mutation requires an argument of type `UpsertUserVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpsertUserVariables {
+  id: string;
+  email: string;
+  role: string;
+}
+```
+### Return Type
+Recall that executing the `UpsertUser` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpsertUserData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpsertUserData {
+  user_upsert: User_Key;
+}
+```
+### Using `UpsertUser`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, upsertUser, UpsertUserVariables } from '@dataconnect/generated';
+
+// The `UpsertUser` mutation requires an argument of type `UpsertUserVariables`:
+const upsertUserVars: UpsertUserVariables = {
+  id: ..., 
+  email: ..., 
+  role: ..., 
+};
+
+// Call the `upsertUser()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await upsertUser(upsertUserVars);
+// Variables can be defined inline as well.
+const { data } = await upsertUser({ id: ..., email: ..., role: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await upsertUser(dataConnect, upsertUserVars);
+
+console.log(data.user_upsert);
+
+// Or, you can use the `Promise` API.
+upsertUser(upsertUserVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_upsert);
+});
+```
+
+### Using `UpsertUser`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, upsertUserRef, UpsertUserVariables } from '@dataconnect/generated';
+
+// The `UpsertUser` mutation requires an argument of type `UpsertUserVariables`:
+const upsertUserVars: UpsertUserVariables = {
+  id: ..., 
+  email: ..., 
+  role: ..., 
+};
+
+// Call the `upsertUserRef()` function to get a reference to the mutation.
+const ref = upsertUserRef(upsertUserVars);
+// Variables can be defined inline as well.
+const ref = upsertUserRef({ id: ..., email: ..., role: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = upsertUserRef(dataConnect, upsertUserVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_upsert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_upsert);
+});
+```
+
+## LinkUserToHotel
+You can execute the `LinkUserToHotel` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+linkUserToHotel(vars: LinkUserToHotelVariables): MutationPromise<LinkUserToHotelData, LinkUserToHotelVariables>;
+
+interface LinkUserToHotelRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: LinkUserToHotelVariables): MutationRef<LinkUserToHotelData, LinkUserToHotelVariables>;
+}
+export const linkUserToHotelRef: LinkUserToHotelRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+linkUserToHotel(dc: DataConnect, vars: LinkUserToHotelVariables): MutationPromise<LinkUserToHotelData, LinkUserToHotelVariables>;
+
+interface LinkUserToHotelRef {
+  ...
+  (dc: DataConnect, vars: LinkUserToHotelVariables): MutationRef<LinkUserToHotelData, LinkUserToHotelVariables>;
+}
+export const linkUserToHotelRef: LinkUserToHotelRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the linkUserToHotelRef:
+```typescript
+const name = linkUserToHotelRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `LinkUserToHotel` mutation requires an argument of type `LinkUserToHotelVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface LinkUserToHotelVariables {
+  userId: string;
+  hotelId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `LinkUserToHotel` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `LinkUserToHotelData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface LinkUserToHotelData {
+  userHotel_insert: UserHotel_Key;
+}
+```
+### Using `LinkUserToHotel`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, linkUserToHotel, LinkUserToHotelVariables } from '@dataconnect/generated';
+
+// The `LinkUserToHotel` mutation requires an argument of type `LinkUserToHotelVariables`:
+const linkUserToHotelVars: LinkUserToHotelVariables = {
+  userId: ..., 
+  hotelId: ..., 
+};
+
+// Call the `linkUserToHotel()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await linkUserToHotel(linkUserToHotelVars);
+// Variables can be defined inline as well.
+const { data } = await linkUserToHotel({ userId: ..., hotelId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await linkUserToHotel(dataConnect, linkUserToHotelVars);
+
+console.log(data.userHotel_insert);
+
+// Or, you can use the `Promise` API.
+linkUserToHotel(linkUserToHotelVars).then((response) => {
+  const data = response.data;
+  console.log(data.userHotel_insert);
+});
+```
+
+### Using `LinkUserToHotel`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, linkUserToHotelRef, LinkUserToHotelVariables } from '@dataconnect/generated';
+
+// The `LinkUserToHotel` mutation requires an argument of type `LinkUserToHotelVariables`:
+const linkUserToHotelVars: LinkUserToHotelVariables = {
+  userId: ..., 
+  hotelId: ..., 
+};
+
+// Call the `linkUserToHotelRef()` function to get a reference to the mutation.
+const ref = linkUserToHotelRef(linkUserToHotelVars);
+// Variables can be defined inline as well.
+const ref = linkUserToHotelRef({ userId: ..., hotelId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = linkUserToHotelRef(dataConnect, linkUserToHotelVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.userHotel_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userHotel_insert);
 });
 ```
 

@@ -15,7 +15,15 @@ import { connectorConfig } from './src/dataconnect-generated';
 import { provideAppCheck, initializeAppCheck, ReCaptchaEnterpriseProvider } from '@angular/fire/app-check';
 import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
 
-const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const isLocal = typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.startsWith('192.168.') ||
+    window.location.hostname.endsWith('.local'));
+
+if (isLocal) {
+  console.log('🚀 Running in LOCAL EMULATOR mode');
+}
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -24,27 +32,31 @@ bootstrapApplication(AppComponent, {
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideAuth(() => {
       const auth = getAuth();
-      if (isLocal) connectAuthEmulator(auth, 'http://localhost:9099');
+      if (isLocal) {
+        const host = window.location.hostname;
+        console.log(`🔗 Connecting to Auth Emulator at http://${host}:9099`);
+        connectAuthEmulator(auth, `http://${host}:9099`, { disableWarnings: true });
+      }
       return auth;
     }),
     provideStorage(() => {
       const storage = getStorage();
-      if (isLocal) connectStorageEmulator(storage, 'localhost', 9199);
+      if (isLocal) connectStorageEmulator(storage, window.location.hostname, 9199);
       return storage;
     }),
     provideFunctions(() => {
       const functions = getFunctions();
-      if (isLocal) connectFunctionsEmulator(functions, 'localhost', 5001);
+      if (isLocal) connectFunctionsEmulator(functions, window.location.hostname, 5001);
       return functions;
     }),
     provideFirestore(() => {
       const firestore = getFirestore();
-      if (isLocal) connectFirestoreEmulator(firestore, 'localhost', 8080);
+      if (isLocal) connectFirestoreEmulator(firestore, window.location.hostname, 8080);
       return firestore;
     }),
     provideDataConnect(() => {
       const dc = getDataConnect(getApp(), connectorConfig);
-      if (isLocal) connectDataConnectEmulator(dc, 'localhost', 9399);
+      if (isLocal) connectDataConnectEmulator(dc, window.location.hostname, 9399);
       return dc;
     }),
     provideAppCheck(() => {

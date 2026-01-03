@@ -71,3 +71,12 @@ query ListAllHotels @auth(level: PUBLIC) {
     propertyId
   }
 }
+
+mutation UpsertUser($id: String!, $email: String!, $role: String!) @auth(level: PUBLIC) {
+  user_upsert(data: {id: $id, email: $email, role: $role})
+}
+
+mutation LinkUserToHotel($userId: String!, $hotelId: UUID!) @auth(level: PUBLIC) {
+  userHotel_insert(data: {userId: $userId, hotelId: $hotelId})
+}
+

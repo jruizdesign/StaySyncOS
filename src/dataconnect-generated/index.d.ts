@@ -90,6 +90,15 @@ export interface Hotel_Key {
   __typename?: 'Hotel_Key';
 }
 
+export interface LinkUserToHotelData {
+  userHotel_insert: UserHotel_Key;
+}
+
+export interface LinkUserToHotelVariables {
+  userId: string;
+  hotelId: UUIDString;
+}
+
 export interface ListAllHotelsData {
   hotels: ({
     id: UUIDString;
@@ -157,6 +166,16 @@ export interface UpdateRoomStatusData {
 export interface UpdateRoomStatusVariables {
   id: UUIDString;
   status: string;
+}
+
+export interface UpsertUserData {
+  user_upsert: User_Key;
+}
+
+export interface UpsertUserVariables {
+  id: string;
+  email: string;
+  role: string;
 }
 
 export interface UserHotel_Key {
@@ -289,4 +308,28 @@ export const listAllHotelsRef: ListAllHotelsRef;
 
 export function listAllHotels(): QueryPromise<ListAllHotelsData, undefined>;
 export function listAllHotels(dc: DataConnect): QueryPromise<ListAllHotelsData, undefined>;
+
+interface UpsertUserRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+  operationName: string;
+}
+export const upsertUserRef: UpsertUserRef;
+
+export function upsertUser(vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+export function upsertUser(dc: DataConnect, vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+
+interface LinkUserToHotelRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: LinkUserToHotelVariables): MutationRef<LinkUserToHotelData, LinkUserToHotelVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: LinkUserToHotelVariables): MutationRef<LinkUserToHotelData, LinkUserToHotelVariables>;
+  operationName: string;
+}
+export const linkUserToHotelRef: LinkUserToHotelRef;
+
+export function linkUserToHotel(vars: LinkUserToHotelVariables): MutationPromise<LinkUserToHotelData, LinkUserToHotelVariables>;
+export function linkUserToHotel(dc: DataConnect, vars: LinkUserToHotelVariables): MutationPromise<LinkUserToHotelData, LinkUserToHotelVariables>;
 

@@ -1,4 +1,4 @@
-import { ListAvailableRoomsData, ListAvailableRoomsVariables, CreateRoomData, CreateRoomVariables, CreateHotelData, CreateHotelVariables, UpdateRoomStatusData, UpdateRoomStatusVariables, CreateGuestData, CreateGuestVariables, CreateBookingData, CreateBookingVariables, GetFirstHotelData, GetHotelByIdData, GetHotelByIdVariables, ListHotelsByUserData, ListHotelsByUserVariables, ListAllHotelsData } from '../';
+import { ListAvailableRoomsData, ListAvailableRoomsVariables, CreateRoomData, CreateRoomVariables, CreateHotelData, CreateHotelVariables, UpdateRoomStatusData, UpdateRoomStatusVariables, CreateGuestData, CreateGuestVariables, CreateBookingData, CreateBookingVariables, GetFirstHotelData, GetHotelByIdData, GetHotelByIdVariables, ListHotelsByUserData, ListHotelsByUserVariables, ListAllHotelsData, UpsertUserData, UpsertUserVariables, LinkUserToHotelData, LinkUserToHotelVariables } from '../';
 import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise} from '@angular/fire/data-connect';
 import { CreateQueryResult, CreateMutationResult} from '@tanstack/angular-query-experimental';
 import { CreateDataConnectQueryResult, CreateDataConnectQueryOptions, CreateDataConnectMutationResult, DataConnectMutationOptionsUndefinedMutationFn } from '@tanstack-query-firebase/angular/data-connect';
@@ -37,3 +37,9 @@ export function injectListHotelsByUser(args: ListHotelsByUserArgs, options?: Lis
 
 export type ListAllHotelsOptions = () => Omit<CreateDataConnectQueryOptions<ListAllHotelsData, undefined>, 'queryFn'>;
 export function injectListAllHotels(options?: ListAllHotelsOptions, injector?: Injector): CreateDataConnectQueryResult<ListAllHotelsData, undefined>;
+
+type UpsertUserOptions = DataConnectMutationOptionsUndefinedMutationFn<UpsertUserData, FirebaseError, UpsertUserVariables>;
+export function injectUpsertUser(options?: UpsertUserOptions, injector?: Injector): CreateDataConnectMutationResult<UpsertUserData, UpsertUserVariables, UpsertUserVariables>;
+
+type LinkUserToHotelOptions = DataConnectMutationOptionsUndefinedMutationFn<LinkUserToHotelData, FirebaseError, LinkUserToHotelVariables>;
+export function injectLinkUserToHotel(options?: LinkUserToHotelOptions, injector?: Injector): CreateDataConnectMutationResult<LinkUserToHotelData, LinkUserToHotelVariables, LinkUserToHotelVariables>;

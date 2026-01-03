@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { AiService } from './ai.service';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser } from '../dataconnect-generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel } from '../dataconnect-generated/angular';
 import { ListAvailableRoomsData } from '../dataconnect-generated';
 
 // Interfaces
@@ -206,6 +206,17 @@ export class DataService {
   createBookingMut = injectCreateBooking();
   createHotelMut = injectCreateHotel();
   updateRoomStatusMut = injectUpdateRoomStatus();
+  upsertUserMut = injectUpsertUser();
+  linkUserToHotelMut = injectLinkUserToHotel();
+
+  async ensureUserExists(uid: string, email: string, role: string) {
+    try {
+      await this.upsertUserMut.mutateAsync({ id: uid, email, role });
+      console.log('[DataService] User synced to Data Connect:', uid);
+    } catch (e) {
+      console.error('[DataService] Failed to sync user to Data Connect', e);
+    }
+  }
 
   async linkHotelToUser(hotelId: string) {
     const user = this.auth.currentUser();
@@ -214,7 +225,17 @@ export class DataService {
 
     if (!uid) throw new Error("No user logged in to link.");
 
+    // Link in Firestore
     await setDoc(doc(this.firestore, `users/${uid}`), { hotelId }, { merge: true });
+
+    // Link in Data Connect
+    try {
+      await this.linkUserToHotelMut.mutateAsync({ userId: uid, hotelId });
+      console.log('[DataService] User linked to hotel in Data Connect:', hotelId);
+    } catch (e) {
+      console.error('[DataService] Data Connect linking failed (might already exist):', e);
+    }
+
     this.log('System', 'Recovery', `User linked to existing hotel ${hotelId}`);
     return true;
   }
@@ -433,6 +454,11 @@ export class DataService {
           const newId = res.data?.hotel_insert.id;
 
           if (newId) {
+            // Ensure user exists in DC
+            await this.ensureUserExists(u.uid, u.email || '', 'Manager');
+            // Link in DC
+            await this.linkUserToHotelMut.mutateAsync({ userId: u.uid, hotelId: newId });
+
             await setDoc(doc(this.firestore, `users/${u.uid}`), { hotelId: newId }, { merge: true });
             this.log('System', 'Initialization', 'Created hotel and linked to user.');
             await this.seedRooms(newId);
@@ -457,7 +483,12 @@ export class DataService {
       const newId = res.data?.hotel_insert.id;
 
       if (newId) {
-        // Link to User
+        // Ensure user exists in DC
+        await this.ensureUserExists(user.id, user.email, user.role);
+        // Link in DC
+        await this.linkUserToHotelMut.mutateAsync({ userId: user.id, hotelId: newId });
+
+        // Link in Firestore
         await setDoc(doc(this.firestore, `users/${user.id}`), { hotelId: newId }, { merge: true });
         this.log('System', 'Initialization', 'Created hotel and linked to user.');
 

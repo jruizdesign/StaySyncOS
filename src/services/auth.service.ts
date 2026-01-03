@@ -53,8 +53,9 @@ export class AuthService {
   }
 
   async verifyRecaptcha(action: string): Promise<number> {
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      console.log('Bypassing reCAPTCHA for localhost');
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.endsWith('.local')) {
+      console.log('🛡️ Bypassing reCAPTCHA for local development');
       return 1.0;
     }
     try {

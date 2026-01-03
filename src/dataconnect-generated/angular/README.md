@@ -27,6 +27,8 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*UpdateRoomStatus*](#updateroomstatus)
   - [*CreateGuest*](#createguest)
   - [*CreateBooking*](#createbooking)
+  - [*UpsertUser*](#upsertuser)
+  - [*LinkUserToHotel*](#linkusertohotel)
 
 # TanStack Query Firebase & TanStack Angular Query
 This SDK provides [Angular](https://angular.dev/) injectors generated specific to your application, for the operations found in the connector `default`. These injectors are generated using [TanStack Query Firebase](https://react-query-firebase.invertase.dev/) by our partners at Invertase, a library built on top of [TanStack Angular Query v5](https://tanstack.com/query/v5/docs/framework/angular/overview) and [AngularFire](https://github.com/angular/angularfire/tree/main).
@@ -1044,6 +1046,206 @@ export class MyComponent {
 
     // You can also pass in a `CreateBookingOptions` object (not function) to `CreateDataConnectMutationResult.mutate()`.
     this.mutation.mutate(createBookingVars, this.options());
+  }
+}
+```
+
+## UpsertUser
+You can execute the `UpsertUser` Mutation using the `CreateDataConnectMutationResult` object returned by the following Mutation injector (which is defined in [dataconnect-generated/angular/index.d.ts](./index.d.ts)):
+```javascript
+injectUpsertUser(options?: UpsertUserOptions, injector?: Injector): CreateDataConnectMutationResult<UpsertUserData, UpsertUserVariables, UpsertUserVariables>;
+```
+
+### Variables
+The `UpsertUser` Mutation requires an argument of type `UpsertUserVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface UpsertUserVariables {
+  id: string;
+  email: string;
+  role: string;
+}
+```
+### Return Type
+Recall that calling the `UpsertUser` Mutation injector returns a `CreateDataConnectMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `CreateDataConnectMutationResult.status()` function. You can also check for pending / success / error status using the `CreateDataConnectMutationResult.isPending()`, `CreateDataConnectMutationResult.isSuccess()`, and `CreateDataConnectMutationResult.isError()` functions.
+
+To execute the Mutation, call `CreateDataConnectMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation. 
+
+To access the data returned by a Mutation, use the `CreateDataConnectMutationResult.data()` function. The data for the `UpsertUser` Mutation is of type `UpsertUserData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface UpsertUserData {
+  user_upsert: User_Key;
+}
+```
+
+You can also call `CreateDataConnectMutationResult.mutateAsync()`, which executes the Mutation and returns a promise with the data returned from the Mutation. To learn more, see the [TanStack Angular Query documentation](https://tanstack.com/query/latest/docs/framework/angular/guides/mutations#promises).
+
+To learn more about the `CreateDataConnectMutationResult` object, see the [TanStack Query Firebase documentation](https://docs.page/invertase/tanstack-query-firebase/angular/data-connect/functions/injectDataConnectMutation) and the [TanStack Angular Query documentation](https://tanstack.com/query/v5/docs/framework/angular/reference/functions/injectmutation).
+
+### Using `UpsertUser`'s Mutation injector
+
+```javascript
+... // other imports
+import { connectorConfig, UpsertUserVariables } from '@dataconnect/generated';
+import { injectUpsertUser, UpsertUserOptions } from '@dataconnect/generated/angular'
+import { DataConnect } from '@angular/fire/data-connect';
+import { initializeApp } from '@angular/fire/app';
+
+@Component({
+  ... // other component fields
+  template: `
+    <!-- You can render your component dynamically based on the status of the Mutation. -->
+    @if (mutation.isPending()) {
+      Loading...
+    }
+    @if (mutation.error()) {
+      An error has occurred: {{ mutation.error() }}
+    }
+    <!-- If the Mutation is successful, you can access the data returned using
+      the CreateDataConnectMutationResult.data() function. -->
+    @if (mutation.data(); as data) {
+      <!-- Use your data to display something -->
+      <div>Mutation successful!</div>
+    }
+    <!-- Let's create a button that executes our mutation when clicked. -->
+    <button
+      (disabled)="mutation.isPending()"
+      (click)="executeMutation()"
+    >
+      {{ mutation.isPending() ? 'Pending...' : 'Mutate!' }}
+    </button>
+  `,
+})
+export class MyComponent {
+  // Call the Mutation injector function to get a `CreateDataConnectMutationResult` object which holds the state of your Mutation.
+  mutation = injectUpsertUser();
+
+  // You can also pass in a `UpsertUserOptions` function (not object) to the Mutation injector function.
+  options: UpsertUserOptions = () => {
+    return {
+      onSuccess: () => { console.log('Mutation succeeded!'); }
+    };
+  };
+  mutation = injectUpsertUser(this.options);
+
+  // After calling the Mutation injector function, you must call `CreateDataConnectMutationResult.mutate()` to execute the Mutation.
+  executeMutation() {
+    // The `UpsertUser` Mutation requires an argument of type `UpsertUserVariables`:
+    const upsertUserVars: UpsertUserVariables = {
+      id: ..., 
+      email: ..., 
+      role: ..., 
+    };
+    this.mutation.mutate(upsertUserVars);
+    // Variables can be defined inline as well.
+    this.mutation.mutate({ id: ..., email: ..., role: ..., });
+
+    // You can call `CreateDataConnectMutationResult.mutateAsync()` to execute the Mutation and return a promise with the data returned from the Mutation.
+    this.mutation.mutateAsync(upsertUserVars);
+
+    // You can also pass in a `UpsertUserOptions` object (not function) to `CreateDataConnectMutationResult.mutate()`.
+    this.mutation.mutate(upsertUserVars, this.options());
+  }
+}
+```
+
+## LinkUserToHotel
+You can execute the `LinkUserToHotel` Mutation using the `CreateDataConnectMutationResult` object returned by the following Mutation injector (which is defined in [dataconnect-generated/angular/index.d.ts](./index.d.ts)):
+```javascript
+injectLinkUserToHotel(options?: LinkUserToHotelOptions, injector?: Injector): CreateDataConnectMutationResult<LinkUserToHotelData, LinkUserToHotelVariables, LinkUserToHotelVariables>;
+```
+
+### Variables
+The `LinkUserToHotel` Mutation requires an argument of type `LinkUserToHotelVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface LinkUserToHotelVariables {
+  userId: string;
+  hotelId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `LinkUserToHotel` Mutation injector returns a `CreateDataConnectMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `CreateDataConnectMutationResult.status()` function. You can also check for pending / success / error status using the `CreateDataConnectMutationResult.isPending()`, `CreateDataConnectMutationResult.isSuccess()`, and `CreateDataConnectMutationResult.isError()` functions.
+
+To execute the Mutation, call `CreateDataConnectMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation. 
+
+To access the data returned by a Mutation, use the `CreateDataConnectMutationResult.data()` function. The data for the `LinkUserToHotel` Mutation is of type `LinkUserToHotelData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface LinkUserToHotelData {
+  userHotel_insert: UserHotel_Key;
+}
+```
+
+You can also call `CreateDataConnectMutationResult.mutateAsync()`, which executes the Mutation and returns a promise with the data returned from the Mutation. To learn more, see the [TanStack Angular Query documentation](https://tanstack.com/query/latest/docs/framework/angular/guides/mutations#promises).
+
+To learn more about the `CreateDataConnectMutationResult` object, see the [TanStack Query Firebase documentation](https://docs.page/invertase/tanstack-query-firebase/angular/data-connect/functions/injectDataConnectMutation) and the [TanStack Angular Query documentation](https://tanstack.com/query/v5/docs/framework/angular/reference/functions/injectmutation).
+
+### Using `LinkUserToHotel`'s Mutation injector
+
+```javascript
+... // other imports
+import { connectorConfig, LinkUserToHotelVariables } from '@dataconnect/generated';
+import { injectLinkUserToHotel, LinkUserToHotelOptions } from '@dataconnect/generated/angular'
+import { DataConnect } from '@angular/fire/data-connect';
+import { initializeApp } from '@angular/fire/app';
+
+@Component({
+  ... // other component fields
+  template: `
+    <!-- You can render your component dynamically based on the status of the Mutation. -->
+    @if (mutation.isPending()) {
+      Loading...
+    }
+    @if (mutation.error()) {
+      An error has occurred: {{ mutation.error() }}
+    }
+    <!-- If the Mutation is successful, you can access the data returned using
+      the CreateDataConnectMutationResult.data() function. -->
+    @if (mutation.data(); as data) {
+      <!-- Use your data to display something -->
+      <div>Mutation successful!</div>
+    }
+    <!-- Let's create a button that executes our mutation when clicked. -->
+    <button
+      (disabled)="mutation.isPending()"
+      (click)="executeMutation()"
+    >
+      {{ mutation.isPending() ? 'Pending...' : 'Mutate!' }}
+    </button>
+  `,
+})
+export class MyComponent {
+  // Call the Mutation injector function to get a `CreateDataConnectMutationResult` object which holds the state of your Mutation.
+  mutation = injectLinkUserToHotel();
+
+  // You can also pass in a `LinkUserToHotelOptions` function (not object) to the Mutation injector function.
+  options: LinkUserToHotelOptions = () => {
+    return {
+      onSuccess: () => { console.log('Mutation succeeded!'); }
+    };
+  };
+  mutation = injectLinkUserToHotel(this.options);
+
+  // After calling the Mutation injector function, you must call `CreateDataConnectMutationResult.mutate()` to execute the Mutation.
+  executeMutation() {
+    // The `LinkUserToHotel` Mutation requires an argument of type `LinkUserToHotelVariables`:
+    const linkUserToHotelVars: LinkUserToHotelVariables = {
+      userId: ..., 
+      hotelId: ..., 
+    };
+    this.mutation.mutate(linkUserToHotelVars);
+    // Variables can be defined inline as well.
+    this.mutation.mutate({ userId: ..., hotelId: ..., });
+
+    // You can call `CreateDataConnectMutationResult.mutateAsync()` to execute the Mutation and return a promise with the data returned from the Mutation.
+    this.mutation.mutateAsync(linkUserToHotelVars);
+
+    // You can also pass in a `LinkUserToHotelOptions` object (not function) to `CreateDataConnectMutationResult.mutate()`.
+    this.mutation.mutate(linkUserToHotelVars, this.options());
   }
 }
 ```

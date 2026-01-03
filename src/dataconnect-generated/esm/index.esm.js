@@ -116,3 +116,25 @@ export function listAllHotels(dc) {
   return executeQuery(listAllHotelsRef(dc));
 }
 
+export const upsertUserRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpsertUser', inputVars);
+}
+upsertUserRef.operationName = 'UpsertUser';
+
+export function upsertUser(dcOrVars, vars) {
+  return executeMutation(upsertUserRef(dcOrVars, vars));
+}
+
+export const linkUserToHotelRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'LinkUserToHotel', inputVars);
+}
+linkUserToHotelRef.operationName = 'LinkUserToHotel';
+
+export function linkUserToHotel(dcOrVars, vars) {
+  return executeMutation(linkUserToHotelRef(dcOrVars, vars));
+}
+

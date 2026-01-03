@@ -1,4 +1,4 @@
-import { listAvailableRoomsRef, createRoomRef, createHotelRef, updateRoomStatusRef, createGuestRef, createBookingRef, getFirstHotelRef, getHotelByIdRef, listHotelsByUserRef, listAllHotelsRef } from '../../';
+import { listAvailableRoomsRef, createRoomRef, createHotelRef, updateRoomStatusRef, createGuestRef, createBookingRef, getFirstHotelRef, getHotelByIdRef, listHotelsByUserRef, listAllHotelsRef, upsertUserRef, linkUserToHotelRef } from '../../';
 import { DataConnect, CallerSdkTypeEnum } from '@angular/fire/data-connect';
 import { injectDataConnectQuery, injectDataConnectMutation } from '@tanstack-query-firebase/angular/data-connect';
 import { inject, EnvironmentInjector } from '@angular/core';
@@ -83,5 +83,13 @@ export function injectListAllHotels(options, injector) {
       ...addOpn
     };
   }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectUpsertUser(args, injector) {
+  return injectDataConnectMutation(upsertUserRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectLinkUserToHotel(args, injector) {
+  return injectDataConnectMutation(linkUserToHotelRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
 }
 

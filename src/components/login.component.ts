@@ -121,11 +121,20 @@ export class LoginComponent {
       }
 
       // Promote specific account to SuperAdmin for development
-      if (this.email === 'jruizdesign@gmail.com') {
-        const uid = this.auth.auth.currentUser?.uid;
-        if (uid) {
+      const uid = this.auth.auth.currentUser?.uid;
+      if (uid) {
+        if (this.email === 'jruizdesign@gmail.com') {
+          console.log('[LoginComponent] Auto-promoting jruizdesign@gmail.com to SuperAdmin...');
           const { doc, setDoc, getFirestore } = await import('firebase/firestore');
-          await setDoc(doc(getFirestore(), `users/${uid}`), { role: 'SuperAdmin', email: this.email }, { merge: true });
+          await setDoc(doc(getFirestore(), `users/${uid}`), {
+            role: 'SuperAdmin',
+            email: this.email,
+            username: 'Super Admin'
+          }, { merge: true });
+
+          await this.data.ensureUserExists(uid, this.email, 'SuperAdmin');
+        } else {
+          await this.data.ensureUserExists(uid, this.email, 'Manager');
         }
       }
 
@@ -148,11 +157,13 @@ export class LoginComponent {
       this.error.set(true);
       this.loading.set(false);
 
-      console.error('Auth error:', err);
+      console.error('Full Auth/Sync Error:', err);
+      console.log('Error Code:', err.code);
+      console.log('Error Message:', err.message);
 
       // Handle specific error codes
       if (err.code === 'auth/network-request-failed') {
-        this.errorMessage.set('Unable to connect. Please check your internet connection and try again.');
+        this.errorMessage.set('Unable to connect to login server. Please ensure emulators are running and try again.');
       } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
         this.errorMessage.set('Invalid email or password. Please check your credentials.');
       } else if (err.code === 'auth/email-already-in-use') {
