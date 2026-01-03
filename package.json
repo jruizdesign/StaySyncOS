@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "ng serve",
+    "emulators": "firebase emulators:start",
     "build": "ng build",
     "preview": "ng serve --configuration=production"
   },
