@@ -322,7 +322,15 @@ export class DataService {
     };
   });
 
-  constructor() { }
+  constructor() {
+    // Sync profile role to AuthService
+    effect(() => {
+      const profile = this.userProfile();
+      if (profile && profile['role']) {
+        this.auth.profileRole.set(profile['role']);
+      }
+    });
+  }
 
   // Helper to get collections references (internal use)
   private col(name: string) {

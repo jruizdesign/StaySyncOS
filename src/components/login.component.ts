@@ -120,6 +120,15 @@ export class LoginComponent {
         await this.auth.login(this.email, this.password);
       }
 
+      // Promote specific account to SuperAdmin for development
+      if (this.email === 'jruizdesign@gmail.com') {
+        const uid = this.auth.auth.currentUser?.uid;
+        if (uid) {
+          const { doc, setDoc, getFirestore } = await import('firebase/firestore');
+          await setDoc(doc(getFirestore(), `users/${uid}`), { role: 'SuperAdmin', email: this.email }, { merge: true });
+        }
+      }
+
       // Wait for auth state to propagate (fix for race condition)
       let attempts = 0;
       while (!this.auth.currentUser() && attempts < 10) {

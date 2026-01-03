@@ -41,8 +41,17 @@ export class AppComponent {
   }
 
   menuItems = computed(() => {
+    const user = this.auth.currentUser();
     const isManager = this.auth.isManager();
-    return this.allMenuItems.filter(item => isManager || !item.restricted);
+    const items = this.allMenuItems.filter(item => isManager || !item.restricted);
+
+    if (user?.role === 'SuperAdmin') {
+      return [
+        ...items,
+        { label: 'Switch Property', route: '/select-property', icon: 'grid', restricted: false }
+      ];
+    }
+    return items;
   });
 
   toggleMobileMenu() {

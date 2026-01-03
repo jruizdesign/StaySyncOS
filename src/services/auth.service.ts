@@ -30,7 +30,10 @@ export class AuthService {
   user$ = user(this.auth);
   private firebaseUser = toSignal(this.user$);
 
-  // Computed "App User" to maintain compatibility with existing components
+  // Reactive role from Firestore profile
+  public profileRole = signal<User['role'] | null>(null);
+
+  // Computed "App User" with dynamic role
   currentUser = computed<User | null>(() => {
     const u = this.firebaseUser();
     if (!u) return null;
@@ -38,7 +41,7 @@ export class AuthService {
       id: u.uid,
       email: u.email || '',
       username: u.displayName || u.email || 'User',
-      role: 'Manager' // Defaulting to Manager for simplified access
+      role: this.profileRole() || 'Manager'
     };
   });
 
