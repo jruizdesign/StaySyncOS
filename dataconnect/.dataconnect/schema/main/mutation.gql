@@ -9,6 +9,15 @@ extend type Mutation {
     data: Booking_Data!
   ): Booking_KeyOutput! @fdc_generated(from: "Booking", purpose: INSERT_SINGLE)
   """
+  ✨ Insert a single `FinancialDocument` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  financialDocument_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: FinancialDocument_Data!
+  ): FinancialDocument_KeyOutput! @fdc_generated(from: "FinancialDocument", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `Guest` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   guest_insert(
@@ -26,6 +35,15 @@ extend type Mutation {
     """
     data: Hotel_Data!
   ): Hotel_KeyOutput! @fdc_generated(from: "Hotel", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Log` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  log_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Log_Data!
+  ): Log_KeyOutput! @fdc_generated(from: "Log", purpose: INSERT_SINGLE)
   """
   ✨ Insert a single `MaintenanceRequest` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -45,6 +63,15 @@ extend type Mutation {
     data: Room_Data!
   ): Room_KeyOutput! @fdc_generated(from: "Room", purpose: INSERT_SINGLE)
   """
+  ✨ Insert a single `Shift` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  shift_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Shift_Data!
+  ): Shift_KeyOutput! @fdc_generated(from: "Shift", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `Staff` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   staff_insert(
@@ -53,6 +80,24 @@ extend type Mutation {
     """
     data: Staff_Data!
   ): Staff_KeyOutput! @fdc_generated(from: "Staff", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `StoredDocument` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  storedDocument_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: StoredDocument_Data!
+  ): StoredDocument_KeyOutput! @fdc_generated(from: "StoredDocument", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `TimeLog` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  timeLog_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: TimeLog_Data!
+  ): TimeLog_KeyOutput! @fdc_generated(from: "TimeLog", purpose: INSERT_SINGLE)
   """
   ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -81,6 +126,15 @@ extend type Mutation {
     data: [Booking_Data!]!
   ): [Booking_KeyOutput!]! @fdc_generated(from: "Booking", purpose: INSERT_MULTIPLE)
   """
+  ✨ Insert `FinancialDocument` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  financialDocument_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [FinancialDocument_Data!]!
+  ): [FinancialDocument_KeyOutput!]! @fdc_generated(from: "FinancialDocument", purpose: INSERT_MULTIPLE)
+  """
   ✨ Insert `Guest` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   guest_insertMany(
@@ -98,6 +152,15 @@ extend type Mutation {
     """
     data: [Hotel_Data!]!
   ): [Hotel_KeyOutput!]! @fdc_generated(from: "Hotel", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Log` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  log_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Log_Data!]!
+  ): [Log_KeyOutput!]! @fdc_generated(from: "Log", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `MaintenanceRequest` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -117,6 +180,15 @@ extend type Mutation {
     data: [Room_Data!]!
   ): [Room_KeyOutput!]! @fdc_generated(from: "Room", purpose: INSERT_MULTIPLE)
   """
+  ✨ Insert `Shift` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  shift_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Shift_Data!]!
+  ): [Shift_KeyOutput!]! @fdc_generated(from: "Shift", purpose: INSERT_MULTIPLE)
+  """
   ✨ Insert `Staff` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   staff_insertMany(
@@ -125,6 +197,24 @@ extend type Mutation {
     """
     data: [Staff_Data!]!
   ): [Staff_KeyOutput!]! @fdc_generated(from: "Staff", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `StoredDocument` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  storedDocument_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [StoredDocument_Data!]!
+  ): [StoredDocument_KeyOutput!]! @fdc_generated(from: "StoredDocument", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `TimeLog` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  timeLog_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [TimeLog_Data!]!
+  ): [TimeLog_KeyOutput!]! @fdc_generated(from: "TimeLog", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -153,6 +243,15 @@ extend type Mutation {
     data: Booking_Data!
   ): Booking_KeyOutput! @fdc_generated(from: "Booking", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update a single `FinancialDocument` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `FinancialDocument`.
+  """
+  financialDocument_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: FinancialDocument_Data!
+  ): FinancialDocument_KeyOutput! @fdc_generated(from: "FinancialDocument", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `Guest` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Guest`.
   """
   guest_upsert(
@@ -170,6 +269,15 @@ extend type Mutation {
     """
     data: Hotel_Data!
   ): Hotel_KeyOutput! @fdc_generated(from: "Hotel", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Log` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Log`.
+  """
+  log_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Log_Data!
+  ): Log_KeyOutput! @fdc_generated(from: "Log", purpose: UPSERT_SINGLE)
   """
   ✨ Insert or update a single `MaintenanceRequest` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `MaintenanceRequest`.
   """
@@ -189,6 +297,15 @@ extend type Mutation {
     data: Room_Data!
   ): Room_KeyOutput! @fdc_generated(from: "Room", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update a single `Shift` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Shift`.
+  """
+  shift_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Shift_Data!
+  ): Shift_KeyOutput! @fdc_generated(from: "Shift", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `Staff` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Staff`.
   """
   staff_upsert(
@@ -197,6 +314,24 @@ extend type Mutation {
     """
     data: Staff_Data!
   ): Staff_KeyOutput! @fdc_generated(from: "Staff", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `StoredDocument` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `StoredDocument`.
+  """
+  storedDocument_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: StoredDocument_Data!
+  ): StoredDocument_KeyOutput! @fdc_generated(from: "StoredDocument", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `TimeLog` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `TimeLog`.
+  """
+  timeLog_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: TimeLog_Data!
+  ): TimeLog_KeyOutput! @fdc_generated(from: "TimeLog", purpose: UPSERT_SINGLE)
   """
   ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
   """
@@ -225,6 +360,15 @@ extend type Mutation {
     data: [Booking_Data!]!
   ): [Booking_KeyOutput!]! @fdc_generated(from: "Booking", purpose: UPSERT_MULTIPLE)
   """
+  ✨ Insert or update `FinancialDocument` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `FinancialDocument`.
+  """
+  financialDocument_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [FinancialDocument_Data!]!
+  ): [FinancialDocument_KeyOutput!]! @fdc_generated(from: "FinancialDocument", purpose: UPSERT_MULTIPLE)
+  """
   ✨ Insert or update `Guest` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Guest`.
   """
   guest_upsertMany(
@@ -242,6 +386,15 @@ extend type Mutation {
     """
     data: [Hotel_Data!]!
   ): [Hotel_KeyOutput!]! @fdc_generated(from: "Hotel", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Log` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Log`.
+  """
+  log_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Log_Data!]!
+  ): [Log_KeyOutput!]! @fdc_generated(from: "Log", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `MaintenanceRequest` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `MaintenanceRequest`.
   """
@@ -261,6 +414,15 @@ extend type Mutation {
     data: [Room_Data!]!
   ): [Room_KeyOutput!]! @fdc_generated(from: "Room", purpose: UPSERT_MULTIPLE)
   """
+  ✨ Insert or update `Shift` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Shift`.
+  """
+  shift_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Shift_Data!]!
+  ): [Shift_KeyOutput!]! @fdc_generated(from: "Shift", purpose: UPSERT_MULTIPLE)
+  """
   ✨ Insert or update `Staff` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Staff`.
   """
   staff_upsertMany(
@@ -269,6 +431,24 @@ extend type Mutation {
     """
     data: [Staff_Data!]!
   ): [Staff_KeyOutput!]! @fdc_generated(from: "Staff", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `StoredDocument` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `StoredDocument`.
+  """
+  storedDocument_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [StoredDocument_Data!]!
+  ): [StoredDocument_KeyOutput!]! @fdc_generated(from: "StoredDocument", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `TimeLog` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `TimeLog`.
+  """
+  timeLog_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [TimeLog_Data!]!
+  ): [TimeLog_KeyOutput!]! @fdc_generated(from: "TimeLog", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
   """
@@ -311,6 +491,30 @@ extend type Mutation {
     """
     data: Booking_Data!
   ): Booking_KeyOutput @fdc_generated(from: "Booking", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `FinancialDocument` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `FinancialDocument` or `null` if not found.
+  """
+  financialDocument_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: FinancialDocument_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: FinancialDocument_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: FinancialDocument_Data!
+  ): FinancialDocument_KeyOutput @fdc_generated(from: "FinancialDocument", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `Guest` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Guest` or `null` if not found.
   """
@@ -360,6 +564,30 @@ extend type Mutation {
     data: Hotel_Data!
   ): Hotel_KeyOutput @fdc_generated(from: "Hotel", purpose: UPDATE_SINGLE)
   """
+  ✨ Update a single `Log` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Log` or `null` if not found.
+  """
+  log_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Log_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Log_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Log_Data!
+  ): Log_KeyOutput @fdc_generated(from: "Log", purpose: UPDATE_SINGLE)
+  """
   ✨ Update a single `MaintenanceRequest` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `MaintenanceRequest` or `null` if not found.
   """
   maintenanceRequest_update(
@@ -408,6 +636,30 @@ extend type Mutation {
     data: Room_Data!
   ): Room_KeyOutput @fdc_generated(from: "Room", purpose: UPDATE_SINGLE)
   """
+  ✨ Update a single `Shift` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Shift` or `null` if not found.
+  """
+  shift_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Shift_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Shift_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Shift_Data!
+  ): Shift_KeyOutput @fdc_generated(from: "Shift", purpose: UPDATE_SINGLE)
+  """
   ✨ Update a single `Staff` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Staff` or `null` if not found.
   """
   staff_update(
@@ -431,6 +683,54 @@ extend type Mutation {
     """
     data: Staff_Data!
   ): Staff_KeyOutput @fdc_generated(from: "Staff", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `StoredDocument` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `StoredDocument` or `null` if not found.
+  """
+  storedDocument_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: StoredDocument_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: StoredDocument_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: StoredDocument_Data!
+  ): StoredDocument_KeyOutput @fdc_generated(from: "StoredDocument", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `TimeLog` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `TimeLog` or `null` if not found.
+  """
+  timeLog_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: TimeLog_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: TimeLog_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: TimeLog_Data!
+  ): TimeLog_KeyOutput @fdc_generated(from: "TimeLog", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
   """
@@ -499,6 +799,25 @@ extend type Mutation {
     data: Booking_Data!
   ): Int! @fdc_generated(from: "Booking", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Update `FinancialDocument` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  financialDocument_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: FinancialDocument_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: FinancialDocument_Data!
+  ): Int! @fdc_generated(from: "FinancialDocument", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `Guest` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   guest_updateMany(
@@ -536,6 +855,25 @@ extend type Mutation {
     """
     data: Hotel_Data!
   ): Int! @fdc_generated(from: "Hotel", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Log` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  log_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Log_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Log_Data!
+  ): Int! @fdc_generated(from: "Log", purpose: UPDATE_MULTIPLE)
   """
   ✨ Update `MaintenanceRequest` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
@@ -575,6 +913,25 @@ extend type Mutation {
     data: Room_Data!
   ): Int! @fdc_generated(from: "Room", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Update `Shift` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  shift_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Shift_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Shift_Data!
+  ): Int! @fdc_generated(from: "Shift", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `Staff` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   staff_updateMany(
@@ -593,6 +950,44 @@ extend type Mutation {
     """
     data: Staff_Data!
   ): Int! @fdc_generated(from: "Staff", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `StoredDocument` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  storedDocument_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: StoredDocument_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: StoredDocument_Data!
+  ): Int! @fdc_generated(from: "StoredDocument", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `TimeLog` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  timeLog_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: TimeLog_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: TimeLog_Data!
+  ): Int! @fdc_generated(from: "TimeLog", purpose: UPDATE_MULTIPLE)
   """
   ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
@@ -651,6 +1046,25 @@ extend type Mutation {
     first: Booking_FirstRow
   ): Booking_KeyOutput @fdc_generated(from: "Booking", purpose: DELETE_SINGLE)
   """
+  ✨ Delete a single `FinancialDocument` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  financialDocument_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: FinancialDocument_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: FinancialDocument_FirstRow
+  ): FinancialDocument_KeyOutput @fdc_generated(from: "FinancialDocument", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `Guest` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   guest_delete(
@@ -688,6 +1102,25 @@ extend type Mutation {
     """
     first: Hotel_FirstRow
   ): Hotel_KeyOutput @fdc_generated(from: "Hotel", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Log` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  log_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Log_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Log_FirstRow
+  ): Log_KeyOutput @fdc_generated(from: "Log", purpose: DELETE_SINGLE)
   """
   ✨ Delete a single `MaintenanceRequest` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
@@ -727,6 +1160,25 @@ extend type Mutation {
     first: Room_FirstRow
   ): Room_KeyOutput @fdc_generated(from: "Room", purpose: DELETE_SINGLE)
   """
+  ✨ Delete a single `Shift` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  shift_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Shift_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Shift_FirstRow
+  ): Shift_KeyOutput @fdc_generated(from: "Shift", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `Staff` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   staff_delete(
@@ -745,6 +1197,44 @@ extend type Mutation {
     """
     first: Staff_FirstRow
   ): Staff_KeyOutput @fdc_generated(from: "Staff", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `StoredDocument` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  storedDocument_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: StoredDocument_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: StoredDocument_FirstRow
+  ): StoredDocument_KeyOutput @fdc_generated(from: "StoredDocument", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `TimeLog` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  timeLog_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: TimeLog_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: TimeLog_FirstRow
+  ): TimeLog_KeyOutput @fdc_generated(from: "TimeLog", purpose: DELETE_SINGLE)
   """
   ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
@@ -798,6 +1288,20 @@ extend type Mutation {
     all: Boolean = false
   ): Int! @fdc_generated(from: "Booking", purpose: DELETE_MULTIPLE)
   """
+  ✨ Delete `FinancialDocument` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  financialDocument_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: FinancialDocument_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "FinancialDocument", purpose: DELETE_MULTIPLE)
+  """
   ✨ Delete `Guest` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
   guest_deleteMany(
@@ -825,6 +1329,20 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "Hotel", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Log` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  log_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Log_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Log", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `MaintenanceRequest` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
@@ -854,6 +1372,20 @@ extend type Mutation {
     all: Boolean = false
   ): Int! @fdc_generated(from: "Room", purpose: DELETE_MULTIPLE)
   """
+  ✨ Delete `Shift` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  shift_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Shift_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Shift", purpose: DELETE_MULTIPLE)
+  """
   ✨ Delete `Staff` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
   staff_deleteMany(
@@ -867,6 +1399,34 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "Staff", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `StoredDocument` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  storedDocument_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: StoredDocument_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "StoredDocument", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `TimeLog` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  timeLog_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: TimeLog_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "TimeLog", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

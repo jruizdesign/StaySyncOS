@@ -24,8 +24,17 @@ import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
           <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-lg shadow-indigo-900/50 mb-4">
              <span class="text-3xl font-bold text-white">S</span>
           </div>
-          <h1 class="text-3xl font-bold text-white tracking-tight">Select Property</h1>
-          <p class="text-slate-400 mt-2">Choose a hotel to manage</p>
+          <div class="flex items-center justify-center gap-3">
+            <h1 class="text-3xl font-bold text-white tracking-tight">Select Property</h1>
+            <button (click)="loadAllHotels()" [disabled]="loading()" class="p-2 text-slate-500 hover:text-white transition-colors" title="Reload properties">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5" [class.animate-spin]="loading()">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+            </button>
+          </div>
+          <p class="text-slate-400 mt-2">
+            {{ data.userProfile()?.role === 'SuperAdmin' || auth.currentUser()?.role === 'SuperAdmin' ? 'Global Property Access' : 'Choose a hotel to manage' }}
+          </p>
         </div>
 
         <!-- Property List -->
@@ -102,29 +111,38 @@ export class PropertySelectorComponent {
 
     constructor() {
         effect(() => {
-            const profile = this.data.userProfile();
+            const profile = this.data.userProfile() as any;
             const user = this.auth.currentUser();
 
-            // If we are definitely logged in according to auth service but no profile exists yet, wait a bit
-            // or if we are at home/login we shouldn't be here (guard handles this but safety check)
+            console.log('[PropertySelector] Debug Info:', {
+                hasUser: !!user,
+                userEmail: user?.email,
+                hasProfile: !!profile,
+                profileRole: profile?.role
+            });
+
+            if (this.loading() && this.hotels().length > 0) return; // Already have data
             if (!user) {
                 this.loading.set(false);
                 return;
             }
 
-            // SuperAdmin Check
-            if (profile && profile['role'] === 'SuperAdmin') {
+            // 1. Unified Admin Check (Role OR Email Fallback)
+            const isAdmin = profile?.role === 'SuperAdmin' || user.email === 'jruizdesign@gmail.com';
+
+            if (isAdmin) {
+                console.log('[PropertySelector] SuperAdmin/Admin detected. Fetching global list...');
                 this.loadAllHotels();
                 return;
             }
 
+            // 2. Regular User logic
             if (profile && profile['hotelIds'] && Array.isArray(profile['hotelIds']) && profile['hotelIds'].length > 0) {
                 this.loadHotels(profile['hotelIds']);
             } else if (profile && profile['hotelId']) {
-                // Single hotel, redirect logic handled by guard usually, but safety check
+                console.log('[PropertySelector] Auto-selecting assigned hotel:', profile['hotelId']);
                 this.selectHotel(profile['hotelId']);
             } else if (profile !== null) {
-                // Profile exists but no hotels -> Setup
                 this.loading.set(false);
                 this.router.navigate(['/setup']);
             }

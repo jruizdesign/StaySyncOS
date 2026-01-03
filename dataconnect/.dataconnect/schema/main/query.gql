@@ -19,6 +19,25 @@ extend type Query {
     first: Booking_FirstRow
   ): Booking @fdc_generated(from: "Booking", purpose: QUERY_SINGLE)
   """
+  ✨ Look up a single `FinancialDocument` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  financialDocument(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: FinancialDocument_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: FinancialDocument_FirstRow
+  ): FinancialDocument @fdc_generated(from: "FinancialDocument", purpose: QUERY_SINGLE)
+  """
   ✨ Look up a single `Guest` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   guest(
@@ -56,6 +75,25 @@ extend type Query {
     """
     first: Hotel_FirstRow
   ): Hotel @fdc_generated(from: "Hotel", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Log` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  log(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Log_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Log_FirstRow
+  ): Log @fdc_generated(from: "Log", purpose: QUERY_SINGLE)
   """
   ✨ Look up a single `MaintenanceRequest` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
@@ -95,6 +133,25 @@ extend type Query {
     first: Room_FirstRow
   ): Room @fdc_generated(from: "Room", purpose: QUERY_SINGLE)
   """
+  ✨ Look up a single `Shift` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  shift(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Shift_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Shift_FirstRow
+  ): Shift @fdc_generated(from: "Shift", purpose: QUERY_SINGLE)
+  """
   ✨ Look up a single `Staff` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   staff(
@@ -113,6 +170,44 @@ extend type Query {
     """
     first: Staff_FirstRow
   ): Staff @fdc_generated(from: "Staff", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `StoredDocument` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  storedDocument(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: StoredDocument_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: StoredDocument_FirstRow
+  ): StoredDocument @fdc_generated(from: "StoredDocument", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `TimeLog` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  timeLog(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: TimeLog_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: TimeLog_FirstRow
+  ): TimeLog @fdc_generated(from: "TimeLog", purpose: QUERY_SINGLE)
   """
   ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
@@ -186,6 +281,40 @@ extend type Query {
     having: Booking_Having
   ): [Booking!]! @fdc_generated(from: "Booking", purpose: QUERY_MULTIPLE)
   """
+  ✨ List `FinancialDocument` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  financialDocuments(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: FinancialDocument_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [FinancialDocument_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: FinancialDocument_Having
+  ): [FinancialDocument!]! @fdc_generated(from: "FinancialDocument", purpose: QUERY_MULTIPLE)
+  """
   ✨ List `Guest` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
   guests(
@@ -253,6 +382,40 @@ extend type Query {
     """
     having: Hotel_Having
   ): [Hotel!]! @fdc_generated(from: "Hotel", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Log` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  logs(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Log_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Log_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Log_Having
+  ): [Log!]! @fdc_generated(from: "Log", purpose: QUERY_MULTIPLE)
   """
   ✨ List `MaintenanceRequest` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
@@ -322,6 +485,40 @@ extend type Query {
     having: Room_Having
   ): [Room!]! @fdc_generated(from: "Room", purpose: QUERY_MULTIPLE)
   """
+  ✨ List `Shift` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  shifts(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Shift_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Shift_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Shift_Having
+  ): [Shift!]! @fdc_generated(from: "Shift", purpose: QUERY_MULTIPLE)
+  """
   ✨ List `Staff` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
   staffs(
@@ -355,6 +552,74 @@ extend type Query {
     """
     having: Staff_Having
   ): [Staff!]! @fdc_generated(from: "Staff", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `StoredDocument` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  storedDocuments(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: StoredDocument_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [StoredDocument_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: StoredDocument_Having
+  ): [StoredDocument!]! @fdc_generated(from: "StoredDocument", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `TimeLog` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  timeLogs(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: TimeLog_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [TimeLog_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: TimeLog_Having
+  ): [TimeLog!]! @fdc_generated(from: "TimeLog", purpose: QUERY_MULTIPLE)
   """
   ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
   """

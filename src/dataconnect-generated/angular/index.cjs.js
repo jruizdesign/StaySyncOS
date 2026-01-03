@@ -1,4 +1,4 @@
-const { listAvailableRoomsRef, createRoomRef, createHotelRef, updateRoomStatusRef, createGuestRef, createBookingRef, getFirstHotelRef, getHotelByIdRef, listHotelsByUserRef, listAllHotelsRef, upsertUserRef, linkUserToHotelRef } = require('../');
+const { listAvailableRoomsRef, createRoomRef, updateRoomStatusRef, createHotelRef, updateHotelConfigRef, getFirstHotelRef, getHotelByIdRef, listAllHotelsRef, listGuestsRef, createGuestDcRef, updateGuestDcRef, deleteGuestDcRef, listBookingsRef, createBookingDcRef, updateBookingDcRef, listLogsRef, createLogDcRef, listStaffRef, createStaffDcRef, updateStaffDcRef, listTimeLogsRef, createTimeLogDcRef, updateTimeLogDcRef, listFinancialDocumentsRef, createFinancialDocumentDcRef, upsertUserRef, linkUserToHotelRef, listHotelsByUserRef } = require('../');
 const { DataConnect, CallerSdkTypeEnum } = require('@angular/fire/data-connect');
 const { injectDataConnectQuery, injectDataConnectMutation } = require('@tanstack-query-firebase/angular/data-connect');
 const { inject, EnvironmentInjector } = require('@angular/core');
@@ -20,20 +20,16 @@ exports.injectCreateRoom = function injectCreateRoom(args, injector) {
   return injectDataConnectMutation(createRoomRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
 }
 
-exports.injectCreateHotel = function injectCreateHotel(args, injector) {
-  return injectDataConnectMutation(createHotelRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
-}
-
 exports.injectUpdateRoomStatus = function injectUpdateRoomStatus(args, injector) {
   return injectDataConnectMutation(updateRoomStatusRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
 }
 
-exports.injectCreateGuest = function injectCreateGuest(args, injector) {
-  return injectDataConnectMutation(createGuestRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+exports.injectCreateHotel = function injectCreateHotel(args, injector) {
+  return injectDataConnectMutation(createHotelRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
 }
 
-exports.injectCreateBooking = function injectCreateBooking(args, injector) {
-  return injectDataConnectMutation(createBookingRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+exports.injectUpdateHotelConfig = function injectUpdateHotelConfig(args, injector) {
+  return injectDataConnectMutation(updateHotelConfigRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
 }
 
 exports.injectGetFirstHotel = function injectGetFirstHotel(options, injector) {
@@ -61,19 +57,6 @@ exports.injectGetHotelById = function injectGetHotelById(args, options, injector
   }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
 }
 
-exports.injectListHotelsByUser = function injectListHotelsByUser(args, options, injector) {
-  const finalInjector = injector || inject(EnvironmentInjector);
-  const dc = finalInjector.get(DataConnect);
-  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
-  return injectDataConnectQuery(() => {
-    const addOpn = options && options();
-    return {
-      queryFn: () =>  listHotelsByUserRef(dc, varsFactoryFn()),
-      ...addOpn
-    };
-  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
-}
-
 exports.injectListAllHotels = function injectListAllHotels(options, injector) {
   const finalInjector = injector || inject(EnvironmentInjector);
   const dc = finalInjector.get(DataConnect);
@@ -86,11 +69,146 @@ exports.injectListAllHotels = function injectListAllHotels(options, injector) {
   }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
 }
 
+exports.injectListGuests = function injectListGuests(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listGuestsRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectCreateGuestDc = function injectCreateGuestDc(args, injector) {
+  return injectDataConnectMutation(createGuestDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectUpdateGuestDc = function injectUpdateGuestDc(args, injector) {
+  return injectDataConnectMutation(updateGuestDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectDeleteGuestDc = function injectDeleteGuestDc(args, injector) {
+  return injectDataConnectMutation(deleteGuestDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectListBookings = function injectListBookings(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listBookingsRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectCreateBookingDc = function injectCreateBookingDc(args, injector) {
+  return injectDataConnectMutation(createBookingDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectUpdateBookingDc = function injectUpdateBookingDc(args, injector) {
+  return injectDataConnectMutation(updateBookingDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectListLogs = function injectListLogs(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listLogsRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectCreateLogDc = function injectCreateLogDc(args, injector) {
+  return injectDataConnectMutation(createLogDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectListStaff = function injectListStaff(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listStaffRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectCreateStaffDc = function injectCreateStaffDc(args, injector) {
+  return injectDataConnectMutation(createStaffDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectUpdateStaffDc = function injectUpdateStaffDc(args, injector) {
+  return injectDataConnectMutation(updateStaffDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectListTimeLogs = function injectListTimeLogs(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listTimeLogsRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectCreateTimeLogDc = function injectCreateTimeLogDc(args, injector) {
+  return injectDataConnectMutation(createTimeLogDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectUpdateTimeLogDc = function injectUpdateTimeLogDc(args, injector) {
+  return injectDataConnectMutation(updateTimeLogDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectListFinancialDocuments = function injectListFinancialDocuments(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listFinancialDocumentsRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectCreateFinancialDocumentDc = function injectCreateFinancialDocumentDc(args, injector) {
+  return injectDataConnectMutation(createFinancialDocumentDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
 exports.injectUpsertUser = function injectUpsertUser(args, injector) {
   return injectDataConnectMutation(upsertUserRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
 }
 
 exports.injectLinkUserToHotel = function injectLinkUserToHotel(args, injector) {
   return injectDataConnectMutation(linkUserToHotelRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectListHotelsByUser = function injectListHotelsByUser(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listHotelsByUserRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
 }
 

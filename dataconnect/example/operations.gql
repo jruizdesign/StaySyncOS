@@ -18,20 +18,17 @@ mutation CreateRoom($hotelId: UUID!, $roomNumber: String!, $roomType: String!, $
   room_insert(data: {hotelId: $hotelId, roomNumber: $roomNumber, roomType: $roomType, status: $status, dailyRate: $dailyRate, capacity: $capacity})
 }
 
-mutation CreateHotel($name: String!, $address: String!, $propertyId: String!) @auth(level: PUBLIC) {
-  hotel_insert(data: {name: $name, address: $address, propertyId: $propertyId})
-}
-
 mutation UpdateRoomStatus($id: UUID!, $status: String!) @auth(level: PUBLIC) {
   room_update(id: $id, data: {status: $status})
 }
 
-mutation CreateGuest($firstName: String!, $lastName: String!, $email: String!) @auth(level: PUBLIC) {
-  guest_insert(data: {firstName: $firstName, lastName: $lastName, email: $email})
+# Hotel Operations
+mutation CreateHotel($name: String!, $address: String!, $propertyId: String!) @auth(level: PUBLIC) {
+  hotel_insert(data: {name: $name, address: $address, propertyId: $propertyId})
 }
 
-mutation CreateBooking($guestId: UUID!, $hotelId: UUID!, $checkInDate: Date!, $checkOutDate: Date!, $bookingStatus: String!) @auth(level: PUBLIC) {
-  booking_insert(data: {guestId: $guestId, hotelId: $hotelId, checkInDate: $checkInDate, checkOutDate: $checkOutDate, bookingStatus: $bookingStatus})
+mutation UpdateHotelConfig($id: UUID!, $name: String, $address: String, $email: String, $phoneNumber: String, $demoMode: Boolean, $maintenanceEmail: String) @auth(level: PUBLIC) {
+  hotel_update(id: $id, data: {name: $name, address: $address, email: $email, phoneNumber: $phoneNumber, demoMode: $demoMode, maintenanceEmail: $maintenanceEmail})
 }
 
 query GetFirstHotel @auth(level: PUBLIC) {
@@ -47,19 +44,10 @@ query GetHotelById($id: UUID!) @auth(level: PUBLIC) {
     name
     address
     propertyId
-  }
-}
-
-query ListHotelsByUser($userId: String!) @auth(level: PUBLIC) {
-  user(id: $userId) {
-    userHotels_on_user {
-      hotel {
-        id
-        name
-        address
-        propertyId
-      }
-    }
+    email
+    phoneNumber
+    demoMode
+    maintenanceEmail
   }
 }
 
@@ -72,11 +60,156 @@ query ListAllHotels @auth(level: PUBLIC) {
   }
 }
 
+# Guest Operations
+query ListGuests($hotelId: UUID!) @auth(level: PUBLIC) {
+  guests(where: {hotelId: {eq: $hotelId}}) {
+    id
+    name
+    email
+    phoneNumber
+    address
+    notes
+    history
+  }
+}
+
+mutation CreateGuestDC($hotelId: UUID!, $name: String!, $email: String!, $phoneNumber: String, $address: String, $notes: String) @auth(level: PUBLIC) {
+  guest_insert(data: {hotelId: $hotelId, name: $name, email: $email, phoneNumber: $phoneNumber, address: $address, notes: $notes})
+}
+
+mutation UpdateGuestDC($id: UUID!, $name: String, $email: String, $phoneNumber: String, $address: String, $notes: String, $history: Any) @auth(level: PUBLIC) {
+  guest_update(id: $id, data: {name: $name, email: $email, phoneNumber: $phoneNumber, address: $address, notes: $notes, history: $history})
+}
+
+mutation DeleteGuestDC($id: UUID!) @auth(level: PUBLIC) {
+  guest_delete(id: $id)
+}
+
+# Booking / Stay Operations
+query ListBookings($hotelId: UUID!) @auth(level: PUBLIC) {
+  bookings(where: {hotelId: {eq: $hotelId}}) {
+    id
+    checkInDate
+    checkOutDate
+    checkOutActual
+    bookingStatus
+    specialRequests
+    numberOfGuests
+    ratePerNight
+    totalPaid
+    isIndefinite
+    guest { id, name }
+    room { id, roomNumber }
+  }
+}
+
+mutation CreateBookingDC($hotelId: UUID!, $guestId: UUID!, $roomId: UUID, $checkInDate: Timestamp!, $checkOutDate: Timestamp!, $bookingStatus: String!, $ratePerNight: Float, $totalPaid: Float, $isIndefinite: Boolean) @auth(level: PUBLIC) {
+  booking_insert(data: {hotelId: $hotelId, guestId: $guestId, roomId: $roomId, checkInDate: $checkInDate, checkOutDate: $checkOutDate, bookingStatus: $bookingStatus, ratePerNight: $ratePerNight, totalPaid: $totalPaid, isIndefinite: $isIndefinite})
+}
+
+mutation UpdateBookingDC($id: UUID!, $bookingStatus: String, $checkOutActual: Timestamp, $totalPaid: Float) @auth(level: PUBLIC) {
+  booking_update(id: $id, data: {bookingStatus: $bookingStatus, checkOutActual: $checkOutActual, totalPaid: $totalPaid})
+}
+
+# Log Operations
+query ListLogs($hotelId: UUID!) @auth(level: PUBLIC) {
+  logs(where: {hotelId: {eq: $hotelId}}, orderBy: [{timestamp: DESC}]) {
+    id
+    timestamp
+    action
+    user
+    category
+    details
+  }
+}
+
+mutation CreateLogDC($hotelId: UUID!, $action: String!, $user: String!, $category: String!, $details: String!) @auth(level: PUBLIC) {
+  log_insert(data: {hotelId: $hotelId, action: $action, user: $user, category: $category, details: $details})
+}
+
+# Staff Operations
+query ListStaff($hotelId: UUID!) @auth(level: PUBLIC) {
+  staffs(where: {hotelId: {eq: $hotelId}}) {
+    id
+    firstName
+    lastName
+    role
+    pin
+    status
+    currentStatus
+  }
+}
+
+mutation CreateStaffDC($hotelId: UUID!, $firstName: String!, $lastName: String!, $role: String!, $status: String!, $currentStatus: String!, $pin: String) @auth(level: PUBLIC) {
+  staff_insert(data: {hotelId: $hotelId, firstName: $firstName, lastName: $lastName, role: $role, status: $status, currentStatus: $currentStatus, pin: $pin, username: "", passwordHash: ""})
+}
+
+mutation UpdateStaffDC($id: UUID!, $currentStatus: String, $status: String) @auth(level: PUBLIC) {
+  staff_update(id: $id, data: {currentStatus: $currentStatus, status: $status})
+}
+
+# TimeLog Operations
+query ListTimeLogs($hotelId: UUID!) @auth(level: PUBLIC) {
+  timeLogs(where: {hotelId: {eq: $hotelId}}) {
+    id
+    date
+    startTime
+    endTime
+    breaks
+    totalHours
+    status
+    staff { id, firstName, lastName }
+  }
+}
+
+mutation CreateTimeLogDC($hotelId: UUID!, $staffId: UUID!, $date: Date!, $startTime: Timestamp!, $status: String!) @auth(level: PUBLIC) {
+  timeLog_insert(data: {hotelId: $hotelId, staffId: $staffId, date: $date, startTime: $startTime, status: $status})
+}
+
+mutation UpdateTimeLogDC($id: UUID!, $endTime: Timestamp, $breaks: Any, $totalHours: Float, $status: String) @auth(level: PUBLIC) {
+  timeLog_update(id: $id, data: {endTime: $endTime, breaks: $breaks, totalHours: $totalHours, status: $status})
+}
+
+# FinancialDocument Operations
+query ListFinancialDocuments($hotelId: UUID!) @auth(level: PUBLIC) {
+  financialDocuments(where: {hotelId: {eq: $hotelId}}) {
+    id
+    type
+    number
+    date
+    totalAmount
+    notes
+    summary
+    items
+    guest { id, name }
+    booking { id }
+  }
+}
+
+mutation CreateFinancialDocumentDC($hotelId: UUID!, $type: String!, $number: String!, $date: Timestamp!, $guestId: UUID, $guestName: String!, $totalAmount: Float!, $notes: String, $items: Any, $bookingId: UUID) @auth(level: PUBLIC) {
+  financialDocument_insert(data: {hotelId: $hotelId, type: $type, number: $number, date: $date, guestId: $guestId, guestName: $guestName, totalAmount: $totalAmount, notes: $notes, items: $items, bookingId: $bookingId})
+}
+
+# User Operations
 mutation UpsertUser($id: String!, $email: String!, $role: String!) @auth(level: PUBLIC) {
   user_upsert(data: {id: $id, email: $email, role: $role})
 }
 
 mutation LinkUserToHotel($userId: String!, $hotelId: UUID!) @auth(level: PUBLIC) {
   userHotel_insert(data: {userId: $userId, hotelId: $hotelId})
+}
+
+query ListHotelsByUser($userId: String!) @auth(level: PUBLIC) {
+  user(id: $userId) {
+    userHotels_on_user {
+      hotel {
+        id
+        name
+        address
+        propertyId
+        demoMode
+      }
+    }
+  }
 }
 

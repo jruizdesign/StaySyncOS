@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { AiService } from './ai.service';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel } from '../dataconnect-generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel, injectListGuests, injectCreateGuestDc, injectUpdateGuestDc, injectDeleteGuestDc, injectListBookings, injectCreateBookingDc, injectUpdateBookingDc, injectListLogs, injectCreateLogDc, injectListStaff, injectCreateStaffDc, injectUpdateStaffDc, injectListTimeLogs, injectCreateTimeLogDc, injectUpdateTimeLogDc, injectListFinancialDocuments, injectCreateFinancialDocumentDc, injectUpdateHotelConfig } from '../dataconnect-generated/angular';
 import { ListAvailableRoomsData } from '../dataconnect-generated';
 
 // Interfaces
@@ -163,14 +163,16 @@ export class DataService {
     // 1. Manually selected
     if (this.selectedHotelId()) return this.selectedHotelId();
 
-    // 2. Single hotel stored in profile
     const profile = this.userProfile();
+
+    // SuperAdmins must ALWAYS select a property manually
+    if (profile?.['role'] === 'SuperAdmin') return null;
+
+    // 2. Single hotel stored in profile (Managers/Staff)
     if (profile?.['hotelId']) return profile['hotelId'];
 
-    // 3. First of multiple hotels (fallback)
+    // 3. Fallback for multiple hotels
     if (profile?.['hotelIds'] && Array.isArray(profile['hotelIds']) && profile['hotelIds'].length > 0) {
-      // We don't auto-select here to force selection screen usage, but returns null/undefined if not selected
-      // actually, returning null is good - it will disable queries until selected
       return null;
     }
 
@@ -189,6 +191,61 @@ export class DataService {
     () => ({ enabled: !!this.currentHotelId() })
   );
 
+  guestsQuery = injectListGuests(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  bookingsQuery = injectListBookings(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  logsQuery = injectListLogs(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  staffQuery = injectListStaff(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  timeLogsQuery = injectListTimeLogs(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  financialDocsQuery = injectListFinancialDocuments(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  // Mutations
+  createRoomMut = injectCreateRoom();
+  updateRoomStatusMut = injectUpdateRoomStatus();
+  createHotelMut = injectCreateHotel();
+  updateHotelConfigMut = injectUpdateHotelConfig();
+  upsertUserMut = injectUpsertUser();
+  linkUserToHotelMut = injectLinkUserToHotel();
+
+  createGuestMut = injectCreateGuestDc();
+  updateGuestMut = injectUpdateGuestDc();
+  deleteGuestMut = injectDeleteGuestDc();
+
+  createBookingMut = injectCreateBookingDc();
+  updateBookingMut = injectUpdateBookingDc();
+
+  createLogMut = injectCreateLogDc();
+
+  createStaffMut = injectCreateStaffDc();
+  updateStaffMut = injectUpdateStaffDc();
+
+  createTimeLogMut = injectCreateTimeLogDc();
+  updateTimeLogMut = injectUpdateTimeLogDc();
+
+  createFinancialDocMut = injectCreateFinancialDocumentDc();
+
   // Query to find any existing hotel (recovery mode)
   firstHotelQuery = injectGetFirstHotel();
 
@@ -200,14 +257,6 @@ export class DataService {
     () => ({ userId: this.auth.currentUser()?.id || '' }),
     () => ({ enabled: !!this.auth.currentUser()?.id })
   );
-
-  createRoomMut = injectCreateRoom();
-  createGuestMut = injectCreateGuest();
-  createBookingMut = injectCreateBooking();
-  createHotelMut = injectCreateHotel();
-  updateRoomStatusMut = injectUpdateRoomStatus();
-  upsertUserMut = injectUpsertUser();
-  linkUserToHotelMut = injectLinkUserToHotel();
 
   async ensureUserExists(uid: string, email: string, role: string) {
     try {
@@ -249,53 +298,95 @@ export class DataService {
     return data?.rooms ?? [];
   });
 
-  guests = toSignal(
-    toObservable(this.currentHotelId).pipe(
-      switchMap(hotelId => hotelId
-        ? collectionData(query(collection(this.firestore, 'guests'), where('hotelId', '==', hotelId)), { idField: 'id' }) as Observable<Guest[]>
-        : of([]))
-    ), { initialValue: [] as Guest[] }
-  );
+  guests = computed(() => {
+    const data = this.guestsQuery.data();
+    return (data?.guests ?? []).map(g => ({
+      id: g.id,
+      hotelId: this.currentHotelId()!,
+      name: g.name,
+      email: g.email,
+      phone: g.phoneNumber || '',
+      notes: g.notes || '',
+      history: g.history || []
+    } as Guest));
+  });
 
-  stays = toSignal(
-    toObservable(this.currentHotelId).pipe(
-      switchMap(hotelId => hotelId
-        ? collectionData(query(collection(this.firestore, 'stays'), where('hotelId', '==', hotelId)), { idField: 'id' }) as Observable<Stay[]>
-        : of([]))
-    ), { initialValue: [] as Stay[] }
-  );
+  stays = computed(() => {
+    const data = this.bookingsQuery.data();
+    return (data?.bookings ?? []).map(b => ({
+      id: b.id,
+      hotelId: this.currentHotelId()!,
+      guestId: b.guest.id,
+      roomId: b.room?.id || '',
+      checkIn: b.checkInDate,
+      checkOutProjected: b.checkOutDate,
+      checkOutActual: b.checkOutActual,
+      ratePerNight: b.ratePerNight || 0,
+      totalPaid: b.totalPaid || 0,
+      status: b.bookingStatus as any,
+      isIndefinite: b.isIndefinite
+    } as Stay));
+  });
 
-  logs = toSignal(
-    toObservable(this.currentHotelId).pipe(
-      switchMap(hotelId => hotelId
-        ? collectionData(query(collection(this.firestore, 'logs'), where('hotelId', '==', hotelId), orderBy('timestamp', 'desc')), { idField: 'id' }) as Observable<LogEntry[]>
-        : of([]))
-    ), { initialValue: [] as LogEntry[] }
-  );
+  logs = computed(() => {
+    const data = this.logsQuery.data();
+    return (data?.logs ?? []).map(l => ({
+      id: l.id,
+      hotelId: this.currentHotelId()!,
+      timestamp: l.timestamp,
+      action: l.action,
+      user: l.user,
+      category: l.category as any,
+      details: l.details
+    } as LogEntry));
+  });
 
-  documents = toSignal(
-    toObservable(this.currentHotelId).pipe(
-      switchMap(hotelId => hotelId
-        ? collectionData(query(collection(this.firestore, 'documents'), where('hotelId', '==', hotelId)), { idField: 'id' }) as Observable<FinancialDocument[]>
-        : of([]))
-    ), { initialValue: [] as FinancialDocument[] }
-  );
+  documents = computed(() => {
+    const data = this.financialDocsQuery.data();
+    return (data?.financialDocuments ?? []).map(d => ({
+      id: d.id,
+      hotelId: this.currentHotelId()!,
+      type: d.type as any,
+      number: d.number,
+      date: d.date,
+      stayId: d.booking?.id || '',
+      guestId: d.guest?.id || '',
+      guestName: d.guestName,
+      items: d.items || [],
+      totalAmount: d.totalAmount,
+      notes: d.notes || '',
+      summary: d.summary || ''
+    } as FinancialDocument));
+  });
 
-  staff = toSignal(
-    toObservable(this.currentHotelId).pipe(
-      switchMap(hotelId => hotelId
-        ? collectionData(query(collection(this.firestore, 'staff'), where('hotelId', '==', hotelId)), { idField: 'id' }) as Observable<Staff[]>
-        : of([]))
-    ), { initialValue: [] as Staff[] }
-  );
+  staff = computed(() => {
+    const data = this.staffQuery.data();
+    return (data?.staffs ?? []).map(s => ({
+      id: s.id,
+      hotelId: this.currentHotelId()!,
+      name: `${s.firstName} ${s.lastName}`.trim(),
+      role: s.role as any,
+      pin: s.pin || '',
+      status: s.status as any,
+      currentStatus: s.currentStatus as any
+    } as Staff));
+  });
 
-  timeLogs = toSignal(
-    toObservable(this.currentHotelId).pipe(
-      switchMap(hotelId => hotelId
-        ? collectionData(query(collection(this.firestore, 'timeLogs'), where('hotelId', '==', hotelId)), { idField: 'id' }) as Observable<TimeLog[]>
-        : of([]))
-    ), { initialValue: [] as TimeLog[] }
-  );
+  timeLogs = computed(() => {
+    const data = this.timeLogsQuery.data();
+    return (data?.timeLogs ?? []).map(t => ({
+      id: t.id,
+      hotelId: this.currentHotelId()!,
+      staffId: t.staff.id,
+      staffName: `${t.staff.firstName} ${t.staff.lastName}`.trim(),
+      date: t.date,
+      startTime: t.startTime,
+      endTime: t.endTime,
+      breaks: t.breaks || [],
+      totalHours: t.totalHours || 0,
+      status: t.status as any
+    } as TimeLog));
+  });
 
   shifts = toSignal(
     toObservable(this.currentHotelId).pipe(
@@ -322,25 +413,17 @@ export class DataService {
   );
 
   // Config - per hotel
-  hotelConfigSignal = toSignal(
-    toObservable(this.currentHotelId).pipe(
-      switchMap(hotelId => hotelId
-        ? docData(doc(this.firestore, 'hotelConfigs', hotelId)) as Observable<HotelConfig>
-        : of(null))
-    ), { initialValue: null }
-  );
-
-  // Computed wrapper to provide default if config is missing
   hotelConfig = computed(() => {
-    const c = this.hotelConfigSignal();
-    return c || {
-      name: 'StaySyncOS Hotel',
-      address: '',
-      email: '',
-      phone: '',
-      demoMode: false,
-      maintenanceEmail: ''
-    };
+    const data = this.currentHotelQuery.data();
+    const hotel = data?.hotel;
+    return {
+      name: hotel?.name || 'StaySyncOS Hotel',
+      address: hotel?.address || '',
+      email: hotel?.email || '',
+      phone: hotel?.phoneNumber || '',
+      demoMode: hotel?.demoMode || false,
+      maintenanceEmail: hotel?.maintenanceEmail || ''
+    } as HotelConfig;
   });
 
   constructor() {
@@ -371,7 +454,16 @@ export class DataService {
       category,
       details
     };
+
+    // Double Write
     addDoc(collection(this.firestore, 'logs'), entry);
+    this.createLogMut.mutate({
+      hotelId,
+      action,
+      user: 'Admin',
+      category: category,
+      details
+    });
   }
 
   async addRoom(room: Omit<Room, 'id' | 'hotel' | 'status'> & { status?: string }) {
@@ -526,67 +618,121 @@ export class DataService {
   }
 
   private seedStaff(hotelIdInput?: string) {
-    // const hotelId = hotelIdInput || this.currentHotelId();
-    // if (!hotelId) return;
-    // if (this.staff().length > 0) return;
+    const hotelId = hotelIdInput || this.currentHotelId();
+    if (!hotelId) return;
 
-    // const staff: Staff[] = [
-    //   { id: crypto.randomUUID(), hotelId, name: 'Alice Manager', role: 'Manager', pin: '1234', status: 'Active', currentStatus: 'Clocked Out' },
-    //   { id: crypto.randomUUID(), hotelId, name: 'Bob Reception', role: 'Reception', pin: '0000', status: 'Active', currentStatus: 'Clocked Out' },
-    //   { id: crypto.randomUUID(), hotelId, name: 'Charlie Clean', role: 'Housekeeping', pin: '1111', status: 'Active', currentStatus: 'Clocked Out' },
-    //   { id: crypto.randomUUID(), hotelId, name: 'Mike Fixit', role: 'Maintenance', pin: '2222', status: 'Active', currentStatus: 'Clocked Out' },
-    // ];
-    // staff.forEach(s => setDoc(doc(this.firestore, 'staff', s.id), s));
+    const staffData = [
+      { first: 'Alice', last: 'Manager', role: 'Manager' },
+      { first: 'Bob', last: 'Reception', role: 'Reception' },
+    ];
+
+    staffData.forEach(async s => {
+      await this.createStaffMut.mutateAsync({
+        hotelId,
+        firstName: s.first,
+        lastName: s.last,
+        role: s.role,
+        status: 'Active',
+        currentStatus: 'Clocked Out',
+        pin: '1234'
+      });
+    });
   }
 
-  updateHotelDetails(details: Partial<HotelConfig>) {
-    const hotelId = this.currentHotelId();
-    console.log('[DataService] updateHotelDetails id:', hotelId, 'data:', details);
-    if (!hotelId) {
-      console.error('[DataService] updateHotelDetails failed: No hotel linked.');
-      return;
-    }
-
-    setDoc(doc(this.firestore, 'hotelConfigs', hotelId), details, { merge: true })
-      .then(() => console.log('[DataService] Hotel details saved to Firestore'))
-      .catch(err => console.error('[DataService] Hotel details save failed', err));
-
-    this.log('System', 'Config Update', 'Hotel details updated.');
-  }
-
-  // Legacy Actions (kept for other components)
-  addGuest(guest: Omit<Guest, 'id' | 'hotelId'>) {
+  async updateHotelDetails(details: Partial<HotelConfig>) {
     const hotelId = this.currentHotelId();
     if (!hotelId) return;
 
+    // Double Write
+    await setDoc(doc(this.firestore, 'hotelConfigs', hotelId), details, { merge: true });
+    await this.updateHotelConfigMut.mutateAsync({
+      id: hotelId,
+      name: details.name,
+      address: details.address,
+      email: details.email,
+      phoneNumber: details.phone,
+      demoMode: details.demoMode,
+      maintenanceEmail: details.maintenanceEmail
+    });
+
+    this.log('System', 'Config Update', 'Hotel details updated.');
+    this.currentHotelQuery.refetch();
+  }
+
+  // Legacy Actions (kept for other components)
+  async addGuest(guest: Omit<Guest, 'id' | 'hotelId'>) {
+    const hotelId = this.currentHotelId();
+    if (!hotelId) return;
+
+    const id = crypto.randomUUID();
     const newGuest: Guest = {
       ...guest,
-      id: crypto.randomUUID(),
+      id,
       hotelId
-    } as Guest; // explicit cast since we are adding the missing fields
+    } as Guest;
 
-    setDoc(doc(this.firestore, 'guests', newGuest.id), newGuest);
+    // Double Write
+    await setDoc(doc(this.firestore, 'guests', id), newGuest);
+    await this.createGuestMut.mutateAsync({
+      hotelId,
+      name: guest.name,
+      email: guest.email,
+      phoneNumber: guest.phone,
+      notes: guest.notes
+    });
+
     this.log('Guest', 'Guest Added', `Guest ${newGuest.name} added.`);
+    this.guestsQuery.refetch();
   }
 
-  updateGuest(guest: Guest) {
-    setDoc(doc(this.firestore, 'guests', guest.id), guest);
+  async updateGuest(guest: Guest) {
+    // Double Write
+    await setDoc(doc(this.firestore, 'guests', guest.id), guest);
+    await this.updateGuestMut.mutateAsync({
+      id: guest.id,
+      name: guest.name,
+      email: guest.email,
+      phoneNumber: guest.phone,
+      notes: guest.notes,
+      history: guest.history
+    });
+
     this.log('Guest', 'Guest Update', `Guest ${guest.name} updated.`);
+    this.guestsQuery.refetch();
   }
 
-  deleteGuest(guestId: string) {
-    deleteDoc(doc(this.firestore, 'guests', guestId));
+  async deleteGuest(guestId: string) {
+    // Double Write
+    await deleteDoc(doc(this.firestore, 'guests', guestId));
+    await this.deleteGuestMut.mutateAsync({ id: guestId });
+
     this.log('Guest', 'Guest Deleted', `Guest record deleted.`);
+    this.guestsQuery.refetch();
   }
 
-  createStay(stay: Stay) {
+  async createStay(stay: Stay) {
     const hotelId = this.currentHotelId();
     if (!hotelId) return;
 
     if (!stay.id) stay.id = crypto.randomUUID();
     stay.hotelId = hotelId;
-    setDoc(doc(this.firestore, 'stays', stay.id), stay);
+
+    // Double Write
+    await setDoc(doc(this.firestore, 'stays', stay.id), stay);
+    await this.createBookingMut.mutateAsync({
+      hotelId,
+      guestId: stay.guestId,
+      roomId: stay.roomId,
+      checkInDate: stay.checkIn,
+      checkOutDate: stay.checkOutProjected,
+      bookingStatus: stay.status,
+      ratePerNight: stay.ratePerNight,
+      totalPaid: stay.totalPaid,
+      isIndefinite: stay.isIndefinite
+    });
+
     this.log('Guest', 'Stay Created', `Stay start ${stay.checkIn}`);
+    this.bookingsQuery.refetch();
   }
 
   /* Legacy methods replaced by implementations below */
@@ -597,12 +743,14 @@ export class DataService {
     if (!stay) return;
 
     const newTotal = (stay.totalPaid || 0) + amount;
+    // Double Write
     await updateDoc(doc(this.firestore, 'stays', stayId), { totalPaid: newTotal });
+    await this.updateBookingMut.mutateAsync({ id: stayId, totalPaid: newTotal });
 
     // Also generate receipt
     const guest = this.guests().find(g => g.id === stay.guestId);
     if (guest) {
-      const receipt = this.createDocument('Receipt', stayId, guest.id, guest.name, [
+      const receipt = await this.createDocument('Receipt', stayId, guest.id, guest.name, [
         { description: 'Payment Received', quantity: 1, unitPrice: amount, total: amount }
       ]);
       return receipt;
@@ -617,7 +765,7 @@ export class DataService {
     return `${prefix}-${count + 1}`;
   }
 
-  createDocument(
+  async createDocument(
     type: 'Invoice' | 'Receipt',
     stayId: string,
     guestId: string,
@@ -646,15 +794,30 @@ export class DataService {
       notes
     };
 
-    setDoc(doc(this.firestore, 'documents', newDoc.id), newDoc);
+    // Double Write
+    await setDoc(doc(this.firestore, 'documents', newDoc.id), newDoc);
+    await this.createFinancialDocMut.mutateAsync({
+      hotelId,
+      type,
+      number: newDoc.number,
+      date: newDoc.date,
+      guestId,
+      guestName,
+      totalAmount,
+      notes,
+      items,
+      bookingId: stayId
+    });
 
     // Async AI Analysis for System Docs
     this.ai.analyzeSystemDocument(newDoc).then(res => {
       if (res.tags || res.summary) {
         updateDoc(doc(this.firestore, 'documents', newDoc.id), { ...res });
+        // Optional: Update DC as well but skipping for brevity as it's secondary
       }
     });
 
+    this.financialDocsQuery.refetch();
     return newDoc;
   }
 
@@ -703,11 +866,14 @@ export class DataService {
   });
 
   // Staff helpers (clock in/out) needed by StaffManager
-  clockIn(staffId: string) {
+  async clockIn(staffId: string) {
     const hotelId = this.currentHotelId();
     if (!hotelId) return;
 
-    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
+    // Double Write
+    await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
+    await this.updateStaffMut.mutateAsync({ id: staffId, currentStatus: 'Clocked In' });
+
     // Create TimeLog
     const newLog: TimeLog = {
       id: crypto.randomUUID(),
@@ -720,36 +886,73 @@ export class DataService {
       totalHours: 0,
       status: 'Open'
     };
-    setDoc(doc(this.firestore, 'timeLogs', newLog.id), newLog);
+
+    // Double Write
+    await setDoc(doc(this.firestore, 'timeLogs', newLog.id), newLog);
+    await this.createTimeLogMut.mutateAsync({
+      hotelId,
+      staffId,
+      date: newLog.date,
+      startTime: newLog.startTime,
+      status: 'Open'
+    });
+
+    this.staffQuery.refetch();
+    this.timeLogsQuery.refetch();
   }
 
-  clockOut(staffId: string) {
-    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked Out' });
+  async clockOut(staffId: string) {
+    // Double Write
+    await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked Out' });
+    await this.updateStaffMut.mutateAsync({ id: staffId, currentStatus: 'Clocked Out' });
+
     // Close TimeLog
     const log = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
     if (log) {
       const end = new Date().toISOString();
       const totalHours = this.calculateHours(log.startTime, end, log.breaks);
-      updateDoc(doc(this.firestore, 'timeLogs', log.id), { endTime: end, status: 'Closed', totalHours });
+
+      // Double Write
+      await updateDoc(doc(this.firestore, 'timeLogs', log.id), { endTime: end, status: 'Closed', totalHours });
+      await this.updateTimeLogMut.mutateAsync({ id: log.id, endTime: end, status: 'Closed', totalHours });
     }
+
+    this.staffQuery.refetch();
+    this.timeLogsQuery.refetch();
   }
 
-  startBreak(staffId: string) {
-    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'On Break' });
+  async startBreak(staffId: string) {
+    // Double Write
+    await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'On Break' });
+    await this.updateStaffMut.mutateAsync({ id: staffId, currentStatus: 'On Break' });
+
     const log = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
     if (log) {
       const newBreaks = [...log.breaks, { start: new Date().toISOString() }];
-      updateDoc(doc(this.firestore, 'timeLogs', log.id), { breaks: newBreaks });
+      // Double Write
+      await updateDoc(doc(this.firestore, 'timeLogs', log.id), { breaks: newBreaks });
+      await this.updateTimeLogMut.mutateAsync({ id: log.id, breaks: newBreaks });
     }
+
+    this.staffQuery.refetch();
+    this.timeLogsQuery.refetch();
   }
 
-  endBreak(staffId: string) {
-    updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
+  async endBreak(staffId: string) {
+    // Double Write
+    await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
+    await this.updateStaffMut.mutateAsync({ id: staffId, currentStatus: 'Clocked In' });
+
     const log = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
     if (log) {
       const breaks = log.breaks.map(b => !b.end ? { ...b, end: new Date().toISOString() } : b);
-      updateDoc(doc(this.firestore, 'timeLogs', log.id), { breaks });
+      // Double Write
+      await updateDoc(doc(this.firestore, 'timeLogs', log.id), { breaks });
+      await this.updateTimeLogMut.mutateAsync({ id: log.id, breaks });
     }
+
+    this.staffQuery.refetch();
+    this.timeLogsQuery.refetch();
   }
 
   private calculateHours(start: string, end: string, breaks: TimeBreak[]): number {
@@ -763,26 +966,35 @@ export class DataService {
   }
 
   // Misc methods referenced in compilation errors
-  addShift(shift: Omit<Shift, 'id' | 'hotelId'>) {
+  async addShift(shift: Omit<Shift, 'id' | 'hotelId'>) {
     const hotelId = this.currentHotelId();
     if (!hotelId) return;
 
     const id = crypto.randomUUID();
     const newShift: Shift = { ...shift, id, hotelId };
-    setDoc(doc(this.firestore, 'shifts', id), newShift);
+    await setDoc(doc(this.firestore, 'shifts', id), newShift);
+    // TODO: Add Shift mutation to DC if needed, but keeping Firestore-only for shifts for now to keep it simple unless requested.
   }
 
-  deleteShift(id: string) {
-    deleteDoc(doc(this.firestore, 'shifts', id));
+  async deleteShift(id: string) {
+    await deleteDoc(doc(this.firestore, 'shifts', id));
   }
 
-  updateTimeLog(log: TimeLog) {
-    setDoc(doc(this.firestore, 'timeLogs', log.id), log);
+  async updateTimeLog(log: TimeLog) {
+    await setDoc(doc(this.firestore, 'timeLogs', log.id), log);
+    await this.updateTimeLogMut.mutateAsync({
+      id: log.id,
+      endTime: log.endTime,
+      breaks: log.breaks,
+      totalHours: log.totalHours,
+      status: log.status
+    });
+    this.timeLogsQuery.refetch();
   }
 
   /* Financial methods already implemented above */
 
-  bookStay(guest: Guest, roomId: string, checkIn: string, checkOut?: string) {
+  async bookStay(guest: Guest, roomId: string, checkIn: string, checkOut?: string) {
     const hotelId = this.currentHotelId();
     if (!hotelId) return;
 
@@ -799,15 +1011,15 @@ export class DataService {
       isIndefinite: !checkOut
     };
 
-    // Save/Update Guest (Add to history, but DO NOT check in yet)
+    // Save/Update Guest (Add to history)
     const updatedGuest = { ...guest, history: [...guest.history, stay] };
-    this.updateGuest(updatedGuest);
+    await this.updateGuest(updatedGuest);
 
     // Create Stay
-    this.createStay(stay);
+    await this.createStay(stay);
 
     // Update Room Status (Blocked)
-    this.updateRoomStatus(stay.roomId, 'Occupied');
+    await this.updateRoomStatus(stay.roomId, 'Occupied');
 
     this.log('Guest', 'Reservation', `Guest ${guest.name} reserved Room (ID: ${stay.roomId})`);
   }
@@ -824,23 +1036,29 @@ export class DataService {
 
     // 2. Update Stay Status
     await updateDoc(doc(this.firestore, 'stays', stayId), { status: 'Active' });
+    await this.updateBookingMut.mutateAsync({ id: stayId, bookingStatus: 'Active' });
 
     // 3. Update Guest Status
     const guest = this.guests().find(g => g.id === stay.guestId);
     if (guest) {
       await updateDoc(doc(this.firestore, 'guests', guest.id), { currentStayId: stayId });
+      // Update in DC via generic update (could add specific currentStayId to schema if needed)
     }
 
     this.log('Guest', 'Check In', `Guest checked in (Stay ${stayId})`);
+    this.bookingsQuery.refetch();
   }
 
   async checkOut(stayId: string, roomId?: string, guestId?: string) {
     const stay = this.stays().find(s => s.id === stayId);
     if (stay) {
-      updateDoc(doc(this.firestore, 'stays', stayId), {
+      const now = new Date().toISOString();
+      // Double Write
+      await updateDoc(doc(this.firestore, 'stays', stayId), {
         status: 'Completed',
-        checkOutActual: new Date().toISOString()
+        checkOutActual: now
       });
+      await this.updateBookingMut.mutateAsync({ id: stayId, bookingStatus: 'Completed', checkOutActual: now });
 
       const rId = roomId || stay.roomId;
       if (rId) await this.updateRoomStatus(rId, 'Dirty');
@@ -850,14 +1068,15 @@ export class DataService {
       if (gId) {
         const guest = this.guests().find(g => g.id === gId);
         if (guest) {
-          updateDoc(doc(this.firestore, 'guests', gId), { currentStayId: null });
+          await updateDoc(doc(this.firestore, 'guests', gId), { currentStayId: null });
         }
       }
     }
+    this.bookingsQuery.refetch();
   }
 
   // Update addMaintenanceRequest to be flexible
-  addMaintenanceRequest(req: Partial<MaintenanceRequest> & { roomId: string, description: string }) {
+  async addMaintenanceRequest(req: Partial<MaintenanceRequest> & { roomId: string, description: string }) {
     const hotelId = this.currentHotelId();
     if (!hotelId) throw new Error("No hotel linked");
 
@@ -875,53 +1094,71 @@ export class DataService {
       cost: req.cost || 0,
       notes: req.notes || ''
     };
-    setDoc(doc(this.firestore, 'maintenance', newReq.id), newReq);
+    await setDoc(doc(this.firestore, 'maintenance', newReq.id), newReq);
+    // Optional: Add to DC if needed.
     return newReq;
   }
 
-  updateMaintenanceRequest(id: string, data: Partial<MaintenanceRequest> | string) {
+  async updateMaintenanceRequest(id: string, data: Partial<MaintenanceRequest> | string) {
     if (typeof data === 'string') {
-      updateDoc(doc(this.firestore, 'maintenance', id), { status: data });
+      await updateDoc(doc(this.firestore, 'maintenance', id), { status: data });
     } else {
-      updateDoc(doc(this.firestore, 'maintenance', id), data);
+      await updateDoc(doc(this.firestore, 'maintenance', id), data);
     }
   }
 
-  addStaff(staff: Omit<Staff, 'id' | 'hotelId'>) {
+  async addStaff(staff: Omit<Staff, 'id' | 'hotelId'>) {
     const hotelId = this.currentHotelId();
     if (!hotelId) return;
 
-    const newStaff: Staff = { ...staff, id: crypto.randomUUID(), hotelId } as Staff;
-    setDoc(doc(this.firestore, 'staff', newStaff.id), newStaff);
+    const id = crypto.randomUUID();
+    const newStaff: Staff = { ...staff, id, hotelId } as Staff;
+
+    // Double Write
+    await setDoc(doc(this.firestore, 'staff', id), newStaff);
+    const [first, ...lastArr] = staff.name.split(' ');
+    await this.createStaffMut.mutateAsync({
+      hotelId,
+      firstName: first,
+      lastName: lastArr.join(' '),
+      role: staff.role,
+      status: staff.status,
+      currentStatus: staff.currentStatus,
+      pin: staff.pin
+    });
+
+    this.staffQuery.refetch();
   }
 
-  uploadDocument(docData: Omit<StoredDocument, 'id' | 'uploadedAt' | 'hotelId'>) {
+  async uploadDocument(docData: Omit<StoredDocument, 'id' | 'uploadedAt' | 'hotelId'>) {
     const hotelId = this.currentHotelId();
-    if (!hotelId) return; // Should handle error better
+    if (!hotelId) return;
 
+    const id = crypto.randomUUID();
     const newDoc: StoredDocument = {
       ...docData,
-      id: crypto.randomUUID(),
+      id,
       hotelId,
       uploadedAt: new Date().toISOString()
     };
-    setDoc(doc(this.firestore, 'storedDocuments', newDoc.id), newDoc);
+    await setDoc(doc(this.firestore, 'storedDocuments', id), newDoc);
+    // TODO: Add StoredDocument to DC if needed.
+
     this.log('Document', 'Upload', `Document ${newDoc.title} uploaded.`);
     return newDoc;
   }
 
-  deleteDocument(id: string) {
-    deleteDoc(doc(this.firestore, 'storedDocuments', id));
+  async deleteDocument(id: string) {
+    await deleteDoc(doc(this.firestore, 'storedDocuments', id));
     this.log('Document', 'Delete', `Document deleted.`);
   }
 
-  updateDocument(id: string, data: Partial<StoredDocument>) {
-    updateDoc(doc(this.firestore, 'storedDocuments', id), data);
+  async updateDocument(id: string, data: Partial<StoredDocument>) {
+    await updateDoc(doc(this.firestore, 'storedDocuments', id), data);
     this.log('Document', 'Update', `Document updated.`);
   }
 
   importData(jsonString: string): boolean {
-    // Import not supported in cloud mode for now (complex to overwrite relationships)
     return false;
   }
 

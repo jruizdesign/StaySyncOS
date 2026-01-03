@@ -292,7 +292,7 @@ export class MaintenanceComponent {
             this.submitting.set(true);
             const val = this.reportForm.value;
 
-            const newReq = this.data.addMaintenanceRequest({
+            const newReq = await this.data.addMaintenanceRequest({
                 roomId: val.roomId,
                 description: val.description,
                 priority: val.priority,

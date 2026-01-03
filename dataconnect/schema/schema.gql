@@ -5,6 +5,8 @@ type Hotel @table {
   phoneNumber: String
   email: String
   description: String
+  demoMode: Boolean @default(value: false)
+  maintenanceEmail: String
 }
 
 type Room @table {
@@ -18,24 +20,28 @@ type Room @table {
 }
 
 type Guest @table {
-  firstName: String!
-  lastName: String!
+  hotel: Hotel!
+  name: String!
   email: String!
   phoneNumber: String
   address: String
-  loyaltyProgramMember: Boolean
+  notes: String
+  history: Any # JSON array of Stay objects
 }
 
 type Booking @table {
+  hotel: Hotel!
   guest: Guest!
   room: Room
-  checkInDate: Date!
-  checkOutDate: Date!
-  bookingStatus: String!
-  hotel: Hotel!
+  checkInDate: Timestamp!
+  checkOutDate: Timestamp!
+  checkOutActual: Timestamp
+  bookingStatus: String! # Active, Completed, Cancelled, Reserved
   specialRequests: String
   numberOfGuests: Int
-  totalAmount: Float
+  ratePerNight: Float
+  totalPaid: Float
+  isIndefinite: Boolean @default(value: false)
 }
 
 type Staff @table {
@@ -48,16 +54,79 @@ type Staff @table {
   email: String
   phoneNumber: String
   department: String
+  pin: String
+  status: String! # Active, Inactive
+  currentStatus: String! # Clocked Out, Clocked In, On Break
+}
+
+type Log @table {
+  hotel: Hotel!
+  timestamp: Timestamp! @default(expr: "request.time")
+  action: String!
+  user: String!
+  category: String!
+  details: String!
+}
+
+type FinancialDocument @table {
+  hotel: Hotel!
+  type: String! # Invoice, Receipt
+  number: String!
+  date: Timestamp!
+  booking: Booking
+  guest: Guest
+  guestName: String!
+  totalAmount: Float!
+  notes: String
+  summary: String
+  items: Any # JSON array of items
+}
+
+type TimeLog @table {
+  hotel: Hotel!
+  staff: Staff!
+  date: Date!
+  startTime: Timestamp!
+  endTime: Timestamp
+  breaks: Any # JSON array of TimeBreak objects
+  totalHours: Float
+  status: String! # Open, Closed
+}
+
+type Shift @table {
+  hotel: Hotel!
+  staff: Staff!
+  date: Date!
+  startTime: String! # HH:mm
+  endTime: String! # HH:mm
+  type: String! # Regular, Overtime, TimeOff
+  notes: String
+}
+
+type StoredDocument @table {
+  hotel: Hotel!
+  title: String!
+  category: String!
+  uploadedBy: String!
+  uploadedAt: Timestamp! @default(expr: "request.time")
+  fileType: String!
+  data: String! # Base64
+  tags: Any # JSON array of strings
+  guest: Guest
+  summary: String
 }
 
 type MaintenanceRequest @table {
+  hotel: Hotel!
   room: Room!
   description: String!
-  requestDate: Date!
-  status: String!
-  hotel: Hotel!
-  assignedToStaff: Staff
-  completionDate: Date
+  priority: String! # Low, Medium, High, Emergency
+  status: String! # Pending, In Progress, Completed
+  reportedBy: String!
+  reportedAt: Timestamp! @default(expr: "request.time")
+  completedAt: Timestamp
+  cost: Float
+  notes: String
 }
 
 type User @table {
@@ -70,3 +139,4 @@ type UserHotel @table(key: ["user", "hotel"]) {
   user: User!
   hotel: Hotel!
 }
+

@@ -37,16 +37,26 @@ export class AuthService {
   currentUser = computed<User | null>(() => {
     const u = this.firebaseUser();
     if (!u) return null;
+
+    // Hardcoded fallback for the primary workspace account
+    let role = this.profileRole();
+    if (!role && u.email === 'jruizdesign@gmail.com') {
+      role = 'SuperAdmin';
+    }
+
     return {
       id: u.uid,
       email: u.email || '',
       username: u.displayName || u.email || 'User',
-      role: this.profileRole() || 'Manager'
+      role: role || 'Manager'
     };
   });
 
   // Simplified permission check
-  isManager = computed(() => !!this.currentUser());
+  isManager = computed(() => {
+    const role = this.currentUser()?.role;
+    return role === 'Manager' || role === 'Admin' || role === 'SuperAdmin';
+  });
 
   isLoggedIn() {
     return !!this.currentUser();

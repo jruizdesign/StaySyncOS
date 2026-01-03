@@ -5,6 +5,12 @@ It has the same format as `Booking_Key`, but is only used as mutation return val
 """
 scalar Booking_KeyOutput
 """
+✨ `FinancialDocument_KeyOutput` returns the primary key fields of table type `FinancialDocument`.
+
+It has the same format as `FinancialDocument_Key`, but is only used as mutation return value.
+"""
+scalar FinancialDocument_KeyOutput
+"""
 ✨ `Guest_KeyOutput` returns the primary key fields of table type `Guest`.
 
 It has the same format as `Guest_Key`, but is only used as mutation return value.
@@ -16,6 +22,12 @@ scalar Guest_KeyOutput
 It has the same format as `Hotel_Key`, but is only used as mutation return value.
 """
 scalar Hotel_KeyOutput
+"""
+✨ `Log_KeyOutput` returns the primary key fields of table type `Log`.
+
+It has the same format as `Log_Key`, but is only used as mutation return value.
+"""
+scalar Log_KeyOutput
 """
 ✨ `MaintenanceRequest_KeyOutput` returns the primary key fields of table type `MaintenanceRequest`.
 
@@ -29,11 +41,29 @@ It has the same format as `Room_Key`, but is only used as mutation return value.
 """
 scalar Room_KeyOutput
 """
+✨ `Shift_KeyOutput` returns the primary key fields of table type `Shift`.
+
+It has the same format as `Shift_Key`, but is only used as mutation return value.
+"""
+scalar Shift_KeyOutput
+"""
 ✨ `Staff_KeyOutput` returns the primary key fields of table type `Staff`.
 
 It has the same format as `Staff_Key`, but is only used as mutation return value.
 """
 scalar Staff_KeyOutput
+"""
+✨ `StoredDocument_KeyOutput` returns the primary key fields of table type `StoredDocument`.
+
+It has the same format as `StoredDocument_Key`, but is only used as mutation return value.
+"""
+scalar StoredDocument_KeyOutput
+"""
+✨ `TimeLog_KeyOutput` returns the primary key fields of table type `TimeLog`.
+
+It has the same format as `TimeLog_Key`, but is only used as mutation return value.
+"""
+scalar TimeLog_KeyOutput
 """
 ✨ `User_KeyOutput` returns the primary key fields of table type `User`.
 
@@ -103,37 +133,61 @@ input Booking_Data {
   """
   bookingStatus_expr: String_Expr
   """
-  ✨ Generated from Field `Booking`.`checkInDate` of type `Date!`
+  ✨ Generated from Field `Booking`.`checkInDate` of type `Timestamp!`
   """
-  checkInDate: Date
+  checkInDate: Timestamp
   """
-  ✨ `_date` server value variant of `checkInDate` (✨ Generated from Field `Booking`.`checkInDate` of type `Date!`)
+  ✨ `_expr` server value variant of `checkInDate` (✨ Generated from Field `Booking`.`checkInDate` of type `Timestamp!`)
   """
-  checkInDate_date: Date_Relative
+  checkInDate_expr: Timestamp_Expr
   """
-  ✨ `_expr` server value variant of `checkInDate` (✨ Generated from Field `Booking`.`checkInDate` of type `Date!`)
+  ✨ `_time` server value variant of `checkInDate` (✨ Generated from Field `Booking`.`checkInDate` of type `Timestamp!`)
   """
-  checkInDate_expr: Date_Expr
+  checkInDate_time: Timestamp_Relative
   """
-  ✨ `_update` server value variant of `checkInDate` (✨ Generated from Field `Booking`.`checkInDate` of type `Date!`)
+  ✨ `_update` server value variant of `checkInDate` (✨ Generated from Field `Booking`.`checkInDate` of type `Timestamp!`)
   """
-  checkInDate_update: [Date_Update!]
+  checkInDate_update: [Timestamp_Update!]
   """
-  ✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`
+  ✨ Generated from Field `Booking`.`checkOutActual` of type `Timestamp`
   """
-  checkOutDate: Date
+  checkOutActual: Timestamp
   """
-  ✨ `_date` server value variant of `checkOutDate` (✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`)
+  ✨ `_expr` server value variant of `checkOutActual` (✨ Generated from Field `Booking`.`checkOutActual` of type `Timestamp`)
   """
-  checkOutDate_date: Date_Relative
+  checkOutActual_expr: Timestamp_Expr
   """
-  ✨ `_expr` server value variant of `checkOutDate` (✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`)
+  ✨ `_time` server value variant of `checkOutActual` (✨ Generated from Field `Booking`.`checkOutActual` of type `Timestamp`)
   """
-  checkOutDate_expr: Date_Expr
+  checkOutActual_time: Timestamp_Relative
   """
-  ✨ `_update` server value variant of `checkOutDate` (✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`)
+  ✨ `_update` server value variant of `checkOutActual` (✨ Generated from Field `Booking`.`checkOutActual` of type `Timestamp`)
   """
-  checkOutDate_update: [Date_Update!]
+  checkOutActual_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate` of type `Timestamp!`
+  """
+  checkOutDate: Timestamp
+  """
+  ✨ `_expr` server value variant of `checkOutDate` (✨ Generated from Field `Booking`.`checkOutDate` of type `Timestamp!`)
+  """
+  checkOutDate_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `checkOutDate` (✨ Generated from Field `Booking`.`checkOutDate` of type `Timestamp!`)
+  """
+  checkOutDate_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `checkOutDate` (✨ Generated from Field `Booking`.`checkOutDate` of type `Timestamp!`)
+  """
+  checkOutDate_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Booking`.`isIndefinite` of type `Boolean`
+  """
+  isIndefinite: Boolean
+  """
+  ✨ `_expr` server value variant of `isIndefinite` (✨ Generated from Field `Booking`.`isIndefinite` of type `Boolean`)
+  """
+  isIndefinite_expr: Boolean_Expr
   """
   ✨ Generated from Field `Booking`.`numberOfGuests` of type `Int`
   """
@@ -147,6 +201,18 @@ input Booking_Data {
   """
   numberOfGuests_update: [Int_Update!]
   """
+  ✨ Generated from Field `Booking`.`ratePerNight` of type `Float`
+  """
+  ratePerNight: Float
+  """
+  ✨ `_expr` server value variant of `ratePerNight` (✨ Generated from Field `Booking`.`ratePerNight` of type `Float`)
+  """
+  ratePerNight_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `ratePerNight` (✨ Generated from Field `Booking`.`ratePerNight` of type `Float`)
+  """
+  ratePerNight_update: [Float_Update!]
+  """
   ✨ Generated from Field `Booking`.`specialRequests` of type `String`
   """
   specialRequests: String
@@ -155,17 +221,17 @@ input Booking_Data {
   """
   specialRequests_expr: String_Expr
   """
-  ✨ Generated from Field `Booking`.`totalAmount` of type `Float`
+  ✨ Generated from Field `Booking`.`totalPaid` of type `Float`
   """
-  totalAmount: Float
+  totalPaid: Float
   """
-  ✨ `_expr` server value variant of `totalAmount` (✨ Generated from Field `Booking`.`totalAmount` of type `Float`)
+  ✨ `_expr` server value variant of `totalPaid` (✨ Generated from Field `Booking`.`totalPaid` of type `Float`)
   """
-  totalAmount_expr: Float_Expr
+  totalPaid_expr: Float_Expr
   """
-  ✨ `_update` server value variant of `totalAmount` (✨ Generated from Field `Booking`.`totalAmount` of type `Float`)
+  ✨ `_update` server value variant of `totalPaid` (✨ Generated from Field `Booking`.`totalPaid` of type `Float`)
   """
-  totalAmount_update: [Float_Update!]
+  totalPaid_update: [Float_Update!]
 }
 """
 ✨ Generated filter input type for table 'Booking'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -216,25 +282,41 @@ input Booking_Filter {
   """
   bookingStatus: String_Filter
   """
-  ✨ Generated from Field `Booking`.`checkInDate` of type `Date!`
+  ✨ Generated from Field `Booking`.`checkInDate` of type `Timestamp!`
   """
-  checkInDate: Date_Filter
+  checkInDate: Timestamp_Filter
   """
-  ✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`
+  ✨ Generated from Field `Booking`.`checkOutActual` of type `Timestamp`
   """
-  checkOutDate: Date_Filter
+  checkOutActual: Timestamp_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate` of type `Timestamp!`
+  """
+  checkOutDate: Timestamp_Filter
+  """
+  ✨ Generated from Field `Booking`.`isIndefinite` of type `Boolean`
+  """
+  isIndefinite: Boolean_Filter
   """
   ✨ Generated from Field `Booking`.`numberOfGuests` of type `Int`
   """
   numberOfGuests: Int_Filter
   """
+  ✨ Generated from Field `Booking`.`ratePerNight` of type `Float`
+  """
+  ratePerNight: Float_Filter
+  """
   ✨ Generated from Field `Booking`.`specialRequests` of type `String`
   """
   specialRequests: String_Filter
   """
-  ✨ Generated from Field `Booking`.`totalAmount` of type `Float`
+  ✨ Generated from Field `Booking`.`totalPaid` of type `Float`
   """
-  totalAmount: Float_Filter
+  totalPaid: Float_Filter
+  """
+  ✨ Generated from Field `Booking`.`financialDocuments_on_booking` of type `[FinancialDocument!]!`
+  """
+  financialDocuments_on_booking: FinancialDocument_ListFilter
 }
 """
 ✨ Generated first-row input type for table 'Booking'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -282,6 +364,10 @@ input Booking_Having {
   """
   checkInDate_count: Int_Filter
   """
+  ✨ Generated from Field `Booking`.`checkOutActual_count` of type `Int!`
+  """
+  checkOutActual_count: Int_Filter
+  """
   ✨ Generated from Field `Booking`.`checkOutDate_count` of type `Int!`
   """
   checkOutDate_count: Int_Filter
@@ -298,9 +384,17 @@ input Booking_Having {
   """
   id_count: Int_Filter
   """
+  ✨ Generated from Field `Booking`.`isIndefinite_count` of type `Int!`
+  """
+  isIndefinite_count: Int_Filter
+  """
   ✨ Generated from Field `Booking`.`numberOfGuests_count` of type `Int!`
   """
   numberOfGuests_count: Int_Filter
+  """
+  ✨ Generated from Field `Booking`.`ratePerNight_count` of type `Int!`
+  """
+  ratePerNight_count: Int_Filter
   """
   ✨ Generated from Field `Booking`.`roomId_count` of type `Int!`
   """
@@ -310,57 +404,81 @@ input Booking_Having {
   """
   specialRequests_count: Int_Filter
   """
-  ✨ Generated from Field `Booking`.`totalAmount_count` of type `Int!`
+  ✨ Generated from Field `Booking`.`totalPaid_count` of type `Int!`
   """
-  totalAmount_count: Int_Filter
+  totalPaid_count: Int_Filter
   """
   ✨ Generated from Field `Booking`.`numberOfGuests_sum` of type `Int`
   """
   numberOfGuests_sum: Int_Filter
   """
-  ✨ Generated from Field `Booking`.`totalAmount_sum` of type `Float`
+  ✨ Generated from Field `Booking`.`ratePerNight_sum` of type `Float`
   """
-  totalAmount_sum: Float_Filter
+  ratePerNight_sum: Float_Filter
+  """
+  ✨ Generated from Field `Booking`.`totalPaid_sum` of type `Float`
+  """
+  totalPaid_sum: Float_Filter
   """
   ✨ Generated from Field `Booking`.`numberOfGuests_avg` of type `Float`
   """
   numberOfGuests_avg: Float_Filter
   """
-  ✨ Generated from Field `Booking`.`totalAmount_avg` of type `Float`
+  ✨ Generated from Field `Booking`.`ratePerNight_avg` of type `Float`
   """
-  totalAmount_avg: Float_Filter
+  ratePerNight_avg: Float_Filter
   """
-  ✨ Generated from Field `Booking`.`checkInDate_min` of type `Date`
+  ✨ Generated from Field `Booking`.`totalPaid_avg` of type `Float`
   """
-  checkInDate_min: Date_Filter
+  totalPaid_avg: Float_Filter
   """
-  ✨ Generated from Field `Booking`.`checkOutDate_min` of type `Date`
+  ✨ Generated from Field `Booking`.`checkInDate_min` of type `Timestamp`
   """
-  checkOutDate_min: Date_Filter
+  checkInDate_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkOutActual_min` of type `Timestamp`
+  """
+  checkOutActual_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate_min` of type `Timestamp`
+  """
+  checkOutDate_min: Timestamp_Filter
   """
   ✨ Generated from Field `Booking`.`numberOfGuests_min` of type `Int`
   """
   numberOfGuests_min: Int_Filter
   """
-  ✨ Generated from Field `Booking`.`totalAmount_min` of type `Float`
+  ✨ Generated from Field `Booking`.`ratePerNight_min` of type `Float`
   """
-  totalAmount_min: Float_Filter
+  ratePerNight_min: Float_Filter
   """
-  ✨ Generated from Field `Booking`.`checkInDate_max` of type `Date`
+  ✨ Generated from Field `Booking`.`totalPaid_min` of type `Float`
   """
-  checkInDate_max: Date_Filter
+  totalPaid_min: Float_Filter
   """
-  ✨ Generated from Field `Booking`.`checkOutDate_max` of type `Date`
+  ✨ Generated from Field `Booking`.`checkInDate_max` of type `Timestamp`
   """
-  checkOutDate_max: Date_Filter
+  checkInDate_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkOutActual_max` of type `Timestamp`
+  """
+  checkOutActual_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate_max` of type `Timestamp`
+  """
+  checkOutDate_max: Timestamp_Filter
   """
   ✨ Generated from Field `Booking`.`numberOfGuests_max` of type `Int`
   """
   numberOfGuests_max: Int_Filter
   """
-  ✨ Generated from Field `Booking`.`totalAmount_max` of type `Float`
+  ✨ Generated from Field `Booking`.`ratePerNight_max` of type `Float`
   """
-  totalAmount_max: Float_Filter
+  ratePerNight_max: Float_Filter
+  """
+  ✨ Generated from Field `Booking`.`totalPaid_max` of type `Float`
+  """
+  totalPaid_max: Float_Filter
 }
 """
 ✨ Generated key input type for table 'Booking'. It represents the primary key fields used to uniquely identify a row in the table.
@@ -425,25 +543,37 @@ input Booking_Order {
   """
   bookingStatus: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`checkInDate` of type `Date!`
+  ✨ Generated from Field `Booking`.`checkInDate` of type `Timestamp!`
   """
   checkInDate: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`checkOutDate` of type `Date!`
+  ✨ Generated from Field `Booking`.`checkOutActual` of type `Timestamp`
+  """
+  checkOutActual: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate` of type `Timestamp!`
   """
   checkOutDate: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`isIndefinite` of type `Boolean`
+  """
+  isIndefinite: OrderDirection
   """
   ✨ Generated from Field `Booking`.`numberOfGuests` of type `Int`
   """
   numberOfGuests: OrderDirection
   """
+  ✨ Generated from Field `Booking`.`ratePerNight` of type `Float`
+  """
+  ratePerNight: OrderDirection
+  """
   ✨ Generated from Field `Booking`.`specialRequests` of type `String`
   """
   specialRequests: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`totalAmount` of type `Float`
+  ✨ Generated from Field `Booking`.`totalPaid` of type `Float`
   """
-  totalAmount: OrderDirection
+  totalPaid: OrderDirection
   """
   ✨ Generated from Field `Booking`.`_count` of type `Int!`
   """
@@ -456,6 +586,10 @@ input Booking_Order {
   ✨ Generated from Field `Booking`.`checkInDate_count` of type `Int!`
   """
   checkInDate_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkOutActual_count` of type `Int!`
+  """
+  checkOutActual_count: OrderDirection
   """
   ✨ Generated from Field `Booking`.`checkOutDate_count` of type `Int!`
   """
@@ -473,9 +607,17 @@ input Booking_Order {
   """
   id_count: OrderDirection
   """
+  ✨ Generated from Field `Booking`.`isIndefinite_count` of type `Int!`
+  """
+  isIndefinite_count: OrderDirection
+  """
   ✨ Generated from Field `Booking`.`numberOfGuests_count` of type `Int!`
   """
   numberOfGuests_count: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`ratePerNight_count` of type `Int!`
+  """
+  ratePerNight_count: OrderDirection
   """
   ✨ Generated from Field `Booking`.`roomId_count` of type `Int!`
   """
@@ -485,31 +627,43 @@ input Booking_Order {
   """
   specialRequests_count: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`totalAmount_count` of type `Int!`
+  ✨ Generated from Field `Booking`.`totalPaid_count` of type `Int!`
   """
-  totalAmount_count: OrderDirection
+  totalPaid_count: OrderDirection
   """
   ✨ Generated from Field `Booking`.`numberOfGuests_sum` of type `Int`
   """
   numberOfGuests_sum: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`totalAmount_sum` of type `Float`
+  ✨ Generated from Field `Booking`.`ratePerNight_sum` of type `Float`
   """
-  totalAmount_sum: OrderDirection
+  ratePerNight_sum: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`totalPaid_sum` of type `Float`
+  """
+  totalPaid_sum: OrderDirection
   """
   ✨ Generated from Field `Booking`.`numberOfGuests_avg` of type `Float`
   """
   numberOfGuests_avg: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`totalAmount_avg` of type `Float`
+  ✨ Generated from Field `Booking`.`ratePerNight_avg` of type `Float`
   """
-  totalAmount_avg: OrderDirection
+  ratePerNight_avg: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`checkInDate_min` of type `Date`
+  ✨ Generated from Field `Booking`.`totalPaid_avg` of type `Float`
+  """
+  totalPaid_avg: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkInDate_min` of type `Timestamp`
   """
   checkInDate_min: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`checkOutDate_min` of type `Date`
+  ✨ Generated from Field `Booking`.`checkOutActual_min` of type `Timestamp`
+  """
+  checkOutActual_min: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate_min` of type `Timestamp`
   """
   checkOutDate_min: OrderDirection
   """
@@ -517,15 +671,23 @@ input Booking_Order {
   """
   numberOfGuests_min: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`totalAmount_min` of type `Float`
+  ✨ Generated from Field `Booking`.`ratePerNight_min` of type `Float`
   """
-  totalAmount_min: OrderDirection
+  ratePerNight_min: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`checkInDate_max` of type `Date`
+  ✨ Generated from Field `Booking`.`totalPaid_min` of type `Float`
+  """
+  totalPaid_min: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkInDate_max` of type `Timestamp`
   """
   checkInDate_max: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`checkOutDate_max` of type `Date`
+  ✨ Generated from Field `Booking`.`checkOutActual_max` of type `Timestamp`
+  """
+  checkOutActual_max: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`checkOutDate_max` of type `Timestamp`
   """
   checkOutDate_max: OrderDirection
   """
@@ -533,7 +695,506 @@ input Booking_Order {
   """
   numberOfGuests_max: OrderDirection
   """
-  ✨ Generated from Field `Booking`.`totalAmount_max` of type `Float`
+  ✨ Generated from Field `Booking`.`ratePerNight_max` of type `Float`
+  """
+  ratePerNight_max: OrderDirection
+  """
+  ✨ Generated from Field `Booking`.`totalPaid_max` of type `Float`
+  """
+  totalPaid_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'FinancialDocument'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input FinancialDocument_Data {
+  """
+  ✨ Generated from Field `FinancialDocument`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `FinancialDocument`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `FinancialDocument`.`bookingId` of type `UUID`
+  """
+  bookingId: UUID
+  """
+  ✨ `_expr` server value variant of `bookingId` (✨ Generated from Field `FinancialDocument`.`bookingId` of type `UUID`)
+  """
+  bookingId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `FinancialDocument`.`guestId` of type `UUID`
+  """
+  guestId: UUID
+  """
+  ✨ `_expr` server value variant of `guestId` (✨ Generated from Field `FinancialDocument`.`guestId` of type `UUID`)
+  """
+  guestId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `FinancialDocument`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `FinancialDocument`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `FinancialDocument`.`booking` of type `Booking`
+  """
+  booking: Booking_Key
+  """
+  ✨ Generated from Field `FinancialDocument`.`guest` of type `Guest`
+  """
+  guest: Guest_Key
+  """
+  ✨ Generated from Field `FinancialDocument`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `FinancialDocument`.`date` of type `Timestamp!`
+  """
+  date: Timestamp
+  """
+  ✨ `_expr` server value variant of `date` (✨ Generated from Field `FinancialDocument`.`date` of type `Timestamp!`)
+  """
+  date_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `date` (✨ Generated from Field `FinancialDocument`.`date` of type `Timestamp!`)
+  """
+  date_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `date` (✨ Generated from Field `FinancialDocument`.`date` of type `Timestamp!`)
+  """
+  date_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `FinancialDocument`.`guestName` of type `String!`
+  """
+  guestName: String
+  """
+  ✨ `_expr` server value variant of `guestName` (✨ Generated from Field `FinancialDocument`.`guestName` of type `String!`)
+  """
+  guestName_expr: String_Expr
+  """
+  ✨ Generated from Field `FinancialDocument`.`items` of type `Any`
+  """
+  items: Any
+  """
+  ✨ `_expr` server value variant of `items` (✨ Generated from Field `FinancialDocument`.`items` of type `Any`)
+  """
+  items_expr: Any_Expr
+  """
+  ✨ Generated from Field `FinancialDocument`.`notes` of type `String`
+  """
+  notes: String
+  """
+  ✨ `_expr` server value variant of `notes` (✨ Generated from Field `FinancialDocument`.`notes` of type `String`)
+  """
+  notes_expr: String_Expr
+  """
+  ✨ Generated from Field `FinancialDocument`.`number` of type `String!`
+  """
+  number: String
+  """
+  ✨ `_expr` server value variant of `number` (✨ Generated from Field `FinancialDocument`.`number` of type `String!`)
+  """
+  number_expr: String_Expr
+  """
+  ✨ Generated from Field `FinancialDocument`.`summary` of type `String`
+  """
+  summary: String
+  """
+  ✨ `_expr` server value variant of `summary` (✨ Generated from Field `FinancialDocument`.`summary` of type `String`)
+  """
+  summary_expr: String_Expr
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount` of type `Float!`
+  """
+  totalAmount: Float
+  """
+  ✨ `_expr` server value variant of `totalAmount` (✨ Generated from Field `FinancialDocument`.`totalAmount` of type `Float!`)
+  """
+  totalAmount_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `totalAmount` (✨ Generated from Field `FinancialDocument`.`totalAmount` of type `Float!`)
+  """
+  totalAmount_update: [Float_Update!]
+  """
+  ✨ Generated from Field `FinancialDocument`.`type` of type `String!`
+  """
+  type: String
+  """
+  ✨ `_expr` server value variant of `type` (✨ Generated from Field `FinancialDocument`.`type` of type `String!`)
+  """
+  type_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'FinancialDocument'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input FinancialDocument_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [FinancialDocument_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: FinancialDocument_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [FinancialDocument_Filter!]
+  """
+  ✨ Generated from Field `FinancialDocument`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`bookingId` of type `UUID`
+  """
+  bookingId: UUID_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`guestId` of type `UUID`
+  """
+  guestId: UUID_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`booking` of type `Booking`
+  """
+  booking: Booking_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`guest` of type `Guest`
+  """
+  guest: Guest_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`date` of type `Timestamp!`
+  """
+  date: Timestamp_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`guestName` of type `String!`
+  """
+  guestName: String_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`items` of type `Any`
+  """
+  items: Any_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`notes` of type `String`
+  """
+  notes: String_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`number` of type `String!`
+  """
+  number: String_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`summary` of type `String`
+  """
+  summary: String_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount` of type `Float!`
+  """
+  totalAmount: Float_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`type` of type `String!`
+  """
+  type: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'FinancialDocument'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input FinancialDocument_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [FinancialDocument_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: FinancialDocument_Filter
+}
+"""
+✨ Generated having input type for table 'FinancialDocument'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input FinancialDocument_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [FinancialDocument_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: FinancialDocument_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [FinancialDocument_Having!]
+  """
+  ✨ Generated from Field `FinancialDocument`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`bookingId_count` of type `Int!`
+  """
+  bookingId_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`date_count` of type `Int!`
+  """
+  date_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`guestId_count` of type `Int!`
+  """
+  guestId_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`guestName_count` of type `Int!`
+  """
+  guestName_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`items_count` of type `Int!`
+  """
+  items_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`notes_count` of type `Int!`
+  """
+  notes_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`number_count` of type `Int!`
+  """
+  number_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`summary_count` of type `Int!`
+  """
+  summary_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount_count` of type `Int!`
+  """
+  totalAmount_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`type_count` of type `Int!`
+  """
+  type_count: Int_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount_sum` of type `Float`
+  """
+  totalAmount_sum: Float_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount_avg` of type `Float`
+  """
+  totalAmount_avg: Float_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`date_min` of type `Timestamp`
+  """
+  date_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`items_min` of type `Any`
+  """
+  items_min: Any_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount_min` of type `Float`
+  """
+  totalAmount_min: Float_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`date_max` of type `Timestamp`
+  """
+  date_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`items_max` of type `Any`
+  """
+  items_max: Any_Filter
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount_max` of type `Float`
+  """
+  totalAmount_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'FinancialDocument'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input FinancialDocument_Key {
+  """
+  ✨ Generated from Field `FinancialDocument`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `FinancialDocument`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'FinancialDocument'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input FinancialDocument_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: FinancialDocument_Filter
+}
+"""
+✨ Generated order input type for table 'FinancialDocument'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input FinancialDocument_Order {
+  """
+  ✨ Generated from Field `FinancialDocument`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`bookingId` of type `UUID`
+  """
+  bookingId: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`guestId` of type `UUID`
+  """
+  guestId: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`booking` of type `Booking`
+  """
+  booking: Booking_Order
+  """
+  ✨ Generated from Field `FinancialDocument`.`guest` of type `Guest`
+  """
+  guest: Guest_Order
+  """
+  ✨ Generated from Field `FinancialDocument`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `FinancialDocument`.`date` of type `Timestamp!`
+  """
+  date: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`guestName` of type `String!`
+  """
+  guestName: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`items` of type `Any`
+  """
+  items: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`notes` of type `String`
+  """
+  notes: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`number` of type `String!`
+  """
+  number: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`summary` of type `String`
+  """
+  summary: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount` of type `Float!`
+  """
+  totalAmount: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`type` of type `String!`
+  """
+  type: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`bookingId_count` of type `Int!`
+  """
+  bookingId_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`date_count` of type `Int!`
+  """
+  date_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`guestId_count` of type `Int!`
+  """
+  guestId_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`guestName_count` of type `Int!`
+  """
+  guestName_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`items_count` of type `Int!`
+  """
+  items_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`notes_count` of type `Int!`
+  """
+  notes_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`number_count` of type `Int!`
+  """
+  number_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`summary_count` of type `Int!`
+  """
+  summary_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount_count` of type `Int!`
+  """
+  totalAmount_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`type_count` of type `Int!`
+  """
+  type_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount_sum` of type `Float`
+  """
+  totalAmount_sum: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount_avg` of type `Float`
+  """
+  totalAmount_avg: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`date_min` of type `Timestamp`
+  """
+  date_min: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`items_min` of type `Any`
+  """
+  items_min: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount_min` of type `Float`
+  """
+  totalAmount_min: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`date_max` of type `Timestamp`
+  """
+  date_max: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`items_max` of type `Any`
+  """
+  items_max: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`totalAmount_max` of type `Float`
   """
   totalAmount_max: OrderDirection
 }
@@ -549,6 +1210,18 @@ input Guest_Data {
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `Guest`.`id` of type `UUID!`)
   """
   id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Guest`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `Guest`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Guest`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
   """
   ✨ Generated from Field `Guest`.`address` of type `String`
   """
@@ -566,29 +1239,29 @@ input Guest_Data {
   """
   email_expr: String_Expr
   """
-  ✨ Generated from Field `Guest`.`firstName` of type `String!`
+  ✨ Generated from Field `Guest`.`history` of type `Any`
   """
-  firstName: String
+  history: Any
   """
-  ✨ `_expr` server value variant of `firstName` (✨ Generated from Field `Guest`.`firstName` of type `String!`)
+  ✨ `_expr` server value variant of `history` (✨ Generated from Field `Guest`.`history` of type `Any`)
   """
-  firstName_expr: String_Expr
+  history_expr: Any_Expr
   """
-  ✨ Generated from Field `Guest`.`lastName` of type `String!`
+  ✨ Generated from Field `Guest`.`name` of type `String!`
   """
-  lastName: String
+  name: String
   """
-  ✨ `_expr` server value variant of `lastName` (✨ Generated from Field `Guest`.`lastName` of type `String!`)
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Guest`.`name` of type `String!`)
   """
-  lastName_expr: String_Expr
+  name_expr: String_Expr
   """
-  ✨ Generated from Field `Guest`.`loyaltyProgramMember` of type `Boolean`
+  ✨ Generated from Field `Guest`.`notes` of type `String`
   """
-  loyaltyProgramMember: Boolean
+  notes: String
   """
-  ✨ `_expr` server value variant of `loyaltyProgramMember` (✨ Generated from Field `Guest`.`loyaltyProgramMember` of type `Boolean`)
+  ✨ `_expr` server value variant of `notes` (✨ Generated from Field `Guest`.`notes` of type `String`)
   """
-  loyaltyProgramMember_expr: Boolean_Expr
+  notes_expr: String_Expr
   """
   ✨ Generated from Field `Guest`.`phoneNumber` of type `String`
   """
@@ -619,6 +1292,14 @@ input Guest_Filter {
   """
   id: UUID_Filter
   """
+  ✨ Generated from Field `Guest`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `Guest`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
   ✨ Generated from Field `Guest`.`address` of type `String`
   """
   address: String_Filter
@@ -627,17 +1308,17 @@ input Guest_Filter {
   """
   email: String_Filter
   """
-  ✨ Generated from Field `Guest`.`firstName` of type `String!`
+  ✨ Generated from Field `Guest`.`history` of type `Any`
   """
-  firstName: String_Filter
+  history: Any_Filter
   """
-  ✨ Generated from Field `Guest`.`lastName` of type `String!`
+  ✨ Generated from Field `Guest`.`name` of type `String!`
   """
-  lastName: String_Filter
+  name: String_Filter
   """
-  ✨ Generated from Field `Guest`.`loyaltyProgramMember` of type `Boolean`
+  ✨ Generated from Field `Guest`.`notes` of type `String`
   """
-  loyaltyProgramMember: Boolean_Filter
+  notes: String_Filter
   """
   ✨ Generated from Field `Guest`.`phoneNumber` of type `String`
   """
@@ -646,6 +1327,14 @@ input Guest_Filter {
   ✨ Generated from Field `Guest`.`bookings_on_guest` of type `[Booking!]!`
   """
   bookings_on_guest: Booking_ListFilter
+  """
+  ✨ Generated from Field `Guest`.`financialDocuments_on_guest` of type `[FinancialDocument!]!`
+  """
+  financialDocuments_on_guest: FinancialDocument_ListFilter
+  """
+  ✨ Generated from Field `Guest`.`storedDocuments_on_guest` of type `[StoredDocument!]!`
+  """
+  storedDocuments_on_guest: StoredDocument_ListFilter
 }
 """
 ✨ Generated first-row input type for table 'Guest'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -693,25 +1382,37 @@ input Guest_Having {
   """
   email_count: Int_Filter
   """
-  ✨ Generated from Field `Guest`.`firstName_count` of type `Int!`
+  ✨ Generated from Field `Guest`.`history_count` of type `Int!`
   """
-  firstName_count: Int_Filter
+  history_count: Int_Filter
+  """
+  ✨ Generated from Field `Guest`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
   """
   ✨ Generated from Field `Guest`.`id_count` of type `Int!`
   """
   id_count: Int_Filter
   """
-  ✨ Generated from Field `Guest`.`lastName_count` of type `Int!`
+  ✨ Generated from Field `Guest`.`name_count` of type `Int!`
   """
-  lastName_count: Int_Filter
+  name_count: Int_Filter
   """
-  ✨ Generated from Field `Guest`.`loyaltyProgramMember_count` of type `Int!`
+  ✨ Generated from Field `Guest`.`notes_count` of type `Int!`
   """
-  loyaltyProgramMember_count: Int_Filter
+  notes_count: Int_Filter
   """
   ✨ Generated from Field `Guest`.`phoneNumber_count` of type `Int!`
   """
   phoneNumber_count: Int_Filter
+  """
+  ✨ Generated from Field `Guest`.`history_min` of type `Any`
+  """
+  history_min: Any_Filter
+  """
+  ✨ Generated from Field `Guest`.`history_max` of type `Any`
+  """
+  history_max: Any_Filter
 }
 """
 ✨ Generated key input type for table 'Guest'. It represents the primary key fields used to uniquely identify a row in the table.
@@ -748,6 +1449,14 @@ input Guest_Order {
   """
   id: OrderDirection
   """
+  ✨ Generated from Field `Guest`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
   ✨ Generated from Field `Guest`.`address` of type `String`
   """
   address: OrderDirection
@@ -756,17 +1465,17 @@ input Guest_Order {
   """
   email: OrderDirection
   """
-  ✨ Generated from Field `Guest`.`firstName` of type `String!`
+  ✨ Generated from Field `Guest`.`history` of type `Any`
   """
-  firstName: OrderDirection
+  history: OrderDirection
   """
-  ✨ Generated from Field `Guest`.`lastName` of type `String!`
+  ✨ Generated from Field `Guest`.`name` of type `String!`
   """
-  lastName: OrderDirection
+  name: OrderDirection
   """
-  ✨ Generated from Field `Guest`.`loyaltyProgramMember` of type `Boolean`
+  ✨ Generated from Field `Guest`.`notes` of type `String`
   """
-  loyaltyProgramMember: OrderDirection
+  notes: OrderDirection
   """
   ✨ Generated from Field `Guest`.`phoneNumber` of type `String`
   """
@@ -784,25 +1493,37 @@ input Guest_Order {
   """
   email_count: OrderDirection
   """
-  ✨ Generated from Field `Guest`.`firstName_count` of type `Int!`
+  ✨ Generated from Field `Guest`.`history_count` of type `Int!`
   """
-  firstName_count: OrderDirection
+  history_count: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
   """
   ✨ Generated from Field `Guest`.`id_count` of type `Int!`
   """
   id_count: OrderDirection
   """
-  ✨ Generated from Field `Guest`.`lastName_count` of type `Int!`
+  ✨ Generated from Field `Guest`.`name_count` of type `Int!`
   """
-  lastName_count: OrderDirection
+  name_count: OrderDirection
   """
-  ✨ Generated from Field `Guest`.`loyaltyProgramMember_count` of type `Int!`
+  ✨ Generated from Field `Guest`.`notes_count` of type `Int!`
   """
-  loyaltyProgramMember_count: OrderDirection
+  notes_count: OrderDirection
   """
   ✨ Generated from Field `Guest`.`phoneNumber_count` of type `Int!`
   """
   phoneNumber_count: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`history_min` of type `Any`
+  """
+  history_min: OrderDirection
+  """
+  ✨ Generated from Field `Guest`.`history_max` of type `Any`
+  """
+  history_max: OrderDirection
 }
 """
 ✨ Generated data input type for table 'Hotel'. It includes all necessary fields for creating or upserting rows into table.
@@ -825,6 +1546,14 @@ input Hotel_Data {
   """
   address_expr: String_Expr
   """
+  ✨ Generated from Field `Hotel`.`demoMode` of type `Boolean`
+  """
+  demoMode: Boolean
+  """
+  ✨ `_expr` server value variant of `demoMode` (✨ Generated from Field `Hotel`.`demoMode` of type `Boolean`)
+  """
+  demoMode_expr: Boolean_Expr
+  """
   ✨ Generated from Field `Hotel`.`description` of type `String`
   """
   description: String
@@ -840,6 +1569,14 @@ input Hotel_Data {
   ✨ `_expr` server value variant of `email` (✨ Generated from Field `Hotel`.`email` of type `String`)
   """
   email_expr: String_Expr
+  """
+  ✨ Generated from Field `Hotel`.`maintenanceEmail` of type `String`
+  """
+  maintenanceEmail: String
+  """
+  ✨ `_expr` server value variant of `maintenanceEmail` (✨ Generated from Field `Hotel`.`maintenanceEmail` of type `String`)
+  """
+  maintenanceEmail_expr: String_Expr
   """
   ✨ Generated from Field `Hotel`.`name` of type `String!`
   """
@@ -890,6 +1627,10 @@ input Hotel_Filter {
   """
   address: String_Filter
   """
+  ✨ Generated from Field `Hotel`.`demoMode` of type `Boolean`
+  """
+  demoMode: Boolean_Filter
+  """
   ✨ Generated from Field `Hotel`.`description` of type `String`
   """
   description: String_Filter
@@ -897,6 +1638,10 @@ input Hotel_Filter {
   ✨ Generated from Field `Hotel`.`email` of type `String`
   """
   email: String_Filter
+  """
+  ✨ Generated from Field `Hotel`.`maintenanceEmail` of type `String`
+  """
+  maintenanceEmail: String_Filter
   """
   ✨ Generated from Field `Hotel`.`name` of type `String!`
   """
@@ -914,6 +1659,18 @@ input Hotel_Filter {
   """
   bookings_on_hotel: Booking_ListFilter
   """
+  ✨ Generated from Field `Hotel`.`financialDocuments_on_hotel` of type `[FinancialDocument!]!`
+  """
+  financialDocuments_on_hotel: FinancialDocument_ListFilter
+  """
+  ✨ Generated from Field `Hotel`.`guests_on_hotel` of type `[Guest!]!`
+  """
+  guests_on_hotel: Guest_ListFilter
+  """
+  ✨ Generated from Field `Hotel`.`logs_on_hotel` of type `[Log!]!`
+  """
+  logs_on_hotel: Log_ListFilter
+  """
   ✨ Generated from Field `Hotel`.`maintenanceRequests_on_hotel` of type `[MaintenanceRequest!]!`
   """
   maintenanceRequests_on_hotel: MaintenanceRequest_ListFilter
@@ -922,9 +1679,21 @@ input Hotel_Filter {
   """
   rooms_on_hotel: Room_ListFilter
   """
+  ✨ Generated from Field `Hotel`.`shifts_on_hotel` of type `[Shift!]!`
+  """
+  shifts_on_hotel: Shift_ListFilter
+  """
   ✨ Generated from Field `Hotel`.`staffs_on_hotel` of type `[Staff!]!`
   """
   staffs_on_hotel: Staff_ListFilter
+  """
+  ✨ Generated from Field `Hotel`.`storedDocuments_on_hotel` of type `[StoredDocument!]!`
+  """
+  storedDocuments_on_hotel: StoredDocument_ListFilter
+  """
+  ✨ Generated from Field `Hotel`.`timeLogs_on_hotel` of type `[TimeLog!]!`
+  """
+  timeLogs_on_hotel: TimeLog_ListFilter
   """
   ✨ Generated from Field `Hotel`.`userHotels_on_hotel` of type `[UserHotel!]!`
   """
@@ -976,6 +1745,10 @@ input Hotel_Having {
   """
   address_count: Int_Filter
   """
+  ✨ Generated from Field `Hotel`.`demoMode_count` of type `Int!`
+  """
+  demoMode_count: Int_Filter
+  """
   ✨ Generated from Field `Hotel`.`description_count` of type `Int!`
   """
   description_count: Int_Filter
@@ -987,6 +1760,10 @@ input Hotel_Having {
   ✨ Generated from Field `Hotel`.`id_count` of type `Int!`
   """
   id_count: Int_Filter
+  """
+  ✨ Generated from Field `Hotel`.`maintenanceEmail_count` of type `Int!`
+  """
+  maintenanceEmail_count: Int_Filter
   """
   ✨ Generated from Field `Hotel`.`name_count` of type `Int!`
   """
@@ -1039,6 +1816,10 @@ input Hotel_Order {
   """
   address: OrderDirection
   """
+  ✨ Generated from Field `Hotel`.`demoMode` of type `Boolean`
+  """
+  demoMode: OrderDirection
+  """
   ✨ Generated from Field `Hotel`.`description` of type `String`
   """
   description: OrderDirection
@@ -1046,6 +1827,10 @@ input Hotel_Order {
   ✨ Generated from Field `Hotel`.`email` of type `String`
   """
   email: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`maintenanceEmail` of type `String`
+  """
+  maintenanceEmail: OrderDirection
   """
   ✨ Generated from Field `Hotel`.`name` of type `String!`
   """
@@ -1067,6 +1852,10 @@ input Hotel_Order {
   """
   address_count: OrderDirection
   """
+  ✨ Generated from Field `Hotel`.`demoMode_count` of type `Int!`
+  """
+  demoMode_count: OrderDirection
+  """
   ✨ Generated from Field `Hotel`.`description_count` of type `Int!`
   """
   description_count: OrderDirection
@@ -1078,6 +1867,10 @@ input Hotel_Order {
   ✨ Generated from Field `Hotel`.`id_count` of type `Int!`
   """
   id_count: OrderDirection
+  """
+  ✨ Generated from Field `Hotel`.`maintenanceEmail_count` of type `Int!`
+  """
+  maintenanceEmail_count: OrderDirection
   """
   ✨ Generated from Field `Hotel`.`name_count` of type `Int!`
   """
@@ -1092,6 +1885,305 @@ input Hotel_Order {
   propertyId_count: OrderDirection
 }
 """
+✨ Generated data input type for table 'Log'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Log_Data {
+  """
+  ✨ Generated from Field `Log`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Log`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Log`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `Log`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Log`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `Log`.`action` of type `String!`
+  """
+  action: String
+  """
+  ✨ `_expr` server value variant of `action` (✨ Generated from Field `Log`.`action` of type `String!`)
+  """
+  action_expr: String_Expr
+  """
+  ✨ Generated from Field `Log`.`category` of type `String!`
+  """
+  category: String
+  """
+  ✨ `_expr` server value variant of `category` (✨ Generated from Field `Log`.`category` of type `String!`)
+  """
+  category_expr: String_Expr
+  """
+  ✨ Generated from Field `Log`.`details` of type `String!`
+  """
+  details: String
+  """
+  ✨ `_expr` server value variant of `details` (✨ Generated from Field `Log`.`details` of type `String!`)
+  """
+  details_expr: String_Expr
+  """
+  ✨ Generated from Field `Log`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: Timestamp
+  """
+  ✨ `_expr` server value variant of `timestamp` (✨ Generated from Field `Log`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `timestamp` (✨ Generated from Field `Log`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `timestamp` (✨ Generated from Field `Log`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Log`.`user` of type `String!`
+  """
+  user: String
+  """
+  ✨ `_expr` server value variant of `user` (✨ Generated from Field `Log`.`user` of type `String!`)
+  """
+  user_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Log'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Log_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Log_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Log_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Log_Filter!]
+  """
+  ✨ Generated from Field `Log`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Log`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `Log`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `Log`.`action` of type `String!`
+  """
+  action: String_Filter
+  """
+  ✨ Generated from Field `Log`.`category` of type `String!`
+  """
+  category: String_Filter
+  """
+  ✨ Generated from Field `Log`.`details` of type `String!`
+  """
+  details: String_Filter
+  """
+  ✨ Generated from Field `Log`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: Timestamp_Filter
+  """
+  ✨ Generated from Field `Log`.`user` of type `String!`
+  """
+  user: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Log'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Log_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Log_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Log_Filter
+}
+"""
+✨ Generated having input type for table 'Log'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Log_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Log_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Log_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Log_Having!]
+  """
+  ✨ Generated from Field `Log`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Log`.`action_count` of type `Int!`
+  """
+  action_count: Int_Filter
+  """
+  ✨ Generated from Field `Log`.`category_count` of type `Int!`
+  """
+  category_count: Int_Filter
+  """
+  ✨ Generated from Field `Log`.`details_count` of type `Int!`
+  """
+  details_count: Int_Filter
+  """
+  ✨ Generated from Field `Log`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `Log`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Log`.`timestamp_count` of type `Int!`
+  """
+  timestamp_count: Int_Filter
+  """
+  ✨ Generated from Field `Log`.`user_count` of type `Int!`
+  """
+  user_count: Int_Filter
+  """
+  ✨ Generated from Field `Log`.`timestamp_min` of type `Timestamp`
+  """
+  timestamp_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Log`.`timestamp_max` of type `Timestamp`
+  """
+  timestamp_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'Log'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Log_Key {
+  """
+  ✨ Generated from Field `Log`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Log`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Log'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Log_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Log_Filter
+}
+"""
+✨ Generated order input type for table 'Log'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Log_Order {
+  """
+  ✨ Generated from Field `Log`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `Log`.`action` of type `String!`
+  """
+  action: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`category` of type `String!`
+  """
+  category: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`details` of type `String!`
+  """
+  details: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`user` of type `String!`
+  """
+  user: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`action_count` of type `Int!`
+  """
+  action_count: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`category_count` of type `Int!`
+  """
+  category_count: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`details_count` of type `Int!`
+  """
+  details_count: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`timestamp_count` of type `Int!`
+  """
+  timestamp_count: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`user_count` of type `Int!`
+  """
+  user_count: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`timestamp_min` of type `Timestamp`
+  """
+  timestamp_min: OrderDirection
+  """
+  ✨ Generated from Field `Log`.`timestamp_max` of type `Timestamp`
+  """
+  timestamp_max: OrderDirection
+}
+"""
 ✨ Generated data input type for table 'MaintenanceRequest'. It includes all necessary fields for creating or upserting rows into table.
 """
 input MaintenanceRequest_Data {
@@ -1103,14 +2195,6 @@ input MaintenanceRequest_Data {
   ✨ `_expr` server value variant of `id` (✨ Generated from Field `MaintenanceRequest`.`id` of type `UUID!`)
   """
   id_expr: UUID_Expr
-  """
-  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId` of type `UUID`
-  """
-  assignedToStaffId: UUID
-  """
-  ✨ `_expr` server value variant of `assignedToStaffId` (✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId` of type `UUID`)
-  """
-  assignedToStaffId_expr: UUID_Expr
   """
   ✨ Generated from Field `MaintenanceRequest`.`hotelId` of type `UUID!`
   """
@@ -1128,10 +2212,6 @@ input MaintenanceRequest_Data {
   """
   roomId_expr: UUID_Expr
   """
-  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaff` of type `Staff`
-  """
-  assignedToStaff: Staff_Key
-  """
   ✨ Generated from Field `MaintenanceRequest`.`hotel` of type `Hotel!`
   """
   hotel: Hotel_Key
@@ -1140,21 +2220,33 @@ input MaintenanceRequest_Data {
   """
   room: Room_Key
   """
-  ✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`completedAt` of type `Timestamp`
   """
-  completionDate: Date
+  completedAt: Timestamp
   """
-  ✨ `_date` server value variant of `completionDate` (✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`)
+  ✨ `_expr` server value variant of `completedAt` (✨ Generated from Field `MaintenanceRequest`.`completedAt` of type `Timestamp`)
   """
-  completionDate_date: Date_Relative
+  completedAt_expr: Timestamp_Expr
   """
-  ✨ `_expr` server value variant of `completionDate` (✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`)
+  ✨ `_time` server value variant of `completedAt` (✨ Generated from Field `MaintenanceRequest`.`completedAt` of type `Timestamp`)
   """
-  completionDate_expr: Date_Expr
+  completedAt_time: Timestamp_Relative
   """
-  ✨ `_update` server value variant of `completionDate` (✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`)
+  ✨ `_update` server value variant of `completedAt` (✨ Generated from Field `MaintenanceRequest`.`completedAt` of type `Timestamp`)
   """
-  completionDate_update: [Date_Update!]
+  completedAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`cost` of type `Float`
+  """
+  cost: Float
+  """
+  ✨ `_expr` server value variant of `cost` (✨ Generated from Field `MaintenanceRequest`.`cost` of type `Float`)
+  """
+  cost_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `cost` (✨ Generated from Field `MaintenanceRequest`.`cost` of type `Float`)
+  """
+  cost_update: [Float_Update!]
   """
   ✨ Generated from Field `MaintenanceRequest`.`description` of type `String!`
   """
@@ -1164,21 +2256,45 @@ input MaintenanceRequest_Data {
   """
   description_expr: String_Expr
   """
-  ✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`
+  ✨ Generated from Field `MaintenanceRequest`.`notes` of type `String`
   """
-  requestDate: Date
+  notes: String
   """
-  ✨ `_date` server value variant of `requestDate` (✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`)
+  ✨ `_expr` server value variant of `notes` (✨ Generated from Field `MaintenanceRequest`.`notes` of type `String`)
   """
-  requestDate_date: Date_Relative
+  notes_expr: String_Expr
   """
-  ✨ `_expr` server value variant of `requestDate` (✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`)
+  ✨ Generated from Field `MaintenanceRequest`.`priority` of type `String!`
   """
-  requestDate_expr: Date_Expr
+  priority: String
   """
-  ✨ `_update` server value variant of `requestDate` (✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`)
+  ✨ `_expr` server value variant of `priority` (✨ Generated from Field `MaintenanceRequest`.`priority` of type `String!`)
   """
-  requestDate_update: [Date_Update!]
+  priority_expr: String_Expr
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedAt` of type `Timestamp!`
+  """
+  reportedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `reportedAt` (✨ Generated from Field `MaintenanceRequest`.`reportedAt` of type `Timestamp!`)
+  """
+  reportedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `reportedAt` (✨ Generated from Field `MaintenanceRequest`.`reportedAt` of type `Timestamp!`)
+  """
+  reportedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `reportedAt` (✨ Generated from Field `MaintenanceRequest`.`reportedAt` of type `Timestamp!`)
+  """
+  reportedAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedBy` of type `String!`
+  """
+  reportedBy: String
+  """
+  ✨ `_expr` server value variant of `reportedBy` (✨ Generated from Field `MaintenanceRequest`.`reportedBy` of type `String!`)
+  """
+  reportedBy_expr: String_Expr
   """
   ✨ Generated from Field `MaintenanceRequest`.`status` of type `String!`
   """
@@ -1209,10 +2325,6 @@ input MaintenanceRequest_Filter {
   """
   id: UUID_Filter
   """
-  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId` of type `UUID`
-  """
-  assignedToStaffId: UUID_Filter
-  """
   ✨ Generated from Field `MaintenanceRequest`.`hotelId` of type `UUID!`
   """
   hotelId: UUID_Filter
@@ -1220,10 +2332,6 @@ input MaintenanceRequest_Filter {
   ✨ Generated from Field `MaintenanceRequest`.`roomId` of type `UUID!`
   """
   roomId: UUID_Filter
-  """
-  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaff` of type `Staff`
-  """
-  assignedToStaff: Staff_Filter
   """
   ✨ Generated from Field `MaintenanceRequest`.`hotel` of type `Hotel!`
   """
@@ -1233,17 +2341,33 @@ input MaintenanceRequest_Filter {
   """
   room: Room_Filter
   """
-  ✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`completedAt` of type `Timestamp`
   """
-  completionDate: Date_Filter
+  completedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`cost` of type `Float`
+  """
+  cost: Float_Filter
   """
   ✨ Generated from Field `MaintenanceRequest`.`description` of type `String!`
   """
   description: String_Filter
   """
-  ✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`
+  ✨ Generated from Field `MaintenanceRequest`.`notes` of type `String`
   """
-  requestDate: Date_Filter
+  notes: String_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`priority` of type `String!`
+  """
+  priority: String_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedAt` of type `Timestamp!`
+  """
+  reportedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedBy` of type `String!`
+  """
+  reportedBy: String_Filter
   """
   ✨ Generated from Field `MaintenanceRequest`.`status` of type `String!`
   """
@@ -1287,13 +2411,13 @@ input MaintenanceRequest_Having {
   """
   _count: Int_Filter
   """
-  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId_count` of type `Int!`
+  ✨ Generated from Field `MaintenanceRequest`.`completedAt_count` of type `Int!`
   """
-  assignedToStaffId_count: Int_Filter
+  completedAt_count: Int_Filter
   """
-  ✨ Generated from Field `MaintenanceRequest`.`completionDate_count` of type `Int!`
+  ✨ Generated from Field `MaintenanceRequest`.`cost_count` of type `Int!`
   """
-  completionDate_count: Int_Filter
+  cost_count: Int_Filter
   """
   ✨ Generated from Field `MaintenanceRequest`.`description_count` of type `Int!`
   """
@@ -1307,9 +2431,21 @@ input MaintenanceRequest_Having {
   """
   id_count: Int_Filter
   """
-  ✨ Generated from Field `MaintenanceRequest`.`requestDate_count` of type `Int!`
+  ✨ Generated from Field `MaintenanceRequest`.`notes_count` of type `Int!`
   """
-  requestDate_count: Int_Filter
+  notes_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`priority_count` of type `Int!`
+  """
+  priority_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedAt_count` of type `Int!`
+  """
+  reportedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedBy_count` of type `Int!`
+  """
+  reportedBy_count: Int_Filter
   """
   ✨ Generated from Field `MaintenanceRequest`.`roomId_count` of type `Int!`
   """
@@ -1319,21 +2455,37 @@ input MaintenanceRequest_Having {
   """
   status_count: Int_Filter
   """
-  ✨ Generated from Field `MaintenanceRequest`.`completionDate_min` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`cost_sum` of type `Float`
   """
-  completionDate_min: Date_Filter
+  cost_sum: Float_Filter
   """
-  ✨ Generated from Field `MaintenanceRequest`.`requestDate_min` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`cost_avg` of type `Float`
   """
-  requestDate_min: Date_Filter
+  cost_avg: Float_Filter
   """
-  ✨ Generated from Field `MaintenanceRequest`.`completionDate_max` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`completedAt_min` of type `Timestamp`
   """
-  completionDate_max: Date_Filter
+  completedAt_min: Timestamp_Filter
   """
-  ✨ Generated from Field `MaintenanceRequest`.`requestDate_max` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`cost_min` of type `Float`
   """
-  requestDate_max: Date_Filter
+  cost_min: Float_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedAt_min` of type `Timestamp`
+  """
+  reportedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completedAt_max` of type `Timestamp`
+  """
+  completedAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`cost_max` of type `Float`
+  """
+  cost_max: Float_Filter
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedAt_max` of type `Timestamp`
+  """
+  reportedAt_max: Timestamp_Filter
 }
 """
 ✨ Generated key input type for table 'MaintenanceRequest'. It represents the primary key fields used to uniquely identify a row in the table.
@@ -1370,10 +2522,6 @@ input MaintenanceRequest_Order {
   """
   id: OrderDirection
   """
-  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId` of type `UUID`
-  """
-  assignedToStaffId: OrderDirection
-  """
   ✨ Generated from Field `MaintenanceRequest`.`hotelId` of type `UUID!`
   """
   hotelId: OrderDirection
@@ -1381,10 +2529,6 @@ input MaintenanceRequest_Order {
   ✨ Generated from Field `MaintenanceRequest`.`roomId` of type `UUID!`
   """
   roomId: OrderDirection
-  """
-  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaff` of type `Staff`
-  """
-  assignedToStaff: Staff_Order
   """
   ✨ Generated from Field `MaintenanceRequest`.`hotel` of type `Hotel!`
   """
@@ -1394,17 +2538,33 @@ input MaintenanceRequest_Order {
   """
   room: Room_Order
   """
-  ✨ Generated from Field `MaintenanceRequest`.`completionDate` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`completedAt` of type `Timestamp`
   """
-  completionDate: OrderDirection
+  completedAt: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`cost` of type `Float`
+  """
+  cost: OrderDirection
   """
   ✨ Generated from Field `MaintenanceRequest`.`description` of type `String!`
   """
   description: OrderDirection
   """
-  ✨ Generated from Field `MaintenanceRequest`.`requestDate` of type `Date!`
+  ✨ Generated from Field `MaintenanceRequest`.`notes` of type `String`
   """
-  requestDate: OrderDirection
+  notes: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`priority` of type `String!`
+  """
+  priority: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedAt` of type `Timestamp!`
+  """
+  reportedAt: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedBy` of type `String!`
+  """
+  reportedBy: OrderDirection
   """
   ✨ Generated from Field `MaintenanceRequest`.`status` of type `String!`
   """
@@ -1414,13 +2574,13 @@ input MaintenanceRequest_Order {
   """
   _count: OrderDirection
   """
-  ✨ Generated from Field `MaintenanceRequest`.`assignedToStaffId_count` of type `Int!`
+  ✨ Generated from Field `MaintenanceRequest`.`completedAt_count` of type `Int!`
   """
-  assignedToStaffId_count: OrderDirection
+  completedAt_count: OrderDirection
   """
-  ✨ Generated from Field `MaintenanceRequest`.`completionDate_count` of type `Int!`
+  ✨ Generated from Field `MaintenanceRequest`.`cost_count` of type `Int!`
   """
-  completionDate_count: OrderDirection
+  cost_count: OrderDirection
   """
   ✨ Generated from Field `MaintenanceRequest`.`description_count` of type `Int!`
   """
@@ -1434,9 +2594,21 @@ input MaintenanceRequest_Order {
   """
   id_count: OrderDirection
   """
-  ✨ Generated from Field `MaintenanceRequest`.`requestDate_count` of type `Int!`
+  ✨ Generated from Field `MaintenanceRequest`.`notes_count` of type `Int!`
   """
-  requestDate_count: OrderDirection
+  notes_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`priority_count` of type `Int!`
+  """
+  priority_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedAt_count` of type `Int!`
+  """
+  reportedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedBy_count` of type `Int!`
+  """
+  reportedBy_count: OrderDirection
   """
   ✨ Generated from Field `MaintenanceRequest`.`roomId_count` of type `Int!`
   """
@@ -1446,21 +2618,37 @@ input MaintenanceRequest_Order {
   """
   status_count: OrderDirection
   """
-  ✨ Generated from Field `MaintenanceRequest`.`completionDate_min` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`cost_sum` of type `Float`
   """
-  completionDate_min: OrderDirection
+  cost_sum: OrderDirection
   """
-  ✨ Generated from Field `MaintenanceRequest`.`requestDate_min` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`cost_avg` of type `Float`
   """
-  requestDate_min: OrderDirection
+  cost_avg: OrderDirection
   """
-  ✨ Generated from Field `MaintenanceRequest`.`completionDate_max` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`completedAt_min` of type `Timestamp`
   """
-  completionDate_max: OrderDirection
+  completedAt_min: OrderDirection
   """
-  ✨ Generated from Field `MaintenanceRequest`.`requestDate_max` of type `Date`
+  ✨ Generated from Field `MaintenanceRequest`.`cost_min` of type `Float`
   """
-  requestDate_max: OrderDirection
+  cost_min: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedAt_min` of type `Timestamp`
+  """
+  reportedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`completedAt_max` of type `Timestamp`
+  """
+  completedAt_max: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`cost_max` of type `Float`
+  """
+  cost_max: OrderDirection
+  """
+  ✨ Generated from Field `MaintenanceRequest`.`reportedAt_max` of type `Timestamp`
+  """
+  reportedAt_max: OrderDirection
 }
 """
 ✨ Generated data input type for table 'Room'. It includes all necessary fields for creating or upserting rows into table.
@@ -1842,6 +3030,341 @@ input Room_Order {
   dailyRate_max: OrderDirection
 }
 """
+✨ Generated data input type for table 'Shift'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Shift_Data {
+  """
+  ✨ Generated from Field `Shift`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Shift`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Shift`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `Shift`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Shift`.`staffId` of type `UUID!`
+  """
+  staffId: UUID
+  """
+  ✨ `_expr` server value variant of `staffId` (✨ Generated from Field `Shift`.`staffId` of type `UUID!`)
+  """
+  staffId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Shift`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `Shift`.`staff` of type `Staff!`
+  """
+  staff: Staff_Key
+  """
+  ✨ Generated from Field `Shift`.`date` of type `Date!`
+  """
+  date: Date
+  """
+  ✨ `_date` server value variant of `date` (✨ Generated from Field `Shift`.`date` of type `Date!`)
+  """
+  date_date: Date_Relative
+  """
+  ✨ `_expr` server value variant of `date` (✨ Generated from Field `Shift`.`date` of type `Date!`)
+  """
+  date_expr: Date_Expr
+  """
+  ✨ `_update` server value variant of `date` (✨ Generated from Field `Shift`.`date` of type `Date!`)
+  """
+  date_update: [Date_Update!]
+  """
+  ✨ Generated from Field `Shift`.`endTime` of type `String!`
+  """
+  endTime: String
+  """
+  ✨ `_expr` server value variant of `endTime` (✨ Generated from Field `Shift`.`endTime` of type `String!`)
+  """
+  endTime_expr: String_Expr
+  """
+  ✨ Generated from Field `Shift`.`notes` of type `String`
+  """
+  notes: String
+  """
+  ✨ `_expr` server value variant of `notes` (✨ Generated from Field `Shift`.`notes` of type `String`)
+  """
+  notes_expr: String_Expr
+  """
+  ✨ Generated from Field `Shift`.`startTime` of type `String!`
+  """
+  startTime: String
+  """
+  ✨ `_expr` server value variant of `startTime` (✨ Generated from Field `Shift`.`startTime` of type `String!`)
+  """
+  startTime_expr: String_Expr
+  """
+  ✨ Generated from Field `Shift`.`type` of type `String!`
+  """
+  type: String
+  """
+  ✨ `_expr` server value variant of `type` (✨ Generated from Field `Shift`.`type` of type `String!`)
+  """
+  type_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Shift'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Shift_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Shift_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Shift_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Shift_Filter!]
+  """
+  ✨ Generated from Field `Shift`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Shift`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `Shift`.`staffId` of type `UUID!`
+  """
+  staffId: UUID_Filter
+  """
+  ✨ Generated from Field `Shift`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `Shift`.`staff` of type `Staff!`
+  """
+  staff: Staff_Filter
+  """
+  ✨ Generated from Field `Shift`.`date` of type `Date!`
+  """
+  date: Date_Filter
+  """
+  ✨ Generated from Field `Shift`.`endTime` of type `String!`
+  """
+  endTime: String_Filter
+  """
+  ✨ Generated from Field `Shift`.`notes` of type `String`
+  """
+  notes: String_Filter
+  """
+  ✨ Generated from Field `Shift`.`startTime` of type `String!`
+  """
+  startTime: String_Filter
+  """
+  ✨ Generated from Field `Shift`.`type` of type `String!`
+  """
+  type: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Shift'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Shift_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Shift_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Shift_Filter
+}
+"""
+✨ Generated having input type for table 'Shift'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Shift_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Shift_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Shift_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Shift_Having!]
+  """
+  ✨ Generated from Field `Shift`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Shift`.`date_count` of type `Int!`
+  """
+  date_count: Int_Filter
+  """
+  ✨ Generated from Field `Shift`.`endTime_count` of type `Int!`
+  """
+  endTime_count: Int_Filter
+  """
+  ✨ Generated from Field `Shift`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `Shift`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Shift`.`notes_count` of type `Int!`
+  """
+  notes_count: Int_Filter
+  """
+  ✨ Generated from Field `Shift`.`staffId_count` of type `Int!`
+  """
+  staffId_count: Int_Filter
+  """
+  ✨ Generated from Field `Shift`.`startTime_count` of type `Int!`
+  """
+  startTime_count: Int_Filter
+  """
+  ✨ Generated from Field `Shift`.`type_count` of type `Int!`
+  """
+  type_count: Int_Filter
+  """
+  ✨ Generated from Field `Shift`.`date_min` of type `Date`
+  """
+  date_min: Date_Filter
+  """
+  ✨ Generated from Field `Shift`.`date_max` of type `Date`
+  """
+  date_max: Date_Filter
+}
+"""
+✨ Generated key input type for table 'Shift'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Shift_Key {
+  """
+  ✨ Generated from Field `Shift`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Shift`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Shift'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Shift_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Shift_Filter
+}
+"""
+✨ Generated order input type for table 'Shift'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Shift_Order {
+  """
+  ✨ Generated from Field `Shift`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`staffId` of type `UUID!`
+  """
+  staffId: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `Shift`.`staff` of type `Staff!`
+  """
+  staff: Staff_Order
+  """
+  ✨ Generated from Field `Shift`.`date` of type `Date!`
+  """
+  date: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`endTime` of type `String!`
+  """
+  endTime: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`notes` of type `String`
+  """
+  notes: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`startTime` of type `String!`
+  """
+  startTime: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`type` of type `String!`
+  """
+  type: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`date_count` of type `Int!`
+  """
+  date_count: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`endTime_count` of type `Int!`
+  """
+  endTime_count: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`notes_count` of type `Int!`
+  """
+  notes_count: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`staffId_count` of type `Int!`
+  """
+  staffId_count: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`startTime_count` of type `Int!`
+  """
+  startTime_count: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`type_count` of type `Int!`
+  """
+  type_count: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`date_min` of type `Date`
+  """
+  date_min: OrderDirection
+  """
+  ✨ Generated from Field `Shift`.`date_max` of type `Date`
+  """
+  date_max: OrderDirection
+}
+"""
 ✨ Generated data input type for table 'Staff'. It includes all necessary fields for creating or upserting rows into table.
 """
 input Staff_Data {
@@ -1865,6 +3388,14 @@ input Staff_Data {
   ✨ Generated from Field `Staff`.`hotel` of type `Hotel!`
   """
   hotel: Hotel_Key
+  """
+  ✨ Generated from Field `Staff`.`currentStatus` of type `String!`
+  """
+  currentStatus: String
+  """
+  ✨ `_expr` server value variant of `currentStatus` (✨ Generated from Field `Staff`.`currentStatus` of type `String!`)
+  """
+  currentStatus_expr: String_Expr
   """
   ✨ Generated from Field `Staff`.`department` of type `String`
   """
@@ -1914,6 +3445,14 @@ input Staff_Data {
   """
   phoneNumber_expr: String_Expr
   """
+  ✨ Generated from Field `Staff`.`pin` of type `String`
+  """
+  pin: String
+  """
+  ✨ `_expr` server value variant of `pin` (✨ Generated from Field `Staff`.`pin` of type `String`)
+  """
+  pin_expr: String_Expr
+  """
   ✨ Generated from Field `Staff`.`role` of type `String!`
   """
   role: String
@@ -1921,6 +3460,14 @@ input Staff_Data {
   ✨ `_expr` server value variant of `role` (✨ Generated from Field `Staff`.`role` of type `String!`)
   """
   role_expr: String_Expr
+  """
+  ✨ Generated from Field `Staff`.`status` of type `String!`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Staff`.`status` of type `String!`)
+  """
+  status_expr: String_Expr
   """
   ✨ Generated from Field `Staff`.`username` of type `String!`
   """
@@ -1959,6 +3506,10 @@ input Staff_Filter {
   """
   hotel: Hotel_Filter
   """
+  ✨ Generated from Field `Staff`.`currentStatus` of type `String!`
+  """
+  currentStatus: String_Filter
+  """
   ✨ Generated from Field `Staff`.`department` of type `String`
   """
   department: String_Filter
@@ -1983,17 +3534,29 @@ input Staff_Filter {
   """
   phoneNumber: String_Filter
   """
+  ✨ Generated from Field `Staff`.`pin` of type `String`
+  """
+  pin: String_Filter
+  """
   ✨ Generated from Field `Staff`.`role` of type `String!`
   """
   role: String_Filter
+  """
+  ✨ Generated from Field `Staff`.`status` of type `String!`
+  """
+  status: String_Filter
   """
   ✨ Generated from Field `Staff`.`username` of type `String!`
   """
   username: String_Filter
   """
-  ✨ Generated from Field `Staff`.`maintenanceRequests_on_assignedToStaff` of type `[MaintenanceRequest!]!`
+  ✨ Generated from Field `Staff`.`shifts_on_staff` of type `[Shift!]!`
   """
-  maintenanceRequests_on_assignedToStaff: MaintenanceRequest_ListFilter
+  shifts_on_staff: Shift_ListFilter
+  """
+  ✨ Generated from Field `Staff`.`timeLogs_on_staff` of type `[TimeLog!]!`
+  """
+  timeLogs_on_staff: TimeLog_ListFilter
 }
 """
 ✨ Generated first-row input type for table 'Staff'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -2033,6 +3596,10 @@ input Staff_Having {
   """
   _count: Int_Filter
   """
+  ✨ Generated from Field `Staff`.`currentStatus_count` of type `Int!`
+  """
+  currentStatus_count: Int_Filter
+  """
   ✨ Generated from Field `Staff`.`department_count` of type `Int!`
   """
   department_count: Int_Filter
@@ -2065,9 +3632,17 @@ input Staff_Having {
   """
   phoneNumber_count: Int_Filter
   """
+  ✨ Generated from Field `Staff`.`pin_count` of type `Int!`
+  """
+  pin_count: Int_Filter
+  """
   ✨ Generated from Field `Staff`.`role_count` of type `Int!`
   """
   role_count: Int_Filter
+  """
+  ✨ Generated from Field `Staff`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
   """
   ✨ Generated from Field `Staff`.`username_count` of type `Int!`
   """
@@ -2116,6 +3691,10 @@ input Staff_Order {
   """
   hotel: Hotel_Order
   """
+  ✨ Generated from Field `Staff`.`currentStatus` of type `String!`
+  """
+  currentStatus: OrderDirection
+  """
   ✨ Generated from Field `Staff`.`department` of type `String`
   """
   department: OrderDirection
@@ -2140,9 +3719,17 @@ input Staff_Order {
   """
   phoneNumber: OrderDirection
   """
+  ✨ Generated from Field `Staff`.`pin` of type `String`
+  """
+  pin: OrderDirection
+  """
   ✨ Generated from Field `Staff`.`role` of type `String!`
   """
   role: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`status` of type `String!`
+  """
+  status: OrderDirection
   """
   ✨ Generated from Field `Staff`.`username` of type `String!`
   """
@@ -2151,6 +3738,10 @@ input Staff_Order {
   ✨ Generated from Field `Staff`.`_count` of type `Int!`
   """
   _count: OrderDirection
+  """
+  ✨ Generated from Field `Staff`.`currentStatus_count` of type `Int!`
+  """
+  currentStatus_count: OrderDirection
   """
   ✨ Generated from Field `Staff`.`department_count` of type `Int!`
   """
@@ -2184,13 +3775,903 @@ input Staff_Order {
   """
   phoneNumber_count: OrderDirection
   """
+  ✨ Generated from Field `Staff`.`pin_count` of type `Int!`
+  """
+  pin_count: OrderDirection
+  """
   ✨ Generated from Field `Staff`.`role_count` of type `Int!`
   """
   role_count: OrderDirection
   """
+  ✨ Generated from Field `Staff`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
   ✨ Generated from Field `Staff`.`username_count` of type `Int!`
   """
   username_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'StoredDocument'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input StoredDocument_Data {
+  """
+  ✨ Generated from Field `StoredDocument`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `StoredDocument`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `StoredDocument`.`guestId` of type `UUID`
+  """
+  guestId: UUID
+  """
+  ✨ `_expr` server value variant of `guestId` (✨ Generated from Field `StoredDocument`.`guestId` of type `UUID`)
+  """
+  guestId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `StoredDocument`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `StoredDocument`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `StoredDocument`.`guest` of type `Guest`
+  """
+  guest: Guest_Key
+  """
+  ✨ Generated from Field `StoredDocument`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `StoredDocument`.`category` of type `String!`
+  """
+  category: String
+  """
+  ✨ `_expr` server value variant of `category` (✨ Generated from Field `StoredDocument`.`category` of type `String!`)
+  """
+  category_expr: String_Expr
+  """
+  ✨ Generated from Field `StoredDocument`.`data` of type `String!`
+  """
+  data: String
+  """
+  ✨ `_expr` server value variant of `data` (✨ Generated from Field `StoredDocument`.`data` of type `String!`)
+  """
+  data_expr: String_Expr
+  """
+  ✨ Generated from Field `StoredDocument`.`fileType` of type `String!`
+  """
+  fileType: String
+  """
+  ✨ `_expr` server value variant of `fileType` (✨ Generated from Field `StoredDocument`.`fileType` of type `String!`)
+  """
+  fileType_expr: String_Expr
+  """
+  ✨ Generated from Field `StoredDocument`.`summary` of type `String`
+  """
+  summary: String
+  """
+  ✨ `_expr` server value variant of `summary` (✨ Generated from Field `StoredDocument`.`summary` of type `String`)
+  """
+  summary_expr: String_Expr
+  """
+  ✨ Generated from Field `StoredDocument`.`tags` of type `Any`
+  """
+  tags: Any
+  """
+  ✨ `_expr` server value variant of `tags` (✨ Generated from Field `StoredDocument`.`tags` of type `Any`)
+  """
+  tags_expr: Any_Expr
+  """
+  ✨ Generated from Field `StoredDocument`.`title` of type `String!`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `StoredDocument`.`title` of type `String!`)
+  """
+  title_expr: String_Expr
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedAt` of type `Timestamp!`
+  """
+  uploadedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `uploadedAt` (✨ Generated from Field `StoredDocument`.`uploadedAt` of type `Timestamp!`)
+  """
+  uploadedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `uploadedAt` (✨ Generated from Field `StoredDocument`.`uploadedAt` of type `Timestamp!`)
+  """
+  uploadedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `uploadedAt` (✨ Generated from Field `StoredDocument`.`uploadedAt` of type `Timestamp!`)
+  """
+  uploadedAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedBy` of type `String!`
+  """
+  uploadedBy: String
+  """
+  ✨ `_expr` server value variant of `uploadedBy` (✨ Generated from Field `StoredDocument`.`uploadedBy` of type `String!`)
+  """
+  uploadedBy_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'StoredDocument'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input StoredDocument_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [StoredDocument_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: StoredDocument_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [StoredDocument_Filter!]
+  """
+  ✨ Generated from Field `StoredDocument`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`guestId` of type `UUID`
+  """
+  guestId: UUID_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`guest` of type `Guest`
+  """
+  guest: Guest_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`category` of type `String!`
+  """
+  category: String_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`data` of type `String!`
+  """
+  data: String_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`fileType` of type `String!`
+  """
+  fileType: String_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`summary` of type `String`
+  """
+  summary: String_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`tags` of type `Any`
+  """
+  tags: Any_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`title` of type `String!`
+  """
+  title: String_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedAt` of type `Timestamp!`
+  """
+  uploadedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedBy` of type `String!`
+  """
+  uploadedBy: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'StoredDocument'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input StoredDocument_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [StoredDocument_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: StoredDocument_Filter
+}
+"""
+✨ Generated having input type for table 'StoredDocument'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input StoredDocument_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [StoredDocument_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: StoredDocument_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [StoredDocument_Having!]
+  """
+  ✨ Generated from Field `StoredDocument`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`category_count` of type `Int!`
+  """
+  category_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`data_count` of type `Int!`
+  """
+  data_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`fileType_count` of type `Int!`
+  """
+  fileType_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`guestId_count` of type `Int!`
+  """
+  guestId_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`summary_count` of type `Int!`
+  """
+  summary_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`tags_count` of type `Int!`
+  """
+  tags_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`title_count` of type `Int!`
+  """
+  title_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedAt_count` of type `Int!`
+  """
+  uploadedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedBy_count` of type `Int!`
+  """
+  uploadedBy_count: Int_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`tags_min` of type `Any`
+  """
+  tags_min: Any_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedAt_min` of type `Timestamp`
+  """
+  uploadedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`tags_max` of type `Any`
+  """
+  tags_max: Any_Filter
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedAt_max` of type `Timestamp`
+  """
+  uploadedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'StoredDocument'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input StoredDocument_Key {
+  """
+  ✨ Generated from Field `StoredDocument`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `StoredDocument`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'StoredDocument'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input StoredDocument_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: StoredDocument_Filter
+}
+"""
+✨ Generated order input type for table 'StoredDocument'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input StoredDocument_Order {
+  """
+  ✨ Generated from Field `StoredDocument`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`guestId` of type `UUID`
+  """
+  guestId: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`guest` of type `Guest`
+  """
+  guest: Guest_Order
+  """
+  ✨ Generated from Field `StoredDocument`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `StoredDocument`.`category` of type `String!`
+  """
+  category: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`data` of type `String!`
+  """
+  data: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`fileType` of type `String!`
+  """
+  fileType: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`summary` of type `String`
+  """
+  summary: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`tags` of type `Any`
+  """
+  tags: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`title` of type `String!`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedAt` of type `Timestamp!`
+  """
+  uploadedAt: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedBy` of type `String!`
+  """
+  uploadedBy: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`category_count` of type `Int!`
+  """
+  category_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`data_count` of type `Int!`
+  """
+  data_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`fileType_count` of type `Int!`
+  """
+  fileType_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`guestId_count` of type `Int!`
+  """
+  guestId_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`summary_count` of type `Int!`
+  """
+  summary_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`tags_count` of type `Int!`
+  """
+  tags_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`title_count` of type `Int!`
+  """
+  title_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedAt_count` of type `Int!`
+  """
+  uploadedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedBy_count` of type `Int!`
+  """
+  uploadedBy_count: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`tags_min` of type `Any`
+  """
+  tags_min: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedAt_min` of type `Timestamp`
+  """
+  uploadedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`tags_max` of type `Any`
+  """
+  tags_max: OrderDirection
+  """
+  ✨ Generated from Field `StoredDocument`.`uploadedAt_max` of type `Timestamp`
+  """
+  uploadedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'TimeLog'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input TimeLog_Data {
+  """
+  ✨ Generated from Field `TimeLog`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `TimeLog`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `TimeLog`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `TimeLog`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `TimeLog`.`staffId` of type `UUID!`
+  """
+  staffId: UUID
+  """
+  ✨ `_expr` server value variant of `staffId` (✨ Generated from Field `TimeLog`.`staffId` of type `UUID!`)
+  """
+  staffId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `TimeLog`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `TimeLog`.`staff` of type `Staff!`
+  """
+  staff: Staff_Key
+  """
+  ✨ Generated from Field `TimeLog`.`breaks` of type `Any`
+  """
+  breaks: Any
+  """
+  ✨ `_expr` server value variant of `breaks` (✨ Generated from Field `TimeLog`.`breaks` of type `Any`)
+  """
+  breaks_expr: Any_Expr
+  """
+  ✨ Generated from Field `TimeLog`.`date` of type `Date!`
+  """
+  date: Date
+  """
+  ✨ `_date` server value variant of `date` (✨ Generated from Field `TimeLog`.`date` of type `Date!`)
+  """
+  date_date: Date_Relative
+  """
+  ✨ `_expr` server value variant of `date` (✨ Generated from Field `TimeLog`.`date` of type `Date!`)
+  """
+  date_expr: Date_Expr
+  """
+  ✨ `_update` server value variant of `date` (✨ Generated from Field `TimeLog`.`date` of type `Date!`)
+  """
+  date_update: [Date_Update!]
+  """
+  ✨ Generated from Field `TimeLog`.`endTime` of type `Timestamp`
+  """
+  endTime: Timestamp
+  """
+  ✨ `_expr` server value variant of `endTime` (✨ Generated from Field `TimeLog`.`endTime` of type `Timestamp`)
+  """
+  endTime_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `endTime` (✨ Generated from Field `TimeLog`.`endTime` of type `Timestamp`)
+  """
+  endTime_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `endTime` (✨ Generated from Field `TimeLog`.`endTime` of type `Timestamp`)
+  """
+  endTime_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `TimeLog`.`startTime` of type `Timestamp!`
+  """
+  startTime: Timestamp
+  """
+  ✨ `_expr` server value variant of `startTime` (✨ Generated from Field `TimeLog`.`startTime` of type `Timestamp!`)
+  """
+  startTime_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `startTime` (✨ Generated from Field `TimeLog`.`startTime` of type `Timestamp!`)
+  """
+  startTime_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `startTime` (✨ Generated from Field `TimeLog`.`startTime` of type `Timestamp!`)
+  """
+  startTime_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `TimeLog`.`status` of type `String!`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `TimeLog`.`status` of type `String!`)
+  """
+  status_expr: String_Expr
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours` of type `Float`
+  """
+  totalHours: Float
+  """
+  ✨ `_expr` server value variant of `totalHours` (✨ Generated from Field `TimeLog`.`totalHours` of type `Float`)
+  """
+  totalHours_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `totalHours` (✨ Generated from Field `TimeLog`.`totalHours` of type `Float`)
+  """
+  totalHours_update: [Float_Update!]
+}
+"""
+✨ Generated filter input type for table 'TimeLog'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input TimeLog_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [TimeLog_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: TimeLog_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [TimeLog_Filter!]
+  """
+  ✨ Generated from Field `TimeLog`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`staffId` of type `UUID!`
+  """
+  staffId: UUID_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`staff` of type `Staff!`
+  """
+  staff: Staff_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`breaks` of type `Any`
+  """
+  breaks: Any_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`date` of type `Date!`
+  """
+  date: Date_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`endTime` of type `Timestamp`
+  """
+  endTime: Timestamp_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`startTime` of type `Timestamp!`
+  """
+  startTime: Timestamp_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`status` of type `String!`
+  """
+  status: String_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours` of type `Float`
+  """
+  totalHours: Float_Filter
+}
+"""
+✨ Generated first-row input type for table 'TimeLog'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input TimeLog_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [TimeLog_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: TimeLog_Filter
+}
+"""
+✨ Generated having input type for table 'TimeLog'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input TimeLog_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [TimeLog_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: TimeLog_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [TimeLog_Having!]
+  """
+  ✨ Generated from Field `TimeLog`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`breaks_count` of type `Int!`
+  """
+  breaks_count: Int_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`date_count` of type `Int!`
+  """
+  date_count: Int_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`endTime_count` of type `Int!`
+  """
+  endTime_count: Int_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`staffId_count` of type `Int!`
+  """
+  staffId_count: Int_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`startTime_count` of type `Int!`
+  """
+  startTime_count: Int_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours_count` of type `Int!`
+  """
+  totalHours_count: Int_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours_sum` of type `Float`
+  """
+  totalHours_sum: Float_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours_avg` of type `Float`
+  """
+  totalHours_avg: Float_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`breaks_min` of type `Any`
+  """
+  breaks_min: Any_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`date_min` of type `Date`
+  """
+  date_min: Date_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`endTime_min` of type `Timestamp`
+  """
+  endTime_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`startTime_min` of type `Timestamp`
+  """
+  startTime_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours_min` of type `Float`
+  """
+  totalHours_min: Float_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`breaks_max` of type `Any`
+  """
+  breaks_max: Any_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`date_max` of type `Date`
+  """
+  date_max: Date_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`endTime_max` of type `Timestamp`
+  """
+  endTime_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`startTime_max` of type `Timestamp`
+  """
+  startTime_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours_max` of type `Float`
+  """
+  totalHours_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'TimeLog'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input TimeLog_Key {
+  """
+  ✨ Generated from Field `TimeLog`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `TimeLog`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'TimeLog'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input TimeLog_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: TimeLog_Filter
+}
+"""
+✨ Generated order input type for table 'TimeLog'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input TimeLog_Order {
+  """
+  ✨ Generated from Field `TimeLog`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`staffId` of type `UUID!`
+  """
+  staffId: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `TimeLog`.`staff` of type `Staff!`
+  """
+  staff: Staff_Order
+  """
+  ✨ Generated from Field `TimeLog`.`breaks` of type `Any`
+  """
+  breaks: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`date` of type `Date!`
+  """
+  date: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`endTime` of type `Timestamp`
+  """
+  endTime: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`startTime` of type `Timestamp!`
+  """
+  startTime: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`status` of type `String!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours` of type `Float`
+  """
+  totalHours: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`breaks_count` of type `Int!`
+  """
+  breaks_count: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`date_count` of type `Int!`
+  """
+  date_count: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`endTime_count` of type `Int!`
+  """
+  endTime_count: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`staffId_count` of type `Int!`
+  """
+  staffId_count: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`startTime_count` of type `Int!`
+  """
+  startTime_count: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours_count` of type `Int!`
+  """
+  totalHours_count: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours_sum` of type `Float`
+  """
+  totalHours_sum: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours_avg` of type `Float`
+  """
+  totalHours_avg: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`breaks_min` of type `Any`
+  """
+  breaks_min: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`date_min` of type `Date`
+  """
+  date_min: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`endTime_min` of type `Timestamp`
+  """
+  endTime_min: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`startTime_min` of type `Timestamp`
+  """
+  startTime_min: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours_min` of type `Float`
+  """
+  totalHours_min: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`breaks_max` of type `Any`
+  """
+  breaks_max: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`date_max` of type `Date`
+  """
+  date_max: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`endTime_max` of type `Timestamp`
+  """
+  endTime_max: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`startTime_max` of type `Timestamp`
+  """
+  startTime_max: OrderDirection
+  """
+  ✨ Generated from Field `TimeLog`.`totalHours_max` of type `Float`
+  """
+  totalHours_max: OrderDirection
 }
 """
 ✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
