@@ -419,6 +419,74 @@ extend type Hotel {
     having: Staff_Having
   ): [Staff!]! @fdc_generated(from: "Staff.hotel", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
   """
+  ✨ List `UserHotel` objects in a one-to-many relationship (where `UserHotel`.`hotel` is this object).
+  """
+  userHotels_on_hotel(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserHotel_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserHotel_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserHotel_Having
+  ): [UserHotel!]! @fdc_generated(from: "UserHotel.hotel", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `User` objects using `UserHotel` as the join table (a `UserHotel` object exists where its `hotel` is this and its `user` is that).
+  """
+  users_via_UserHotel(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserHotel_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserHotel_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserHotel_Having
+  ): [User!]! @fdc_generated(from: "UserHotel", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+  """
   Implicit metadata field that cannot be written. It provides extra information about query results.
   """
   _metadata: _Metadata @fdc_generated(from: "Hotel", purpose: METADATA_FIELD)
@@ -939,4 +1007,145 @@ extend type Staff {
   A generated field that is used for caching results in SDKs.
   """
   _id: ID! @fdc_generated(from: "Staff.id", purpose: GLOBAL_ID)
+}
+extend type User {
+  """
+  ✨ List `UserHotel` objects in a one-to-many relationship (where `UserHotel`.`user` is this object).
+  """
+  userHotels_on_user(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserHotel_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserHotel_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserHotel_Having
+  ): [UserHotel!]! @fdc_generated(from: "UserHotel.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `Hotel` objects using `UserHotel` as the join table (a `UserHotel` object exists where its `user` is this and its `hotel` is that).
+  """
+  hotels_via_UserHotel(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserHotel_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserHotel_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserHotel_Having
+  ): [Hotel!]! @fdc_generated(from: "UserHotel", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "User", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `User` table.
+  """
+  _count: Int! @fdc_generated(from: "User.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.email", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `role` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  role_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.role", purpose: QUERY_COUNT)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "User.id", purpose: GLOBAL_ID)
+}
+extend type UserHotel {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "UserHotel", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `UserHotel` table.
+  """
+  _count: Int! @fdc_generated(from: "UserHotel.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserHotel` table where the `hotelId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  hotelId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserHotel.hotelId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserHotel` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserHotel.userId", purpose: QUERY_COUNT)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "UserHotel.userId,hotelId", purpose: GLOBAL_ID)
 }

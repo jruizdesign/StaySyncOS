@@ -70,6 +70,13 @@ import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
         <p class="text-center text-slate-500 text-xs mt-8">
           Logged in as {{ data.userProfile()?.email }}
         </p>
+
+        <div class="text-center mt-6">
+            <button (click)="logout()" class="text-slate-400 hover:text-white text-sm flex items-center gap-2 mx-auto transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Logout & Switch Account
+            </button>
+        </div>
       </div>
     </div>
     `,
@@ -92,17 +99,30 @@ export class PropertySelectorComponent {
     constructor() {
         effect(() => {
             const profile = this.data.userProfile();
+            const user = this.auth.currentUser();
+
+            // If we are definitely logged in according to auth service but no profile exists yet, wait a bit
+            // or if we are at home/login we shouldn't be here (guard handles this but safety check)
+            if (!user) {
+                this.loading.set(false);
+                return;
+            }
+
             // SuperAdmin Check
             if (profile && profile['role'] === 'SuperAdmin') {
                 this.loadAllHotels();
                 return;
             }
 
-            if (profile && profile['hotelIds'] && Array.isArray(profile['hotelIds'])) {
+            if (profile && profile['hotelIds'] && Array.isArray(profile['hotelIds']) && profile['hotelIds'].length > 0) {
                 this.loadHotels(profile['hotelIds']);
             } else if (profile && profile['hotelId']) {
                 // Single hotel, redirect logic handled by guard usually, but safety check
                 this.selectHotel(profile['hotelId']);
+            } else if (profile !== null) {
+                // Profile exists but no hotels -> Setup
+                this.loading.set(false);
+                this.router.navigate(['/setup']);
             }
         });
     }
@@ -110,12 +130,12 @@ export class PropertySelectorComponent {
     async loadAllHotels() {
         this.loading.set(true);
         try {
-            // Fetch ALL hotels from 'hotels' collection
-            const snap = await getDocs(collection(this.data.firestore, 'hotels'));
-            const loaded = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            this.hotels.set(loaded);
+            console.log('[PropertySelector] Loading all hotels via Data Connect...');
+            const res = await this.data.allHotelsQuery.execute();
+            console.log('[PropertySelector] All hotels result:', res.data.hotels);
+            this.hotels.set(res.data.hotels || []);
         } catch (err) {
-            console.error('Failed to load all hotels', err);
+            console.error('[PropertySelector] Failed to load all hotels', err);
         } finally {
             this.loading.set(false);
         }
@@ -124,6 +144,18 @@ export class PropertySelectorComponent {
     async loadHotels(ids: string[]) {
         this.loading.set(true);
         try {
+            const user = this.auth.currentUser();
+            if (user?.id) {
+                const res = await this.data.hotelsByUserQuery.execute({ userId: user.id });
+                const hotelsViaUser = res.data.user?.userHotels_on_user?.map(uh => uh.hotel) || [];
+
+                if (hotelsViaUser.length) {
+                    this.hotels.set(hotelsViaUser);
+                    return;
+                }
+            }
+
+            // Fallback for transition or if user-hotel link is only in Firestore
             const promises = ids.map(id => getDoc(doc(this.data.firestore, `hotels/${id}`)));
             const snapshots = await Promise.all(promises);
             const loaded = snapshots
@@ -141,5 +173,9 @@ export class PropertySelectorComponent {
     selectHotel(id: string) {
         this.data.selectedHotelId.set(id);
         this.router.navigate(['/dashboard']);
+    }
+
+    async logout() {
+        await this.auth.logout();
     }
 }

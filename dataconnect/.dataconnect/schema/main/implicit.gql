@@ -66,3 +66,13 @@ extend type Staff {
   """
   hotelId: UUID! @fdc_generated(from: "Staff.hotel", purpose: IMPLICIT_REF_FIELD)
 }
+extend type UserHotel {
+  """
+  ✨ Implicit foreign key field based on `UserHotel`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: String! @fdc_generated(from: "UserHotel.user", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `UserHotel`.`hotel`. It must match the value of `Hotel`.`id`. See `@ref` for how to customize it.
+  """
+  hotelId: UUID! @fdc_generated(from: "UserHotel.hotel", purpose: IMPLICIT_REF_FIELD)
+}

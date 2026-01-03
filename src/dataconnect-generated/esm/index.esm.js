@@ -94,3 +94,25 @@ export function getHotelById(dcOrVars, vars) {
   return executeQuery(getHotelByIdRef(dcOrVars, vars));
 }
 
+export const listHotelsByUserRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListHotelsByUser', inputVars);
+}
+listHotelsByUserRef.operationName = 'ListHotelsByUser';
+
+export function listHotelsByUser(dcOrVars, vars) {
+  return executeQuery(listHotelsByUserRef(dcOrVars, vars));
+}
+
+export const listAllHotelsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListAllHotels');
+}
+listAllHotelsRef.operationName = 'ListAllHotels';
+
+export function listAllHotels(dc) {
+  return executeQuery(listAllHotelsRef(dc));
+}
+

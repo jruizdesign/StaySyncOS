@@ -11,7 +11,7 @@ The generated SDK creates injectable wrapper functions.
 
 Here's an example:
 ```
-import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectUpdateRoomStatus, injectCreateGuest, injectCreateBooking, injectGetFirstHotel, injectGetHotelById } from '@dataconnect/generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectUpdateRoomStatus, injectCreateGuest, injectCreateBooking, injectGetFirstHotel, injectGetHotelById, injectListHotelsByUser, injectListAllHotels } from '@dataconnect/generated/angular';
 
 @Component({
   selector: 'my-component',
@@ -27,6 +27,8 @@ class MyComponent {
   private readonly CreateBookingOperation = injectCreateBooking(createBookingVars);
   private readonly GetFirstHotelOperation = injectGetFirstHotel();
   private readonly GetHotelByIdOperation = injectGetHotelById(getHotelByIdVars);
+  private readonly ListHotelsByUserOperation = injectListHotelsByUser(listHotelsByUserVars);
+  private readonly ListAllHotelsOperation = injectListAllHotels();
   }
 ```
 
@@ -69,7 +71,7 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { listAvailableRooms, createRoom, createHotel, updateRoomStatus, createGuest, createBooking, getFirstHotel, getHotelById } from '@dataconnect/generated';
+import { listAvailableRooms, createRoom, createHotel, updateRoomStatus, createGuest, createBooking, getFirstHotel, getHotelById, listHotelsByUser, listAllHotels } from '@dataconnect/generated';
 
 
 // Operation ListAvailableRooms:  For variables, look at type ListAvailableRoomsVars in ../index.d.ts
@@ -95,6 +97,12 @@ const { data } = await GetFirstHotel(dataConnect);
 
 // Operation GetHotelById:  For variables, look at type GetHotelByIdVars in ../index.d.ts
 const { data } = await GetHotelById(dataConnect, getHotelByIdVars);
+
+// Operation ListHotelsByUser:  For variables, look at type ListHotelsByUserVars in ../index.d.ts
+const { data } = await ListHotelsByUser(dataConnect, listHotelsByUserVars);
+
+// Operation ListAllHotels: 
+const { data } = await ListAllHotels(dataConnect);
 
 
 ```

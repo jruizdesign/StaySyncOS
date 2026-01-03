@@ -1,4 +1,4 @@
-import { ListAvailableRoomsData, ListAvailableRoomsVariables, CreateRoomData, CreateRoomVariables, CreateHotelData, CreateHotelVariables, UpdateRoomStatusData, UpdateRoomStatusVariables, CreateGuestData, CreateGuestVariables, CreateBookingData, CreateBookingVariables, GetFirstHotelData, GetHotelByIdData, GetHotelByIdVariables } from '../';
+import { ListAvailableRoomsData, ListAvailableRoomsVariables, CreateRoomData, CreateRoomVariables, CreateHotelData, CreateHotelVariables, UpdateRoomStatusData, UpdateRoomStatusVariables, CreateGuestData, CreateGuestVariables, CreateBookingData, CreateBookingVariables, GetFirstHotelData, GetHotelByIdData, GetHotelByIdVariables, ListHotelsByUserData, ListHotelsByUserVariables, ListAllHotelsData } from '../';
 import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise} from '@angular/fire/data-connect';
 import { CreateQueryResult, CreateMutationResult} from '@tanstack/angular-query-experimental';
 import { CreateDataConnectQueryResult, CreateDataConnectQueryOptions, CreateDataConnectMutationResult, DataConnectMutationOptionsUndefinedMutationFn } from '@tanstack-query-firebase/angular/data-connect';
@@ -30,3 +30,10 @@ export function injectGetFirstHotel(options?: GetFirstHotelOptions, injector?: I
 type GetHotelByIdArgs = GetHotelByIdVariables | (() => GetHotelByIdVariables);
 export type GetHotelByIdOptions = () => Omit<CreateDataConnectQueryOptions<GetHotelByIdData, GetHotelByIdVariables>, 'queryFn'>;
 export function injectGetHotelById(args: GetHotelByIdArgs, options?: GetHotelByIdOptions, injector?: Injector): CreateDataConnectQueryResult<GetHotelByIdData, GetHotelByIdVariables>;
+
+type ListHotelsByUserArgs = ListHotelsByUserVariables | (() => ListHotelsByUserVariables);
+export type ListHotelsByUserOptions = () => Omit<CreateDataConnectQueryOptions<ListHotelsByUserData, ListHotelsByUserVariables>, 'queryFn'>;
+export function injectListHotelsByUser(args: ListHotelsByUserArgs, options?: ListHotelsByUserOptions, injector?: Injector): CreateDataConnectQueryResult<ListHotelsByUserData, ListHotelsByUserVariables>;
+
+export type ListAllHotelsOptions = () => Omit<CreateDataConnectQueryOptions<ListAllHotelsData, undefined>, 'queryFn'>;
+export function injectListAllHotels(options?: ListAllHotelsOptions, injector?: Injector): CreateDataConnectQueryResult<ListAllHotelsData, undefined>;

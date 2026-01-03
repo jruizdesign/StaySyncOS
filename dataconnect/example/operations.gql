@@ -49,3 +49,25 @@ query GetHotelById($id: UUID!) @auth(level: PUBLIC) {
     propertyId
   }
 }
+
+query ListHotelsByUser($userId: String!) @auth(level: PUBLIC) {
+  user(id: $userId) {
+    userHotels_on_user {
+      hotel {
+        id
+        name
+        address
+        propertyId
+      }
+    }
+  }
+}
+
+query ListAllHotels @auth(level: PUBLIC) {
+  hotels {
+    id
+    name
+    address
+    propertyId
+  }
+}

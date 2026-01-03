@@ -35,6 +35,18 @@ It has the same format as `Staff_Key`, but is only used as mutation return value
 """
 scalar Staff_KeyOutput
 """
+✨ `User_KeyOutput` returns the primary key fields of table type `User`.
+
+It has the same format as `User_Key`, but is only used as mutation return value.
+"""
+scalar User_KeyOutput
+"""
+✨ `UserHotel_KeyOutput` returns the primary key fields of table type `UserHotel`.
+
+It has the same format as `UserHotel_Key`, but is only used as mutation return value.
+"""
+scalar UserHotel_KeyOutput
+"""
 ✨ Generated data input type for table 'Booking'. It includes all necessary fields for creating or upserting rows into table.
 """
 input Booking_Data {
@@ -913,6 +925,14 @@ input Hotel_Filter {
   ✨ Generated from Field `Hotel`.`staffs_on_hotel` of type `[Staff!]!`
   """
   staffs_on_hotel: Staff_ListFilter
+  """
+  ✨ Generated from Field `Hotel`.`userHotels_on_hotel` of type `[UserHotel!]!`
+  """
+  userHotels_on_hotel: UserHotel_ListFilter
+  """
+  ✨ Generated from Field `Hotel`.`users_via_UserHotel` of type `[User!]!`
+  """
+  users_via_UserHotel: User_ListFilter
 }
 """
 ✨ Generated first-row input type for table 'Hotel'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -2171,4 +2191,354 @@ input Staff_Order {
   ✨ Generated from Field `Staff`.`username_count` of type `Int!`
   """
   username_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input User_Data {
+  """
+  ✨ Generated from Field `User`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `String!`)
+  """
+  id_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `User`.`email` of type `String!`)
+  """
+  email_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`role` of type `String!`
+  """
+  role: String
+  """
+  ✨ `_expr` server value variant of `role` (✨ Generated from Field `User`.`role` of type `String!`)
+  """
+  role_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [User_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: User_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [User_Filter!]
+  """
+  ✨ Generated from Field `User`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `User`.`role` of type `String!`
+  """
+  role: String_Filter
+  """
+  ✨ Generated from Field `User`.`userHotels_on_user` of type `[UserHotel!]!`
+  """
+  userHotels_on_user: UserHotel_ListFilter
+  """
+  ✨ Generated from Field `User`.`hotels_via_UserHotel` of type `[Hotel!]!`
+  """
+  hotels_via_UserHotel: Hotel_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input User_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [User_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: User_Filter
+}
+"""
+✨ Generated having input type for table 'User'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [User_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: User_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [User_Having!]
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`role_count` of type `Int!`
+  """
+  role_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'User'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input User_Key {
+  """
+  ✨ Generated from Field `User`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `String!`)
+  """
+  id_expr: String_Expr
+}
+"""
+✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input User_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: User_Filter
+}
+"""
+✨ Generated order input type for table 'User'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input User_Order {
+  """
+  ✨ Generated from Field `User`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `User`.`role` of type `String!`
+  """
+  role: OrderDirection
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`role_count` of type `Int!`
+  """
+  role_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'UserHotel'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input UserHotel_Data {
+  """
+  ✨ Generated from Field `UserHotel`.`userId` of type `String!`
+  """
+  userId: String
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `UserHotel`.`userId` of type `String!`)
+  """
+  userId_expr: String_Expr
+  """
+  ✨ Generated from Field `UserHotel`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `UserHotel`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `UserHotel`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `UserHotel`.`user` of type `User!`
+  """
+  user: User_Key
+}
+"""
+✨ Generated filter input type for table 'UserHotel'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserHotel_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [UserHotel_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: UserHotel_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [UserHotel_Filter!]
+  """
+  ✨ Generated from Field `UserHotel`.`userId` of type `String!`
+  """
+  userId: String_Filter
+  """
+  ✨ Generated from Field `UserHotel`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `UserHotel`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `UserHotel`.`user` of type `User!`
+  """
+  user: User_Filter
+}
+"""
+✨ Generated first-row input type for table 'UserHotel'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input UserHotel_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [UserHotel_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: UserHotel_Filter
+}
+"""
+✨ Generated having input type for table 'UserHotel'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserHotel_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [UserHotel_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: UserHotel_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [UserHotel_Having!]
+  """
+  ✨ Generated from Field `UserHotel`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `UserHotel`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `UserHotel`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'UserHotel'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input UserHotel_Key {
+  """
+  ✨ Generated from Field `UserHotel`.`userId` of type `String!`
+  """
+  userId: String
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `UserHotel`.`userId` of type `String!`)
+  """
+  userId_expr: String_Expr
+  """
+  ✨ Generated from Field `UserHotel`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `UserHotel`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'UserHotel'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input UserHotel_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: UserHotel_Filter
+}
+"""
+✨ Generated order input type for table 'UserHotel'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input UserHotel_Order {
+  """
+  ✨ Generated from Field `UserHotel`.`userId` of type `String!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `UserHotel`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `UserHotel`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `UserHotel`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `UserHotel`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `UserHotel`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `UserHotel`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
 }

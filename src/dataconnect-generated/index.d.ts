@@ -90,6 +90,15 @@ export interface Hotel_Key {
   __typename?: 'Hotel_Key';
 }
 
+export interface ListAllHotelsData {
+  hotels: ({
+    id: UUIDString;
+    name: string;
+    address: string;
+    propertyId: string;
+  } & Hotel_Key)[];
+}
+
 export interface ListAvailableRoomsData {
   rooms: ({
     id: UUIDString;
@@ -107,6 +116,23 @@ export interface ListAvailableRoomsData {
 
 export interface ListAvailableRoomsVariables {
   hotelId: UUIDString;
+}
+
+export interface ListHotelsByUserData {
+  user?: {
+    userHotels_on_user: ({
+      hotel: {
+        id: UUIDString;
+        name: string;
+        address: string;
+        propertyId: string;
+      } & Hotel_Key;
+    })[];
+  };
+}
+
+export interface ListHotelsByUserVariables {
+  userId: string;
 }
 
 export interface MaintenanceRequest_Key {
@@ -131,6 +157,17 @@ export interface UpdateRoomStatusData {
 export interface UpdateRoomStatusVariables {
   id: UUIDString;
   status: string;
+}
+
+export interface UserHotel_Key {
+  userId: string;
+  hotelId: UUIDString;
+  __typename?: 'UserHotel_Key';
+}
+
+export interface User_Key {
+  id: string;
+  __typename?: 'User_Key';
 }
 
 interface ListAvailableRoomsRef {
@@ -228,4 +265,28 @@ export const getHotelByIdRef: GetHotelByIdRef;
 
 export function getHotelById(vars: GetHotelByIdVariables): QueryPromise<GetHotelByIdData, GetHotelByIdVariables>;
 export function getHotelById(dc: DataConnect, vars: GetHotelByIdVariables): QueryPromise<GetHotelByIdData, GetHotelByIdVariables>;
+
+interface ListHotelsByUserRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListHotelsByUserVariables): QueryRef<ListHotelsByUserData, ListHotelsByUserVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListHotelsByUserVariables): QueryRef<ListHotelsByUserData, ListHotelsByUserVariables>;
+  operationName: string;
+}
+export const listHotelsByUserRef: ListHotelsByUserRef;
+
+export function listHotelsByUser(vars: ListHotelsByUserVariables): QueryPromise<ListHotelsByUserData, ListHotelsByUserVariables>;
+export function listHotelsByUser(dc: DataConnect, vars: ListHotelsByUserVariables): QueryPromise<ListHotelsByUserData, ListHotelsByUserVariables>;
+
+interface ListAllHotelsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListAllHotelsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListAllHotelsData, undefined>;
+  operationName: string;
+}
+export const listAllHotelsRef: ListAllHotelsRef;
+
+export function listAllHotels(): QueryPromise<ListAllHotelsData, undefined>;
+export function listAllHotels(dc: DataConnect): QueryPromise<ListAllHotelsData, undefined>;
 

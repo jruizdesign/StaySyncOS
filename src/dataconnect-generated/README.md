@@ -13,6 +13,8 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListAvailableRooms*](#listavailablerooms)
   - [*GetFirstHotel*](#getfirsthotel)
   - [*GetHotelById*](#gethotelbyid)
+  - [*ListHotelsByUser*](#listhotelsbyuser)
+  - [*ListAllHotels*](#listallhotels)
 - [**Mutations**](#mutations)
   - [*CreateRoom*](#createroom)
   - [*CreateHotel*](#createhotel)
@@ -390,6 +392,220 @@ console.log(data.hotel);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.hotel);
+});
+```
+
+## ListHotelsByUser
+You can execute the `ListHotelsByUser` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listHotelsByUser(vars: ListHotelsByUserVariables): QueryPromise<ListHotelsByUserData, ListHotelsByUserVariables>;
+
+interface ListHotelsByUserRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListHotelsByUserVariables): QueryRef<ListHotelsByUserData, ListHotelsByUserVariables>;
+}
+export const listHotelsByUserRef: ListHotelsByUserRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listHotelsByUser(dc: DataConnect, vars: ListHotelsByUserVariables): QueryPromise<ListHotelsByUserData, ListHotelsByUserVariables>;
+
+interface ListHotelsByUserRef {
+  ...
+  (dc: DataConnect, vars: ListHotelsByUserVariables): QueryRef<ListHotelsByUserData, ListHotelsByUserVariables>;
+}
+export const listHotelsByUserRef: ListHotelsByUserRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listHotelsByUserRef:
+```typescript
+const name = listHotelsByUserRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListHotelsByUser` query requires an argument of type `ListHotelsByUserVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface ListHotelsByUserVariables {
+  userId: string;
+}
+```
+### Return Type
+Recall that executing the `ListHotelsByUser` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListHotelsByUserData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListHotelsByUserData {
+  user?: {
+    userHotels_on_user: ({
+      hotel: {
+        id: UUIDString;
+        name: string;
+        address: string;
+        propertyId: string;
+      } & Hotel_Key;
+    })[];
+  };
+}
+```
+### Using `ListHotelsByUser`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listHotelsByUser, ListHotelsByUserVariables } from '@dataconnect/generated';
+
+// The `ListHotelsByUser` query requires an argument of type `ListHotelsByUserVariables`:
+const listHotelsByUserVars: ListHotelsByUserVariables = {
+  userId: ..., 
+};
+
+// Call the `listHotelsByUser()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listHotelsByUser(listHotelsByUserVars);
+// Variables can be defined inline as well.
+const { data } = await listHotelsByUser({ userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listHotelsByUser(dataConnect, listHotelsByUserVars);
+
+console.log(data.user);
+
+// Or, you can use the `Promise` API.
+listHotelsByUser(listHotelsByUserVars).then((response) => {
+  const data = response.data;
+  console.log(data.user);
+});
+```
+
+### Using `ListHotelsByUser`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listHotelsByUserRef, ListHotelsByUserVariables } from '@dataconnect/generated';
+
+// The `ListHotelsByUser` query requires an argument of type `ListHotelsByUserVariables`:
+const listHotelsByUserVars: ListHotelsByUserVariables = {
+  userId: ..., 
+};
+
+// Call the `listHotelsByUserRef()` function to get a reference to the query.
+const ref = listHotelsByUserRef(listHotelsByUserVars);
+// Variables can be defined inline as well.
+const ref = listHotelsByUserRef({ userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listHotelsByUserRef(dataConnect, listHotelsByUserVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.user);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user);
+});
+```
+
+## ListAllHotels
+You can execute the `ListAllHotels` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listAllHotels(): QueryPromise<ListAllHotelsData, undefined>;
+
+interface ListAllHotelsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListAllHotelsData, undefined>;
+}
+export const listAllHotelsRef: ListAllHotelsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listAllHotels(dc: DataConnect): QueryPromise<ListAllHotelsData, undefined>;
+
+interface ListAllHotelsRef {
+  ...
+  (dc: DataConnect): QueryRef<ListAllHotelsData, undefined>;
+}
+export const listAllHotelsRef: ListAllHotelsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listAllHotelsRef:
+```typescript
+const name = listAllHotelsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListAllHotels` query has no variables.
+### Return Type
+Recall that executing the `ListAllHotels` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListAllHotelsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListAllHotelsData {
+  hotels: ({
+    id: UUIDString;
+    name: string;
+    address: string;
+    propertyId: string;
+  } & Hotel_Key)[];
+}
+```
+### Using `ListAllHotels`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listAllHotels } from '@dataconnect/generated';
+
+
+// Call the `listAllHotels()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listAllHotels();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listAllHotels(dataConnect);
+
+console.log(data.hotels);
+
+// Or, you can use the `Promise` API.
+listAllHotels().then((response) => {
+  const data = response.data;
+  console.log(data.hotels);
+});
+```
+
+### Using `ListAllHotels`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listAllHotelsRef } from '@dataconnect/generated';
+
+
+// Call the `listAllHotelsRef()` function to get a reference to the query.
+const ref = listAllHotelsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listAllHotelsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.hotels);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.hotels);
 });
 ```
 

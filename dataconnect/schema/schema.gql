@@ -59,3 +59,14 @@ type MaintenanceRequest @table {
   assignedToStaff: Staff
   completionDate: Date
 }
+
+type User @table {
+  id: String!
+  email: String!
+  role: String!
+}
+
+type UserHotel @table(key: ["user", "hotel"]) {
+  user: User!
+  hotel: Hotel!
+}

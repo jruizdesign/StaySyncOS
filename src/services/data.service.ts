@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { AiService } from './ai.service';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel } from '../dataconnect-generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateGuest, injectCreateBooking, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser } from '../dataconnect-generated/angular';
 import { ListAvailableRoomsData } from '../dataconnect-generated';
 
 // Interfaces
@@ -191,6 +191,15 @@ export class DataService {
 
   // Query to find any existing hotel (recovery mode)
   firstHotelQuery = injectGetFirstHotel();
+
+  // Query all hotels for SuperAdmins
+  allHotelsQuery = injectListAllHotels();
+
+  // Query hotels for specific user
+  hotelsByUserQuery = injectListHotelsByUser(
+    () => ({ userId: this.auth.currentUser()?.id || '' }),
+    () => ({ enabled: !!this.auth.currentUser()?.id })
+  );
 
   createRoomMut = injectCreateRoom();
   createGuestMut = injectCreateGuest();
