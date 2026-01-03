@@ -7,7 +7,7 @@ export interface User {
   id: string;
   email: string;
   username: string;
-  role: 'Admin' | 'Manager' | 'Reception' | 'Maintenance';
+  role: 'Admin' | 'Manager' | 'Reception' | 'Maintenance' | 'SuperAdmin';
 }
 
 import { Functions, httpsCallable } from '@angular/fire/functions';

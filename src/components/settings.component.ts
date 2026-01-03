@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { DataService, HotelConfig, Room } from '../services/data.service';
 import { AuthService } from '../services/auth.service';
+import { doc, setDoc } from 'firebase/firestore';
 
 @Component({
     selector: 'app-settings',
@@ -31,6 +32,7 @@ import { AuthService } from '../services/auth.service';
              Property Profile
            </h2>
            <form [formGroup]="configForm" (ngSubmit)="updateConfig()" class="space-y-5">
+              <!-- ... existing form fields ... -->
               <div>
                  <label class="block text-sm font-semibold text-gray-700 mb-1.5">Hotel Name</label>
                  <input formControlName="name" type="text" class="w-full border border-gray-200 bg-gray-50/30 rounded-xl p-3 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all duration-200">
@@ -50,8 +52,11 @@ import { AuthService } from '../services/auth.service';
                  </div>
               </div>
               
-                  <!-- Checkbox removed -->
-              <div class="flex justify-end pt-6 mt-2 border-t border-gray-50">
+              <div class="flex justify-between items-center pt-6 mt-2 border-t border-gray-50">
+                   <button type="button" (click)="promoteToSuperAdmin()" class="text-xs text-indigo-500 hover:text-indigo-700 font-medium hover:underline">
+                       Promote to SuperAdmin (Dev)
+                   </button>
+
                    <button type="submit" [disabled]="configForm.pristine" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all font-medium">
                        Save Changes
                    </button>
@@ -449,6 +454,22 @@ export class SettingsComponent {
             if (!mode) {
                 this.showBulkWizard.set(true);
             }
+        }
+    }
+
+    async promoteToSuperAdmin() {
+        const user = this.auth.currentUser();
+        if (!user) return;
+
+        if (!confirm('Promote your account to SuperAdmin? This will grant access to ALL properties.')) return;
+
+        try {
+            await setDoc(doc(this.data.firestore, "users/" + user.id), { role: 'SuperAdmin' }, { merge: true });
+            alert('Success! You are now a SuperAdmin. Please reload the page to see the changes.');
+            window.location.reload();
+        } catch (e) {
+            console.error(e);
+            alert('Failed to promote account: ' + e);
         }
     }
 }

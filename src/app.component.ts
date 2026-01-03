@@ -51,6 +51,7 @@ export class AppComponent {
 
   publicRoutes = [
     '/login',
+    '/select-property',
     '/it-cybersecurity',
     '/digital-solutions',
     '/',

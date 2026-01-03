@@ -156,7 +156,26 @@ export class DataService {
     { initialValue: null }
   );
 
-  currentHotelId = computed(() => this.userProfile()?.['hotelId']);
+  // Multi-property selection
+  selectedHotelId = signal<string | null>(null);
+
+  currentHotelId = computed(() => {
+    // 1. Manually selected
+    if (this.selectedHotelId()) return this.selectedHotelId();
+
+    // 2. Single hotel stored in profile
+    const profile = this.userProfile();
+    if (profile?.['hotelId']) return profile['hotelId'];
+
+    // 3. First of multiple hotels (fallback)
+    if (profile?.['hotelIds'] && Array.isArray(profile['hotelIds']) && profile['hotelIds'].length > 0) {
+      // We don't auto-select here to force selection screen usage, but returns null/undefined if not selected
+      // actually, returning null is good - it will disable queries until selected
+      return null;
+    }
+
+    return undefined;
+  });
 
   // Data Connect Queries & Mutations
   // Now dependent on currentHotelId

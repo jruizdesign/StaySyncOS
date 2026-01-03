@@ -27,6 +27,8 @@ import { SettingsComponent } from '../components/settings.component';
 import { DocumentCenterComponent } from '../components/document-center.component';
 import { LandingComponent } from '../components/landing.component';
 
+import { PropertySelectorComponent } from '../components/property-selector.component';
+
 // Guards
 export const authGuard: CanActivateFn = (route, state) => {
     const auth = inject(AuthService);
@@ -62,28 +64,35 @@ export const setupGuard: CanActivateFn = (route, state) => {
     const data = inject(DataService);
     const auth = inject(AuthService);
     const router = inject(Router);
-    const firestore = data.firestore; // Use the same Firestore instance
+    const firestore = data.firestore;
 
     return auth.user$.pipe(
-        // Wait for auth to be determined (null or user)
         filter(u => u !== undefined),
         take(1),
         switchMap(user => {
-            console.log('[SetupGuard] Checking user:', user?.uid);
-            if (!user) {
-                return of(router.parseUrl('/login'));
-            }
+            if (!user) return of(router.parseUrl('/login'));
 
-            // Check if user has a hotelId in their profile
             return docData(doc(firestore, `users/${user.uid}`)).pipe(
                 take(1),
                 map((profile: any) => {
-                    console.log('[SetupGuard] Profile:', profile);
-                    // If permissions or doc doesn't exist, profile might be undefined
+                    // 1. SuperAdmin & Multi-property check
+                    const isSuperAdmin = profile?.role === 'SuperAdmin';
+                    const hasMultiProps = profile?.hotelIds && Array.isArray(profile.hotelIds) && profile.hotelIds.length > 0;
+
+                    if (isSuperAdmin || hasMultiProps) {
+                        // If multiple hotels or SuperAdmin, user MUST have a selected Hotel ID to pass this guard
+                        if (data.selectedHotelId()) {
+                            return true;
+                        }
+                        // Otherwise, redirect to selector
+                        return router.parseUrl('/select-property');
+                    }
+
+                    // 2. Single property check
                     if (profile && profile.hotelId) {
                         return true;
                     }
-                    console.log('[SetupGuard] No hotelId, redirecting to /setup');
+
                     return router.parseUrl('/setup');
                 })
             );
@@ -101,6 +110,7 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
 
     // Authenticated Routes
+    { path: 'select-property', component: PropertySelectorComponent, canActivate: [authGuard] }, // New Route
     { path: 'setup', component: SetupComponent, canActivate: [authGuard] },
     { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard, setupGuard] },
     { path: 'overview', component: DailyOverviewComponent, canActivate: [authGuard, setupGuard] },
@@ -116,3 +126,5 @@ export const routes: Routes = [
     // Fallback
     { path: '**', redirectTo: '' }
 ];
+
+
