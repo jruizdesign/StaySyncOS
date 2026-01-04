@@ -275,7 +275,7 @@ export class DataService {
     if (!uid) throw new Error("No user logged in to link.");
 
     // Link in Firestore
-    await setDoc(doc(this.firestore, `users/${uid}`), { hotelId }, { merge: true });
+    // await setDoc(doc(this.firestore, `users/${uid}`), { hotelId }, { merge: true });
 
     // Link in Data Connect
     try {
@@ -456,7 +456,7 @@ export class DataService {
     };
 
     // Double Write
-    addDoc(collection(this.firestore, 'logs'), entry);
+    // addDoc(collection(this.firestore, 'logs'), entry);
     this.createLogMut.mutate({
       hotelId,
       action,
@@ -551,7 +551,7 @@ export class DataService {
             // Link in DC
             await this.linkUserToHotelMut.mutateAsync({ userId: u.uid, hotelId: newId });
 
-            await setDoc(doc(this.firestore, `users/${u.uid}`), { hotelId: newId }, { merge: true });
+            // await setDoc(doc(this.firestore, `users/${u.uid}`), { hotelId: newId }, { merge: true });
             this.log('System', 'Initialization', 'Created hotel and linked to user.');
             await this.seedRooms(newId);
             this.seedStaff(newId);
@@ -581,7 +581,7 @@ export class DataService {
         await this.linkUserToHotelMut.mutateAsync({ userId: user.id, hotelId: newId });
 
         // Link in Firestore
-        await setDoc(doc(this.firestore, `users/${user.id}`), { hotelId: newId }, { merge: true });
+        // await setDoc(doc(this.firestore, `users/${user.id}`), { hotelId: newId }, { merge: true });
         this.log('System', 'Initialization', 'Created hotel and linked to user.');
 
         // Seed initial rooms
@@ -644,7 +644,7 @@ export class DataService {
     if (!hotelId) return;
 
     // Double Write
-    await setDoc(doc(this.firestore, 'hotelConfigs', hotelId), details, { merge: true });
+    // await setDoc(doc(this.firestore, 'hotelConfigs', hotelId), details, { merge: true });
     await this.updateHotelConfigMut.mutateAsync({
       id: hotelId,
       name: details.name,
@@ -672,7 +672,7 @@ export class DataService {
     } as Guest;
 
     // Double Write
-    await setDoc(doc(this.firestore, 'guests', id), newGuest);
+    // await setDoc(doc(this.firestore, 'guests', id), newGuest);
     await this.createGuestMut.mutateAsync({
       hotelId,
       name: guest.name,
@@ -687,7 +687,7 @@ export class DataService {
 
   async updateGuest(guest: Guest) {
     // Double Write
-    await setDoc(doc(this.firestore, 'guests', guest.id), guest);
+    // await setDoc(doc(this.firestore, 'guests', guest.id), guest);
     await this.updateGuestMut.mutateAsync({
       id: guest.id,
       name: guest.name,
@@ -703,7 +703,7 @@ export class DataService {
 
   async deleteGuest(guestId: string) {
     // Double Write
-    await deleteDoc(doc(this.firestore, 'guests', guestId));
+    // await deleteDoc(doc(this.firestore, 'guests', guestId));
     await this.deleteGuestMut.mutateAsync({ id: guestId });
 
     this.log('Guest', 'Guest Deleted', `Guest record deleted.`);
@@ -718,7 +718,7 @@ export class DataService {
     stay.hotelId = hotelId;
 
     // Double Write
-    await setDoc(doc(this.firestore, 'stays', stay.id), stay);
+    // await setDoc(doc(this.firestore, 'stays', stay.id), stay);
     await this.createBookingMut.mutateAsync({
       hotelId,
       guestId: stay.guestId,
@@ -744,7 +744,7 @@ export class DataService {
 
     const newTotal = (stay.totalPaid || 0) + amount;
     // Double Write
-    await updateDoc(doc(this.firestore, 'stays', stayId), { totalPaid: newTotal });
+    // await updateDoc(doc(this.firestore, 'stays', stayId), { totalPaid: newTotal });
     await this.updateBookingMut.mutateAsync({ id: stayId, totalPaid: newTotal });
 
     // Also generate receipt
@@ -795,7 +795,7 @@ export class DataService {
     };
 
     // Double Write
-    await setDoc(doc(this.firestore, 'documents', newDoc.id), newDoc);
+    // await setDoc(doc(this.firestore, 'documents', newDoc.id), newDoc);
     await this.createFinancialDocMut.mutateAsync({
       hotelId,
       type,
@@ -812,7 +812,7 @@ export class DataService {
     // Async AI Analysis for System Docs
     this.ai.analyzeSystemDocument(newDoc).then(res => {
       if (res.tags || res.summary) {
-        updateDoc(doc(this.firestore, 'documents', newDoc.id), { ...res });
+        // updateDoc(doc(this.firestore, 'documents', newDoc.id), { ...res });
         // Optional: Update DC as well but skipping for brevity as it's secondary
       }
     });
@@ -871,7 +871,7 @@ export class DataService {
     if (!hotelId) return;
 
     // Double Write
-    await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
+    // await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
     await this.updateStaffMut.mutateAsync({ id: staffId, currentStatus: 'Clocked In' });
 
     // Create TimeLog
@@ -888,7 +888,7 @@ export class DataService {
     };
 
     // Double Write
-    await setDoc(doc(this.firestore, 'timeLogs', newLog.id), newLog);
+    // await setDoc(doc(this.firestore, 'timeLogs', newLog.id), newLog);
     await this.createTimeLogMut.mutateAsync({
       hotelId,
       staffId,
@@ -903,7 +903,7 @@ export class DataService {
 
   async clockOut(staffId: string) {
     // Double Write
-    await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked Out' });
+    // await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked Out' });
     await this.updateStaffMut.mutateAsync({ id: staffId, currentStatus: 'Clocked Out' });
 
     // Close TimeLog
@@ -913,7 +913,7 @@ export class DataService {
       const totalHours = this.calculateHours(log.startTime, end, log.breaks);
 
       // Double Write
-      await updateDoc(doc(this.firestore, 'timeLogs', log.id), { endTime: end, status: 'Closed', totalHours });
+      // await updateDoc(doc(this.firestore, 'timeLogs', log.id), { endTime: end, status: 'Closed', totalHours });
       await this.updateTimeLogMut.mutateAsync({ id: log.id, endTime: end, status: 'Closed', totalHours });
     }
 
@@ -923,14 +923,14 @@ export class DataService {
 
   async startBreak(staffId: string) {
     // Double Write
-    await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'On Break' });
+    // await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'On Break' });
     await this.updateStaffMut.mutateAsync({ id: staffId, currentStatus: 'On Break' });
 
     const log = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
     if (log) {
       const newBreaks = [...log.breaks, { start: new Date().toISOString() }];
       // Double Write
-      await updateDoc(doc(this.firestore, 'timeLogs', log.id), { breaks: newBreaks });
+      // await updateDoc(doc(this.firestore, 'timeLogs', log.id), { breaks: newBreaks });
       await this.updateTimeLogMut.mutateAsync({ id: log.id, breaks: newBreaks });
     }
 
@@ -940,14 +940,14 @@ export class DataService {
 
   async endBreak(staffId: string) {
     // Double Write
-    await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
+    // await updateDoc(doc(this.firestore, 'staff', staffId), { currentStatus: 'Clocked In' });
     await this.updateStaffMut.mutateAsync({ id: staffId, currentStatus: 'Clocked In' });
 
     const log = this.timeLogs().find(l => l.staffId === staffId && l.status === 'Open');
     if (log) {
       const breaks = log.breaks.map(b => !b.end ? { ...b, end: new Date().toISOString() } : b);
       // Double Write
-      await updateDoc(doc(this.firestore, 'timeLogs', log.id), { breaks });
+      // await updateDoc(doc(this.firestore, 'timeLogs', log.id), { breaks });
       await this.updateTimeLogMut.mutateAsync({ id: log.id, breaks });
     }
 
@@ -972,16 +972,16 @@ export class DataService {
 
     const id = crypto.randomUUID();
     const newShift: Shift = { ...shift, id, hotelId };
-    await setDoc(doc(this.firestore, 'shifts', id), newShift);
+    // await setDoc(doc(this.firestore, 'shifts', id), newShift);
     // TODO: Add Shift mutation to DC if needed, but keeping Firestore-only for shifts for now to keep it simple unless requested.
   }
 
   async deleteShift(id: string) {
-    await deleteDoc(doc(this.firestore, 'shifts', id));
+    // await deleteDoc(doc(this.firestore, 'shifts', id));
   }
 
   async updateTimeLog(log: TimeLog) {
-    await setDoc(doc(this.firestore, 'timeLogs', log.id), log);
+    // await setDoc(doc(this.firestore, 'timeLogs', log.id), log);
     await this.updateTimeLogMut.mutateAsync({
       id: log.id,
       endTime: log.endTime,
@@ -1035,13 +1035,13 @@ export class DataService {
     }
 
     // 2. Update Stay Status
-    await updateDoc(doc(this.firestore, 'stays', stayId), { status: 'Active' });
+    // await updateDoc(doc(this.firestore, 'stays', stayId), { status: 'Active' });
     await this.updateBookingMut.mutateAsync({ id: stayId, bookingStatus: 'Active' });
 
     // 3. Update Guest Status
     const guest = this.guests().find(g => g.id === stay.guestId);
     if (guest) {
-      await updateDoc(doc(this.firestore, 'guests', guest.id), { currentStayId: stayId });
+      // await updateDoc(doc(this.firestore, 'guests', guest.id), { currentStayId: stayId });
       // Update in DC via generic update (could add specific currentStayId to schema if needed)
     }
 
@@ -1054,10 +1054,10 @@ export class DataService {
     if (stay) {
       const now = new Date().toISOString();
       // Double Write
-      await updateDoc(doc(this.firestore, 'stays', stayId), {
-        status: 'Completed',
-        checkOutActual: now
-      });
+      // await updateDoc(doc(this.firestore, 'stays', stayId), {
+      //   status: 'Completed',
+      //   checkOutActual: now
+      // });
       await this.updateBookingMut.mutateAsync({ id: stayId, bookingStatus: 'Completed', checkOutActual: now });
 
       const rId = roomId || stay.roomId;
@@ -1068,7 +1068,7 @@ export class DataService {
       if (gId) {
         const guest = this.guests().find(g => g.id === gId);
         if (guest) {
-          await updateDoc(doc(this.firestore, 'guests', gId), { currentStayId: null });
+          // await updateDoc(doc(this.firestore, 'guests', gId), { currentStayId: null });
         }
       }
     }
@@ -1094,16 +1094,16 @@ export class DataService {
       cost: req.cost || 0,
       notes: req.notes || ''
     };
-    await setDoc(doc(this.firestore, 'maintenance', newReq.id), newReq);
+    // await setDoc(doc(this.firestore, 'maintenance', newReq.id), newReq);
     // Optional: Add to DC if needed.
     return newReq;
   }
 
   async updateMaintenanceRequest(id: string, data: Partial<MaintenanceRequest> | string) {
     if (typeof data === 'string') {
-      await updateDoc(doc(this.firestore, 'maintenance', id), { status: data });
+      // await updateDoc(doc(this.firestore, 'maintenance', id), { status: data });
     } else {
-      await updateDoc(doc(this.firestore, 'maintenance', id), data);
+      // await updateDoc(doc(this.firestore, 'maintenance', id), data);
     }
   }
 
@@ -1115,7 +1115,7 @@ export class DataService {
     const newStaff: Staff = { ...staff, id, hotelId } as Staff;
 
     // Double Write
-    await setDoc(doc(this.firestore, 'staff', id), newStaff);
+    // await setDoc(doc(this.firestore, 'staff', id), newStaff);
     const [first, ...lastArr] = staff.name.split(' ');
     await this.createStaffMut.mutateAsync({
       hotelId,
@@ -1141,7 +1141,7 @@ export class DataService {
       hotelId,
       uploadedAt: new Date().toISOString()
     };
-    await setDoc(doc(this.firestore, 'storedDocuments', id), newDoc);
+    // await setDoc(doc(this.firestore, 'storedDocuments', id), newDoc);
     // TODO: Add StoredDocument to DC if needed.
 
     this.log('Document', 'Upload', `Document ${newDoc.title} uploaded.`);
@@ -1149,12 +1149,12 @@ export class DataService {
   }
 
   async deleteDocument(id: string) {
-    await deleteDoc(doc(this.firestore, 'storedDocuments', id));
+    // await deleteDoc(doc(this.firestore, 'storedDocuments', id));
     this.log('Document', 'Delete', `Document deleted.`);
   }
 
   async updateDocument(id: string, data: Partial<StoredDocument>) {
-    await updateDoc(doc(this.firestore, 'storedDocuments', id), data);
+    // await updateDoc(doc(this.firestore, 'storedDocuments', id), data);
     this.log('Document', 'Update', `Document updated.`);
   }
 

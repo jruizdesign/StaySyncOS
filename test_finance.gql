@@ -1,0 +1,7 @@
+query ListFinancialDocuments($hotelId: UUID!) @auth(level: PUBLIC) {
+  financialDocuments(where: {hotelId: {eq: $hotelId}}) {
+    id
+    docType
+    number
+  }
+}

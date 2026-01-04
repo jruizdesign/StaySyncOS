@@ -27,6 +27,7 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*ListTimeLogs*](#listtimelogs)
   - [*ListFinancialDocuments*](#listfinancialdocuments)
   - [*ListHotelsByUser*](#listhotelsbyuser)
+  - [*ListUsersDC*](#listusersdc)
 - [**Mutations**](#mutations)
   - [*CreateRoom*](#createroom)
   - [*UpdateRoomStatus*](#updateroomstatus)
@@ -915,7 +916,7 @@ To access the data returned by a Query, use the `CreateDataConnectQueryResult.da
 export interface ListFinancialDocumentsData {
   financialDocuments: ({
     id: UUIDString;
-    type: string;
+    docType: string;
     number: string;
     date: TimestampString;
     totalAmount: number;
@@ -1069,6 +1070,75 @@ export class MyComponent {
     };
   };
   query = injectListHotelsByUser(this.listHotelsByUserVars, this.options);
+}
+```
+
+## ListUsersDC
+You can execute the `ListUsersDC` Query using the following Query injector, which is defined in [dataconnect-generated/angular/index.d.ts](./index.d.ts):
+
+```javascript
+injectListUsersDc(options?: ListUsersDcOptions, injector?: Injector): CreateDataConnectQueryResult<ListUsersDcData, undefined>;
+```
+
+### Variables
+The `ListUsersDC` Query has no variables.
+### Return Type
+Recall that calling the `ListUsersDC` Query injector returns a `CreateDataConnectQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `CreateDataConnectQueryResult.status()` function. You can also check for pending / success / error status using the `CreateDataConnectQueryResult.isPending()`, `CreateDataConnectQueryResult.isSuccess()`, and `CreateDataConnectQueryResult.isError()` functions.
+
+To access the data returned by a Query, use the `CreateDataConnectQueryResult.data()` function. The data for the `ListUsersDC` Query is of type `ListUsersDcData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListUsersDcData {
+  users: ({
+    id: string;
+    email: string;
+    role: string;
+  } & User_Key)[];
+}
+```
+
+To learn more about the `CreateDataConnectQueryResult` object, see the [TanStack Query Firebase documentation](https://docs.page/invertase/tanstack-query-firebase/angular/data-connect/functions/injectDataConnectQuery) and the [TanStack Angular Query documentation](https://tanstack.com/query/v5/docs/framework/angular/reference/functions/injectquery).
+
+### Using `ListUsersDC`'s Query injector
+
+```javascript
+... // other imports
+import { connectorConfig } from '@dataconnect/generated';
+import { injectListUsersDc, ListUsersDcOptions } from '@dataconnect/generated/angular'
+import { DataConnect } from '@angular/fire/data-connect';
+import { initializeApp } from '@angular/fire/app';
+
+@Component({
+  ... // other component fields
+  template: `
+    <!-- You can render your component dynamically based on the status of the Query. -->
+    @if (query.isPending()) {
+      Loading...
+    }
+    @if (query.error()) {
+      An error has occurred: {{ query.error() }}
+    }
+    <!-- If the Query is successful, you can access the data returned using
+      the CreateDataConnectQueryResult.data() function. -->
+    @if (query.data(); as data) {
+      <!-- use your data to display something -->
+            <div>Query successful!</div>
+    }
+  `,
+})
+export class MyComponent {
+  // Since the execution of the query is eager, you don't have to call `execute` to "execute" the Query.
+  // Call the Query injector function to get a `CreateDataConnectQueryResult` object which holds the state of your Query.
+  query = injectListUsersDc();
+
+  // You can also pass in an options function (not object) of type `ListUsersDcOptions` to the Query injector function.
+  options: ListUsersDcOptions = () => {
+    return {
+      staleTime: 5 * 1000
+    };
+  };
+  query = injectListUsersDc(this.options);
 }
 ```
 
@@ -2579,7 +2649,7 @@ The `CreateFinancialDocumentDC` Mutation requires an argument of type `CreateFin
 ```javascript
 export interface CreateFinancialDocumentDcVariables {
   hotelId: UUIDString;
-  type: string;
+  docType: string;
   number: string;
   date: TimestampString;
   guestId?: UUIDString | null;
@@ -2659,7 +2729,7 @@ export class MyComponent {
     // The `CreateFinancialDocumentDc` Mutation requires an argument of type `CreateFinancialDocumentDcVariables`:
     const createFinancialDocumentDcVars: CreateFinancialDocumentDcVariables = {
       hotelId: ..., 
-      type: ..., 
+      docType: ..., 
       number: ..., 
       date: ..., 
       guestId: ..., // optional
@@ -2671,7 +2741,7 @@ export class MyComponent {
     };
     this.mutation.mutate(createFinancialDocumentDcVars);
     // Variables can be defined inline as well.
-    this.mutation.mutate({ hotelId: ..., type: ..., number: ..., date: ..., guestId: ..., guestName: ..., totalAmount: ..., notes: ..., items: ..., bookingId: ..., });
+    this.mutation.mutate({ hotelId: ..., docType: ..., number: ..., date: ..., guestId: ..., guestName: ..., totalAmount: ..., notes: ..., items: ..., bookingId: ..., });
 
     // You can call `CreateDataConnectMutationResult.mutateAsync()` to execute the Mutation and return a promise with the data returned from the Mutation.
     this.mutation.mutateAsync(createFinancialDocumentDcVars);

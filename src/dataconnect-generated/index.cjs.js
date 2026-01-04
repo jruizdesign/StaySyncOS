@@ -342,3 +342,15 @@ exports.listHotelsByUserRef = listHotelsByUserRef;
 exports.listHotelsByUser = function listHotelsByUser(dcOrVars, vars) {
   return executeQuery(listHotelsByUserRef(dcOrVars, vars));
 };
+
+const listUsersDcRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListUsersDC');
+}
+listUsersDcRef.operationName = 'ListUsersDC';
+exports.listUsersDcRef = listUsersDcRef;
+
+exports.listUsersDc = function listUsersDc(dc) {
+  return executeQuery(listUsersDcRef(dc));
+};

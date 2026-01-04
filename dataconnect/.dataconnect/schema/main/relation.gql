@@ -293,6 +293,15 @@ extend type FinancialDocument {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "FinancialDocument.date", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `FinancialDocument` table where the `docType` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  docType_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "FinancialDocument.docType", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `FinancialDocument` table where the `guestId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   guestId_count(
@@ -373,15 +382,6 @@ extend type FinancialDocument {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "FinancialDocument.totalAmount", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `FinancialDocument` table where the `type` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  type_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "FinancialDocument.type", purpose: QUERY_COUNT)
   """
   ✨ Sum the `totalAmount` field in the `FinancialDocument` table.
   """
@@ -1629,6 +1629,15 @@ extend type Shift {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Shift.notes", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `Shift` table where the `shiftType` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  shiftType_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Shift.shiftType", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `Shift` table where the `staffId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   staffId_count(
@@ -1646,15 +1655,6 @@ extend type Shift {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Shift.startTime", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `Shift` table where the `type` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  type_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Shift.type", purpose: QUERY_COUNT)
   """
   ✨ Minimum of the `date` field in the `Shift` table.
   """

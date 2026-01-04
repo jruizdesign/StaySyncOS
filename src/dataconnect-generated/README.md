@@ -21,6 +21,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListTimeLogs*](#listtimelogs)
   - [*ListFinancialDocuments*](#listfinancialdocuments)
   - [*ListHotelsByUser*](#listhotelsbyuser)
+  - [*ListUsersDC*](#listusersdc)
 - [**Mutations**](#mutations)
   - [*CreateRoom*](#createroom)
   - [*UpdateRoomStatus*](#updateroomstatus)
@@ -1158,7 +1159,7 @@ The `data` property is an object of type `ListFinancialDocumentsData`, which is 
 export interface ListFinancialDocumentsData {
   financialDocuments: ({
     id: UUIDString;
-    type: string;
+    docType: string;
     number: string;
     date: TimestampString;
     totalAmount: number;
@@ -1354,6 +1355,101 @@ console.log(data.user);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.user);
+});
+```
+
+## ListUsersDC
+You can execute the `ListUsersDC` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listUsersDc(): QueryPromise<ListUsersDcData, undefined>;
+
+interface ListUsersDcRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListUsersDcData, undefined>;
+}
+export const listUsersDcRef: ListUsersDcRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listUsersDc(dc: DataConnect): QueryPromise<ListUsersDcData, undefined>;
+
+interface ListUsersDcRef {
+  ...
+  (dc: DataConnect): QueryRef<ListUsersDcData, undefined>;
+}
+export const listUsersDcRef: ListUsersDcRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listUsersDcRef:
+```typescript
+const name = listUsersDcRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListUsersDC` query has no variables.
+### Return Type
+Recall that executing the `ListUsersDC` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListUsersDcData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListUsersDcData {
+  users: ({
+    id: string;
+    email: string;
+    role: string;
+  } & User_Key)[];
+}
+```
+### Using `ListUsersDC`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listUsersDc } from '@dataconnect/generated';
+
+
+// Call the `listUsersDc()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listUsersDc();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listUsersDc(dataConnect);
+
+console.log(data.users);
+
+// Or, you can use the `Promise` API.
+listUsersDc().then((response) => {
+  const data = response.data;
+  console.log(data.users);
+});
+```
+
+### Using `ListUsersDC`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listUsersDcRef } from '@dataconnect/generated';
+
+
+// Call the `listUsersDcRef()` function to get a reference to the query.
+const ref = listUsersDcRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listUsersDcRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.users);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.users);
 });
 ```
 
@@ -3101,7 +3197,7 @@ The `CreateFinancialDocumentDC` mutation requires an argument of type `CreateFin
 ```typescript
 export interface CreateFinancialDocumentDcVariables {
   hotelId: UUIDString;
-  type: string;
+  docType: string;
   number: string;
   date: TimestampString;
   guestId?: UUIDString | null;
@@ -3130,7 +3226,7 @@ import { connectorConfig, createFinancialDocumentDc, CreateFinancialDocumentDcVa
 // The `CreateFinancialDocumentDC` mutation requires an argument of type `CreateFinancialDocumentDcVariables`:
 const createFinancialDocumentDcVars: CreateFinancialDocumentDcVariables = {
   hotelId: ..., 
-  type: ..., 
+  docType: ..., 
   number: ..., 
   date: ..., 
   guestId: ..., // optional
@@ -3145,7 +3241,7 @@ const createFinancialDocumentDcVars: CreateFinancialDocumentDcVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createFinancialDocumentDc(createFinancialDocumentDcVars);
 // Variables can be defined inline as well.
-const { data } = await createFinancialDocumentDc({ hotelId: ..., type: ..., number: ..., date: ..., guestId: ..., guestName: ..., totalAmount: ..., notes: ..., items: ..., bookingId: ..., });
+const { data } = await createFinancialDocumentDc({ hotelId: ..., docType: ..., number: ..., date: ..., guestId: ..., guestName: ..., totalAmount: ..., notes: ..., items: ..., bookingId: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -3169,7 +3265,7 @@ import { connectorConfig, createFinancialDocumentDcRef, CreateFinancialDocumentD
 // The `CreateFinancialDocumentDC` mutation requires an argument of type `CreateFinancialDocumentDcVariables`:
 const createFinancialDocumentDcVars: CreateFinancialDocumentDcVariables = {
   hotelId: ..., 
-  type: ..., 
+  docType: ..., 
   number: ..., 
   date: ..., 
   guestId: ..., // optional
@@ -3183,7 +3279,7 @@ const createFinancialDocumentDcVars: CreateFinancialDocumentDcVariables = {
 // Call the `createFinancialDocumentDcRef()` function to get a reference to the mutation.
 const ref = createFinancialDocumentDcRef(createFinancialDocumentDcVars);
 // Variables can be defined inline as well.
-const ref = createFinancialDocumentDcRef({ hotelId: ..., type: ..., number: ..., date: ..., guestId: ..., guestName: ..., totalAmount: ..., notes: ..., items: ..., bookingId: ..., });
+const ref = createFinancialDocumentDcRef({ hotelId: ..., docType: ..., number: ..., date: ..., guestId: ..., guestName: ..., totalAmount: ..., notes: ..., items: ..., bookingId: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

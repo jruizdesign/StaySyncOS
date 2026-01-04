@@ -1,0 +1,9 @@
+query Introspect {
+  __schema {
+    queryType {
+      fields {
+        name
+      }
+    }
+  }
+}

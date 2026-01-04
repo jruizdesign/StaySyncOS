@@ -768,6 +768,14 @@ input FinancialDocument_Data {
   """
   date_update: [Timestamp_Update!]
   """
+  ✨ Generated from Field `FinancialDocument`.`docType` of type `String!`
+  """
+  docType: String
+  """
+  ✨ `_expr` server value variant of `docType` (✨ Generated from Field `FinancialDocument`.`docType` of type `String!`)
+  """
+  docType_expr: String_Expr
+  """
   ✨ Generated from Field `FinancialDocument`.`guestName` of type `String!`
   """
   guestName: String
@@ -819,14 +827,6 @@ input FinancialDocument_Data {
   ✨ `_update` server value variant of `totalAmount` (✨ Generated from Field `FinancialDocument`.`totalAmount` of type `Float!`)
   """
   totalAmount_update: [Float_Update!]
-  """
-  ✨ Generated from Field `FinancialDocument`.`type` of type `String!`
-  """
-  type: String
-  """
-  ✨ `_expr` server value variant of `type` (✨ Generated from Field `FinancialDocument`.`type` of type `String!`)
-  """
-  type_expr: String_Expr
 }
 """
 ✨ Generated filter input type for table 'FinancialDocument'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -877,6 +877,10 @@ input FinancialDocument_Filter {
   """
   date: Timestamp_Filter
   """
+  ✨ Generated from Field `FinancialDocument`.`docType` of type `String!`
+  """
+  docType: String_Filter
+  """
   ✨ Generated from Field `FinancialDocument`.`guestName` of type `String!`
   """
   guestName: String_Filter
@@ -900,10 +904,6 @@ input FinancialDocument_Filter {
   ✨ Generated from Field `FinancialDocument`.`totalAmount` of type `Float!`
   """
   totalAmount: Float_Filter
-  """
-  ✨ Generated from Field `FinancialDocument`.`type` of type `String!`
-  """
-  type: String_Filter
 }
 """
 ✨ Generated first-row input type for table 'FinancialDocument'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -951,6 +951,10 @@ input FinancialDocument_Having {
   """
   date_count: Int_Filter
   """
+  ✨ Generated from Field `FinancialDocument`.`docType_count` of type `Int!`
+  """
+  docType_count: Int_Filter
+  """
   ✨ Generated from Field `FinancialDocument`.`guestId_count` of type `Int!`
   """
   guestId_count: Int_Filter
@@ -986,10 +990,6 @@ input FinancialDocument_Having {
   ✨ Generated from Field `FinancialDocument`.`totalAmount_count` of type `Int!`
   """
   totalAmount_count: Int_Filter
-  """
-  ✨ Generated from Field `FinancialDocument`.`type_count` of type `Int!`
-  """
-  type_count: Int_Filter
   """
   ✨ Generated from Field `FinancialDocument`.`totalAmount_sum` of type `Float`
   """
@@ -1086,6 +1086,10 @@ input FinancialDocument_Order {
   """
   date: OrderDirection
   """
+  ✨ Generated from Field `FinancialDocument`.`docType` of type `String!`
+  """
+  docType: OrderDirection
+  """
   ✨ Generated from Field `FinancialDocument`.`guestName` of type `String!`
   """
   guestName: OrderDirection
@@ -1110,10 +1114,6 @@ input FinancialDocument_Order {
   """
   totalAmount: OrderDirection
   """
-  ✨ Generated from Field `FinancialDocument`.`type` of type `String!`
-  """
-  type: OrderDirection
-  """
   ✨ Generated from Field `FinancialDocument`.`_count` of type `Int!`
   """
   _count: OrderDirection
@@ -1125,6 +1125,10 @@ input FinancialDocument_Order {
   ✨ Generated from Field `FinancialDocument`.`date_count` of type `Int!`
   """
   date_count: OrderDirection
+  """
+  ✨ Generated from Field `FinancialDocument`.`docType_count` of type `Int!`
+  """
+  docType_count: OrderDirection
   """
   ✨ Generated from Field `FinancialDocument`.`guestId_count` of type `Int!`
   """
@@ -1161,10 +1165,6 @@ input FinancialDocument_Order {
   ✨ Generated from Field `FinancialDocument`.`totalAmount_count` of type `Int!`
   """
   totalAmount_count: OrderDirection
-  """
-  ✨ Generated from Field `FinancialDocument`.`type_count` of type `Int!`
-  """
-  type_count: OrderDirection
   """
   ✨ Generated from Field `FinancialDocument`.`totalAmount_sum` of type `Float`
   """
@@ -3098,6 +3098,14 @@ input Shift_Data {
   """
   notes_expr: String_Expr
   """
+  ✨ Generated from Field `Shift`.`shiftType` of type `String!`
+  """
+  shiftType: String
+  """
+  ✨ `_expr` server value variant of `shiftType` (✨ Generated from Field `Shift`.`shiftType` of type `String!`)
+  """
+  shiftType_expr: String_Expr
+  """
   ✨ Generated from Field `Shift`.`startTime` of type `String!`
   """
   startTime: String
@@ -3105,14 +3113,6 @@ input Shift_Data {
   ✨ `_expr` server value variant of `startTime` (✨ Generated from Field `Shift`.`startTime` of type `String!`)
   """
   startTime_expr: String_Expr
-  """
-  ✨ Generated from Field `Shift`.`type` of type `String!`
-  """
-  type: String
-  """
-  ✨ `_expr` server value variant of `type` (✨ Generated from Field `Shift`.`type` of type `String!`)
-  """
-  type_expr: String_Expr
 }
 """
 ✨ Generated filter input type for table 'Shift'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -3163,13 +3163,13 @@ input Shift_Filter {
   """
   notes: String_Filter
   """
+  ✨ Generated from Field `Shift`.`shiftType` of type `String!`
+  """
+  shiftType: String_Filter
+  """
   ✨ Generated from Field `Shift`.`startTime` of type `String!`
   """
   startTime: String_Filter
-  """
-  ✨ Generated from Field `Shift`.`type` of type `String!`
-  """
-  type: String_Filter
 }
 """
 ✨ Generated first-row input type for table 'Shift'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -3229,6 +3229,10 @@ input Shift_Having {
   """
   notes_count: Int_Filter
   """
+  ✨ Generated from Field `Shift`.`shiftType_count` of type `Int!`
+  """
+  shiftType_count: Int_Filter
+  """
   ✨ Generated from Field `Shift`.`staffId_count` of type `Int!`
   """
   staffId_count: Int_Filter
@@ -3236,10 +3240,6 @@ input Shift_Having {
   ✨ Generated from Field `Shift`.`startTime_count` of type `Int!`
   """
   startTime_count: Int_Filter
-  """
-  ✨ Generated from Field `Shift`.`type_count` of type `Int!`
-  """
-  type_count: Int_Filter
   """
   ✨ Generated from Field `Shift`.`date_min` of type `Date`
   """
@@ -3312,13 +3312,13 @@ input Shift_Order {
   """
   notes: OrderDirection
   """
+  ✨ Generated from Field `Shift`.`shiftType` of type `String!`
+  """
+  shiftType: OrderDirection
+  """
   ✨ Generated from Field `Shift`.`startTime` of type `String!`
   """
   startTime: OrderDirection
-  """
-  ✨ Generated from Field `Shift`.`type` of type `String!`
-  """
-  type: OrderDirection
   """
   ✨ Generated from Field `Shift`.`_count` of type `Int!`
   """
@@ -3344,6 +3344,10 @@ input Shift_Order {
   """
   notes_count: OrderDirection
   """
+  ✨ Generated from Field `Shift`.`shiftType_count` of type `Int!`
+  """
+  shiftType_count: OrderDirection
+  """
   ✨ Generated from Field `Shift`.`staffId_count` of type `Int!`
   """
   staffId_count: OrderDirection
@@ -3351,10 +3355,6 @@ input Shift_Order {
   ✨ Generated from Field `Shift`.`startTime_count` of type `Int!`
   """
   startTime_count: OrderDirection
-  """
-  ✨ Generated from Field `Shift`.`type_count` of type `Int!`
-  """
-  type_count: OrderDirection
   """
   ✨ Generated from Field `Shift`.`date_min` of type `Date`
   """

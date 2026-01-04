@@ -174,7 +174,7 @@ mutation UpdateTimeLogDC($id: UUID!, $endTime: Timestamp, $breaks: Any, $totalHo
 query ListFinancialDocuments($hotelId: UUID!) @auth(level: PUBLIC) {
   financialDocuments(where: {hotelId: {eq: $hotelId}}) {
     id
-    type
+    docType
     number
     date
     totalAmount
@@ -186,8 +186,8 @@ query ListFinancialDocuments($hotelId: UUID!) @auth(level: PUBLIC) {
   }
 }
 
-mutation CreateFinancialDocumentDC($hotelId: UUID!, $type: String!, $number: String!, $date: Timestamp!, $guestId: UUID, $guestName: String!, $totalAmount: Float!, $notes: String, $items: Any, $bookingId: UUID) @auth(level: PUBLIC) {
-  financialDocument_insert(data: {hotelId: $hotelId, type: $type, number: $number, date: $date, guestId: $guestId, guestName: $guestName, totalAmount: $totalAmount, notes: $notes, items: $items, bookingId: $bookingId})
+mutation CreateFinancialDocumentDC($hotelId: UUID!, $docType: String!, $number: String!, $date: Timestamp!, $guestId: UUID, $guestName: String!, $totalAmount: Float!, $notes: String, $items: Any, $bookingId: UUID) @auth(level: PUBLIC) {
+  financialDocument_insert(data: {hotelId: $hotelId, docType: $docType, number: $number, date: $date, guestId: $guestId, guestName: $guestName, totalAmount: $totalAmount, notes: $notes, items: $items, bookingId: $bookingId})
 }
 
 # User Operations
@@ -213,3 +213,11 @@ query ListHotelsByUser($userId: String!) @auth(level: PUBLIC) {
   }
 }
 
+
+query ListUsersDC @auth(level: PUBLIC) {
+  users {
+    id
+    email
+    role
+  }
+}

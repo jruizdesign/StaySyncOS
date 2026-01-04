@@ -314,3 +314,14 @@ export function listHotelsByUser(dcOrVars, vars) {
   return executeQuery(listHotelsByUserRef(dcOrVars, vars));
 }
 
+export const listUsersDcRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListUsersDC');
+}
+listUsersDcRef.operationName = 'ListUsersDC';
+
+export function listUsersDc(dc) {
+  return executeQuery(listUsersDcRef(dc));
+}
+

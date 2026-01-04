@@ -1,0 +1,7 @@
+query CheckUsers @auth(level: PUBLIC) {
+  users {
+    id
+    email
+    role
+  }
+}

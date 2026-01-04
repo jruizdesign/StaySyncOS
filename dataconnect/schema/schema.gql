@@ -70,7 +70,7 @@ type Log @table {
 
 type FinancialDocument @table {
   hotel: Hotel!
-  type: String! # Invoice, Receipt
+  docType: String! # Invoice, Receipt
   number: String!
   date: Timestamp!
   booking: Booking
@@ -99,7 +99,7 @@ type Shift @table {
   date: Date!
   startTime: String! # HH:mm
   endTime: String! # HH:mm
-  type: String! # Regular, Overtime, TimeOff
+  shiftType: String! # Regular, Overtime, TimeOff
   notes: String
 }
 
@@ -140,3 +140,5 @@ type UserHotel @table(key: ["user", "hotel"]) {
   hotel: Hotel!
 }
 
+ 
+ 

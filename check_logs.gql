@@ -1,0 +1,6 @@
+query CheckLogs @auth(level: PUBLIC) {
+  logs {
+    id
+    action
+  }
+}

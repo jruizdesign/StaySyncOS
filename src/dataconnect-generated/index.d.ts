@@ -37,7 +37,7 @@ export interface CreateFinancialDocumentDcData {
 
 export interface CreateFinancialDocumentDcVariables {
   hotelId: UUIDString;
-  type: string;
+  docType: string;
   number: string;
   date: TimestampString;
   guestId?: UUIDString | null;
@@ -236,7 +236,7 @@ export interface ListBookingsVariables {
 export interface ListFinancialDocumentsData {
   financialDocuments: ({
     id: UUIDString;
-    type: string;
+    docType: string;
     number: string;
     date: TimestampString;
     totalAmount: number;
@@ -341,6 +341,14 @@ export interface ListTimeLogsData {
 
 export interface ListTimeLogsVariables {
   hotelId: UUIDString;
+}
+
+export interface ListUsersDcData {
+  users: ({
+    id: string;
+    email: string;
+    role: string;
+  } & User_Key)[];
 }
 
 export interface Log_Key {
@@ -804,4 +812,16 @@ export const listHotelsByUserRef: ListHotelsByUserRef;
 
 export function listHotelsByUser(vars: ListHotelsByUserVariables): QueryPromise<ListHotelsByUserData, ListHotelsByUserVariables>;
 export function listHotelsByUser(dc: DataConnect, vars: ListHotelsByUserVariables): QueryPromise<ListHotelsByUserData, ListHotelsByUserVariables>;
+
+interface ListUsersDcRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListUsersDcData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListUsersDcData, undefined>;
+  operationName: string;
+}
+export const listUsersDcRef: ListUsersDcRef;
+
+export function listUsersDc(): QueryPromise<ListUsersDcData, undefined>;
+export function listUsersDc(dc: DataConnect): QueryPromise<ListUsersDcData, undefined>;
 

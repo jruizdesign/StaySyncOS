@@ -1,0 +1,6 @@
+query TestConnection @auth(level: PUBLIC) {
+  hotels(limit: 1) {
+    id
+    name
+  }
+}
