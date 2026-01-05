@@ -55,7 +55,7 @@ query GetHotelById($id: UUID!) @auth(level: PUBLIC) {
   }
 }
 
-query ListAllHotels @auth(level: PUBLIC) {
+query ListAllHotels @auth(level: USER) {
   hotels {
     id
     name
@@ -203,7 +203,7 @@ mutation LinkUserToHotel($userId: String!, $hotelId: UUID!) @auth(level: PUBLIC)
   userHotel_insert(data: {userId: $userId, hotelId: $hotelId})
 }
 
-query ListHotelsByUser($userId: String!) @auth(level: PUBLIC) {
+query ListHotelsByUser($userId: String!) @auth(expr: "auth.uid == userId") {
   user(id: $userId) {
     userHotels_on_user {
       hotel {

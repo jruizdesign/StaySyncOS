@@ -26,7 +26,7 @@ import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
           </div>
           <div class="flex items-center justify-center gap-3">
             <h1 class="text-3xl font-bold text-white tracking-tight">Select Property</h1>
-            <button (click)="loadAllHotels()" [disabled]="loading()" class="p-2 text-slate-500 hover:text-white transition-colors" title="Reload properties">
+            <button (click)="refreshList()" [disabled]="loading()" class="p-2 text-slate-500 hover:text-white transition-colors" title="Reload properties">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5" [class.animate-spin]="loading()">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                 </svg>
@@ -139,20 +139,47 @@ export class PropertySelectorComponent {
             const isAdmin = profile?.role === 'SuperAdmin' || user.email === 'jruizdesign@gmail.com';
 
             if (isAdmin) {
+                console.log('[PropertySelector] Loading global property list for admin...');
                 await this.loadAllHotels();
                 return;
             }
 
-            // 2. Regular User logic
+            // 2. Regular User logic - strictly restricted to assigned hotels
+            console.log('[PropertySelector] Loading restricted properties for user...');
             if (profile['hotelIds'] && Array.isArray(profile['hotelIds']) && profile['hotelIds'].length > 0) {
                 await this.loadHotels(profile['hotelIds']);
             } else if (profile['hotelId']) {
-                this.selectHotel(profile['hotelId']);
+                // Single hotel user - redirect if only one, but if they are here, load it
+                await this.loadHotels([profile['hotelId']]);
+                if (this.hotels().length === 1 && !this.loading()) {
+                    this.selectHotel(this.hotels()[0].id);
+                }
             } else {
-                this.loading.set(false);
-                this.router.navigate(['/setup']);
+                // Check Data Connect directly for links
+                const res = await this.data.hotelsByUserQuery.refetch();
+                const linked = res.data.user?.userHotels_on_user?.map(uh => uh.hotel) || [];
+                if (linked.length) {
+                    this.hotels.set(linked);
+                    if (linked.length === 1) this.selectHotel(linked[0].id);
+                } else {
+                    this.loading.set(false);
+                    this.router.navigate(['/setup']);
+                }
             }
         });
+    }
+
+    async refreshList() {
+        const profile = this.data.userProfile() as any;
+        const user = this.auth.currentUser();
+        const isAdmin = profile?.role === 'SuperAdmin' || user?.email === 'jruizdesign@gmail.com';
+
+        if (isAdmin) {
+            await this.loadAllHotels();
+        } else {
+            // Non-admins only refresh their assigned hotels
+            await this.loadHotels(profile?.hotelIds || [profile?.hotelId].filter(Boolean));
+        }
     }
 
     async loadAllHotels() {
