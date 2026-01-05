@@ -289,8 +289,8 @@ query ListInventory($hotelId: UUID!) @auth(level: PUBLIC) {
   }
 }
 
-mutation UpsertInventoryItemDC($hotelId: UUID!, $name: String!, $category: String!, $quantity: Int!, $minQuantity: Int!, $unit: String!) @auth(level: PUBLIC) {
-  inventoryItem_upsert(data: {hotelId: $hotelId, name: $name, category: $category, quantity: $quantity, minQuantity: $minQuantity, unit: $unit})
+mutation UpsertInventoryItemDC($id: UUID!, $hotelId: UUID!, $name: String!, $category: String!, $quantity: Int!, $minQuantity: Int!, $unit: String!) @auth(level: PUBLIC) {
+  inventoryItem_upsert(data: {id: $id, hotelId: $hotelId, name: $name, category: $category, quantity: $quantity, minQuantity: $minQuantity, unit: $unit})
 }
 
 # Amenity Operations
@@ -306,5 +306,25 @@ query ListAmenities($hotelId: UUID!) @auth(level: PUBLIC) {
 
 mutation CreateAmenityDC($hotelId: UUID!, $name: String!, $description: String, $location: String, $status: String!) @auth(level: PUBLIC) {
   amenity_insert(data: {hotelId: $hotelId, name: $name, description: $description, location: $location, status: $status})
+}
+
+# StoredDocument Operations
+query ListStoredDocuments($hotelId: UUID!) @auth(level: PUBLIC) {
+  storedDocuments(where: {hotelId: {eq: $hotelId}}) {
+    id
+    title
+    category
+    uploadedBy
+    uploadedAt
+    fileType
+    data
+    tags
+    summary
+    guest { id, name }
+  }
+}
+
+mutation CreateStoredDocumentDC($hotelId: UUID!, $title: String!, $category: String!, $uploadedBy: String!, $fileType: String!, $data: String!, $tags: Any, $guestId: UUID, $summary: String) @auth(level: PUBLIC) {
+  storedDocument_insert(data: {hotelId: $hotelId, title: $title, category: $category, uploadedBy: $uploadedBy, fileType: $fileType, data: $data, tags: $tags, guestId: $guestId, summary: $summary})
 }
 

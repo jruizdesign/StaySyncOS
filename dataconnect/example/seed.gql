@@ -1,0 +1,21 @@
+
+mutation SeedRooms($hotelId: UUID!) {
+  r1: room_insert(data: {hotelId: $hotelId, roomNumber: "101", roomType: "Deluxe King", status: "Available", dailyRate: 250, capacity: 2})
+  r2: room_insert(data: {hotelId: $hotelId, roomNumber: "102", roomType: "Double Queen", status: "Available", dailyRate: 200, capacity: 4})
+  r3: room_insert(data: {hotelId: $hotelId, roomNumber: "201", roomType: "Executive Suite", status: "Available", dailyRate: 450, capacity: 2})
+}
+
+mutation SeedStaff($hotelId: UUID!) {
+  s1: staff_insert(data: {hotelId: $hotelId, firstName: "John", lastName: "Doe", role: "Manager", status: "Active", currentStatus: "Clocked Out", username: "johndoe", passwordHash: "hash123", pin: "1234"})
+  s2: staff_insert(data: {hotelId: $hotelId, firstName: "Jane", lastName: "Smith", role: "Reception", status: "Active", currentStatus: "Clocked Out", username: "janesmith", passwordHash: "hash456", pin: "5678"})
+}
+
+mutation SeedInventory($hotelId: UUID!) {
+  i1: inventoryItem_insert(data: {hotelId: $hotelId, name: "Luxury Soap", category: "Toiletries", quantity: 500, minQuantity: 100, unit: "pieces"})
+  i2: inventoryItem_insert(data: {hotelId: $hotelId, name: "Cotton Towels", category: "Linens", quantity: 200, minQuantity: 50, unit: "pieces"})
+}
+
+mutation SeedAmenities($hotelId: UUID!) {
+  a1: amenity_insert(data: {hotelId: $hotelId, name: "Infinity Pool", location: "Rooftop", status: "Open", description: "Heated infinity pool with city view"})
+  a2: amenity_insert(data: {hotelId: $hotelId, name: "Fitness Center", location: "Floor 2", status: "Open", description: "24/7 gym with modern equipment"})
+}

@@ -325,3 +325,179 @@ export function listUsersDc(dc) {
   return executeQuery(listUsersDcRef(dc));
 }
 
+export const listMaintenanceRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListMaintenance', inputVars);
+}
+listMaintenanceRef.operationName = 'ListMaintenance';
+
+export function listMaintenance(dcOrVars, vars) {
+  return executeQuery(listMaintenanceRef(dcOrVars, vars));
+}
+
+export const createMaintenanceDcRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateMaintenanceDC', inputVars);
+}
+createMaintenanceDcRef.operationName = 'CreateMaintenanceDC';
+
+export function createMaintenanceDc(dcOrVars, vars) {
+  return executeMutation(createMaintenanceDcRef(dcOrVars, vars));
+}
+
+export const listShiftsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListShifts', inputVars);
+}
+listShiftsRef.operationName = 'ListShifts';
+
+export function listShifts(dcOrVars, vars) {
+  return executeQuery(listShiftsRef(dcOrVars, vars));
+}
+
+export const createShiftDcRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateShiftDC', inputVars);
+}
+createShiftDcRef.operationName = 'CreateShiftDC';
+
+export function createShiftDc(dcOrVars, vars) {
+  return executeMutation(createShiftDcRef(dcOrVars, vars));
+}
+
+export const listHousekeepingRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListHousekeeping', inputVars);
+}
+listHousekeepingRef.operationName = 'ListHousekeeping';
+
+export function listHousekeeping(dcOrVars, vars) {
+  return executeQuery(listHousekeepingRef(dcOrVars, vars));
+}
+
+export const createHousekeepingTaskDcRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateHousekeepingTaskDC', inputVars);
+}
+createHousekeepingTaskDcRef.operationName = 'CreateHousekeepingTaskDC';
+
+export function createHousekeepingTaskDc(dcOrVars, vars) {
+  return executeMutation(createHousekeepingTaskDcRef(dcOrVars, vars));
+}
+
+export const listInventoryRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListInventory', inputVars);
+}
+listInventoryRef.operationName = 'ListInventory';
+
+export function listInventory(dcOrVars, vars) {
+  return executeQuery(listInventoryRef(dcOrVars, vars));
+}
+
+export const upsertInventoryItemDcRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpsertInventoryItemDC', inputVars);
+}
+upsertInventoryItemDcRef.operationName = 'UpsertInventoryItemDC';
+
+export function upsertInventoryItemDc(dcOrVars, vars) {
+  return executeMutation(upsertInventoryItemDcRef(dcOrVars, vars));
+}
+
+export const listAmenitiesRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListAmenities', inputVars);
+}
+listAmenitiesRef.operationName = 'ListAmenities';
+
+export function listAmenities(dcOrVars, vars) {
+  return executeQuery(listAmenitiesRef(dcOrVars, vars));
+}
+
+export const createAmenityDcRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateAmenityDC', inputVars);
+}
+createAmenityDcRef.operationName = 'CreateAmenityDC';
+
+export function createAmenityDc(dcOrVars, vars) {
+  return executeMutation(createAmenityDcRef(dcOrVars, vars));
+}
+
+export const listStoredDocumentsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListStoredDocuments', inputVars);
+}
+listStoredDocumentsRef.operationName = 'ListStoredDocuments';
+
+export function listStoredDocuments(dcOrVars, vars) {
+  return executeQuery(listStoredDocumentsRef(dcOrVars, vars));
+}
+
+export const createStoredDocumentDcRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateStoredDocumentDC', inputVars);
+}
+createStoredDocumentDcRef.operationName = 'CreateStoredDocumentDC';
+
+export function createStoredDocumentDc(dcOrVars, vars) {
+  return executeMutation(createStoredDocumentDcRef(dcOrVars, vars));
+}
+
+export const seedRoomsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedRooms', inputVars);
+}
+seedRoomsRef.operationName = 'SeedRooms';
+
+export function seedRooms(dcOrVars, vars) {
+  return executeMutation(seedRoomsRef(dcOrVars, vars));
+}
+
+export const seedStaffRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedStaff', inputVars);
+}
+seedStaffRef.operationName = 'SeedStaff';
+
+export function seedStaff(dcOrVars, vars) {
+  return executeMutation(seedStaffRef(dcOrVars, vars));
+}
+
+export const seedInventoryRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedInventory', inputVars);
+}
+seedInventoryRef.operationName = 'SeedInventory';
+
+export function seedInventory(dcOrVars, vars) {
+  return executeMutation(seedInventoryRef(dcOrVars, vars));
+}
+
+export const seedAmenitiesRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SeedAmenities', inputVars);
+}
+seedAmenitiesRef.operationName = 'SeedAmenities';
+
+export function seedAmenities(dcOrVars, vars) {
+  return executeMutation(seedAmenitiesRef(dcOrVars, vars));
+}
+

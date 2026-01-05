@@ -1,4 +1,4 @@
-import { listAvailableRoomsRef, createRoomRef, updateRoomStatusRef, createHotelRef, updateHotelConfigRef, getFirstHotelRef, getHotelByIdRef, listAllHotelsRef, listGuestsRef, createGuestDcRef, updateGuestDcRef, deleteGuestDcRef, listBookingsRef, createBookingDcRef, updateBookingDcRef, listLogsRef, createLogDcRef, listStaffRef, createStaffDcRef, updateStaffDcRef, listTimeLogsRef, createTimeLogDcRef, updateTimeLogDcRef, listFinancialDocumentsRef, createFinancialDocumentDcRef, upsertUserRef, linkUserToHotelRef, listHotelsByUserRef, listUsersDcRef } from '../../';
+import { listAvailableRoomsRef, createRoomRef, updateRoomStatusRef, createHotelRef, updateHotelConfigRef, getFirstHotelRef, getHotelByIdRef, listAllHotelsRef, listGuestsRef, createGuestDcRef, updateGuestDcRef, deleteGuestDcRef, listBookingsRef, createBookingDcRef, updateBookingDcRef, listLogsRef, createLogDcRef, listStaffRef, createStaffDcRef, updateStaffDcRef, listTimeLogsRef, createTimeLogDcRef, updateTimeLogDcRef, listFinancialDocumentsRef, createFinancialDocumentDcRef, upsertUserRef, linkUserToHotelRef, listHotelsByUserRef, listUsersDcRef, listMaintenanceRef, createMaintenanceDcRef, listShiftsRef, createShiftDcRef, listHousekeepingRef, createHousekeepingTaskDcRef, listInventoryRef, upsertInventoryItemDcRef, listAmenitiesRef, createAmenityDcRef, listStoredDocumentsRef, createStoredDocumentDcRef, seedRoomsRef, seedStaffRef, seedInventoryRef, seedAmenitiesRef } from '../../';
 import { DataConnect, CallerSdkTypeEnum } from '@angular/fire/data-connect';
 import { injectDataConnectQuery, injectDataConnectMutation } from '@tanstack-query-firebase/angular/data-connect';
 import { inject, EnvironmentInjector } from '@angular/core';
@@ -221,5 +221,123 @@ export function injectListUsersDc(options, injector) {
       ...addOpn
     };
   }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectListMaintenance(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listMaintenanceRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectCreateMaintenanceDc(args, injector) {
+  return injectDataConnectMutation(createMaintenanceDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectListShifts(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listShiftsRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectCreateShiftDc(args, injector) {
+  return injectDataConnectMutation(createShiftDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectListHousekeeping(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listHousekeepingRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectCreateHousekeepingTaskDc(args, injector) {
+  return injectDataConnectMutation(createHousekeepingTaskDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectListInventory(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listInventoryRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectUpsertInventoryItemDc(args, injector) {
+  return injectDataConnectMutation(upsertInventoryItemDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectListAmenities(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listAmenitiesRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectCreateAmenityDc(args, injector) {
+  return injectDataConnectMutation(createAmenityDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectListStoredDocuments(args, options, injector) {
+  const finalInjector = injector || inject(EnvironmentInjector);
+  const dc = finalInjector.get(DataConnect);
+  const varsFactoryFn = (typeof args === 'function') ? args : () => args;
+  return injectDataConnectQuery(() => {
+    const addOpn = options && options();
+    return {
+      queryFn: () =>  listStoredDocumentsRef(dc, varsFactoryFn()),
+      ...addOpn
+    };
+  }, finalInjector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectCreateStoredDocumentDc(args, injector) {
+  return injectDataConnectMutation(createStoredDocumentDcRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectSeedRooms(args, injector) {
+  return injectDataConnectMutation(seedRoomsRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectSeedStaff(args, injector) {
+  return injectDataConnectMutation(seedStaffRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectSeedInventory(args, injector) {
+  return injectDataConnectMutation(seedInventoryRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectSeedAmenities(args, injector) {
+  return injectDataConnectMutation(seedAmenitiesRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
 }
 

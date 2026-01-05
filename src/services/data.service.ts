@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { AiService } from './ai.service';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel, injectListGuests, injectCreateGuestDc, injectUpdateGuestDc, injectDeleteGuestDc, injectListBookings, injectCreateBookingDc, injectUpdateBookingDc, injectListLogs, injectCreateLogDc, injectListStaff, injectCreateStaffDc, injectUpdateStaffDc, injectListTimeLogs, injectCreateTimeLogDc, injectUpdateTimeLogDc, injectListFinancialDocuments, injectCreateFinancialDocumentDc, injectUpdateHotelConfig } from '../dataconnect-generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel, injectListGuests, injectCreateGuestDc, injectUpdateGuestDc, injectDeleteGuestDc, injectListBookings, injectCreateBookingDc, injectUpdateBookingDc, injectListLogs, injectCreateLogDc, injectListStaff, injectCreateStaffDc, injectUpdateStaffDc, injectListTimeLogs, injectCreateTimeLogDc, injectUpdateTimeLogDc, injectListFinancialDocuments, injectCreateFinancialDocumentDc, injectUpdateHotelConfig, injectListMaintenance, injectCreateMaintenanceDc, injectListShifts, injectCreateShiftDc, injectListHousekeeping, injectCreateHousekeepingTaskDc, injectListInventory, injectUpsertInventoryItemDc, injectListAmenities, injectCreateAmenityDc, injectListStoredDocuments, injectCreateStoredDocumentDc } from '../dataconnect-generated/angular';
 import { ListAvailableRoomsData } from '../dataconnect-generated';
 
 // Interfaces
@@ -221,6 +221,36 @@ export class DataService {
     () => ({ enabled: !!this.currentHotelId() })
   );
 
+  maintenanceQuery = injectListMaintenance(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  shiftsQuery = injectListShifts(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  housekeepingQuery = injectListHousekeeping(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  inventoryQuery = injectListInventory(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  amenitiesQuery = injectListAmenities(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
+  storedDocumentsQuery = injectListStoredDocuments(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
   // Mutations
   createRoomMut = injectCreateRoom();
   updateRoomStatusMut = injectUpdateRoomStatus();
@@ -245,6 +275,12 @@ export class DataService {
   updateTimeLogMut = injectUpdateTimeLogDc();
 
   createFinancialDocMut = injectCreateFinancialDocumentDc();
+  createMaintenanceMut = injectCreateMaintenanceDc();
+  createShiftMut = injectCreateShiftDc();
+  createHousekeepingMut = injectCreateHousekeepingTaskDc();
+  upsertInventoryMut = injectUpsertInventoryItemDc();
+  createAmenityMut = injectCreateAmenityDc();
+  createStoredDocMut = injectCreateStoredDocumentDc();
 
   // Query to find any existing hotel (recovery mode)
   firstHotelQuery = injectGetFirstHotel();
@@ -389,29 +425,80 @@ export class DataService {
     } as TimeLog));
   });
 
-  shifts = toSignal(
-    toObservable(this.currentHotelId).pipe(
-      switchMap(hotelId => hotelId
-        ? collectionData(query(collection(this.firestore, 'shifts'), where('hotelId', '==', hotelId)), { idField: 'id' }) as Observable<Shift[]>
-        : of([]))
-    ), { initialValue: [] as Shift[] }
-  );
+  shifts = computed(() => {
+    const data = this.shiftsQuery.data();
+    return (data?.shifts ?? []).map(s => ({
+      id: s.id,
+      hotelId: this.currentHotelId()!,
+      staffId: s.staff.id,
+      date: s.date,
+      startTime: s.startTime,
+      endTime: s.endTime,
+      type: s.shiftType as any,
+      notes: s.notes || ''
+    } as Shift));
+  });
 
-  maintenanceRequests = toSignal(
-    toObservable(this.currentHotelId).pipe(
-      switchMap(hotelId => hotelId
-        ? collectionData(query(collection(this.firestore, 'maintenance'), where('hotelId', '==', hotelId)), { idField: 'id' }) as Observable<MaintenanceRequest[]>
-        : of([]))
-    ), { initialValue: [] as MaintenanceRequest[] }
-  );
+  maintenanceRequests = computed(() => {
+    const data = this.maintenanceQuery.data();
+    return (data?.maintenanceRequests ?? []).map(m => ({
+      id: m.id,
+      hotelId: this.currentHotelId()!,
+      roomId: m.room.id,
+      roomNumber: m.room.roomNumber,
+      description: m.description,
+      priority: m.priority as any,
+      status: m.status as any,
+      reportedBy: m.reportedBy,
+      reportedAt: m.reportedAt,
+      completedAt: m.completedAt,
+      cost: m.cost || 0,
+      notes: m.notes || ''
+    } as MaintenanceRequest));
+  });
 
-  storedDocuments = toSignal(
-    toObservable(this.currentHotelId).pipe(
-      switchMap(hotelId => hotelId
-        ? collectionData(query(collection(this.firestore, 'storedDocuments'), where('hotelId', '==', hotelId)), { idField: 'id' }) as Observable<StoredDocument[]>
-        : of([]))
-    ), { initialValue: [] as StoredDocument[] }
-  );
+  storedDocuments = computed(() => {
+    const data = this.storedDocumentsQuery.data();
+    return (data?.storedDocuments ?? []).map(d => ({
+      id: d.id,
+      hotelId: this.currentHotelId()!,
+      title: d.title,
+      category: d.category as any,
+      uploadedBy: d.uploadedBy,
+      uploadedAt: d.uploadedAt,
+      fileType: d.fileType,
+      data: d.data,
+      tags: d.tags || [],
+      guestId: d.guest?.id,
+      summary: d.summary || ''
+    } as StoredDocument));
+  });
+
+  housekeepingTasks = computed(() => {
+    const data = this.housekeepingQuery.data();
+    return (data?.housekeepingTasks ?? []).map(t => ({
+      id: t.id,
+      hotelId: this.currentHotelId()!,
+      roomId: t.room.id,
+      roomNumber: t.room.roomNumber,
+      assignedTo: t.assignedTo ? `${t.assignedTo.firstName} ${t.assignedTo.lastName}` : 'Unassigned',
+      status: t.status,
+      priority: t.priority,
+      notes: t.notes || '',
+      scheduledFor: t.scheduledFor,
+      completedAt: t.completedAt
+    }));
+  });
+
+  inventory = computed(() => {
+    const data = this.inventoryQuery.data();
+    return data?.inventoryItems ?? [];
+  });
+
+  amenities = computed(() => {
+    const data = this.amenitiesQuery.data();
+    return data?.amenities ?? [];
+  });
 
   // Config - per hotel
   hotelConfig = computed(() => {
@@ -971,10 +1058,16 @@ export class DataService {
     const hotelId = this.currentHotelId();
     if (!hotelId) return;
 
-    const id = crypto.randomUUID();
-    const newShift: Shift = { ...shift, id, hotelId };
-    // await setDoc(doc(this.firestore, 'shifts', id), newShift);
-    // TODO: Add Shift mutation to DC if needed, but keeping Firestore-only for shifts for now to keep it simple unless requested.
+    await this.createShiftMut.mutateAsync({
+      hotelId,
+      staffId: shift.staffId,
+      date: shift.date,
+      startTime: shift.startTime,
+      endTime: shift.endTime,
+      shiftType: shift.type,
+      notes: shift.notes
+    });
+    this.shiftsQuery.refetch();
   }
 
   async deleteShift(id: string) {
@@ -1081,23 +1174,15 @@ export class DataService {
     const hotelId = this.currentHotelId();
     if (!hotelId) throw new Error("No hotel linked");
 
-    const room = this.rooms().find(r => r.id === req.roomId);
-    const newReq: MaintenanceRequest = {
-      id: crypto.randomUUID(),
+    await this.createMaintenanceMut.mutateAsync({
       hotelId,
       roomId: req.roomId,
-      roomNumber: room?.roomNumber || '?',
       description: req.description,
       priority: req.priority || 'Medium',
       status: 'Pending',
-      reportedBy: req.reportedBy || 'System',
-      reportedAt: new Date().toISOString(),
-      cost: req.cost || 0,
-      notes: req.notes || ''
-    };
-    // await setDoc(doc(this.firestore, 'maintenance', newReq.id), newReq);
-    // Optional: Add to DC if needed.
-    return newReq;
+      reportedBy: req.reportedBy || 'System'
+    });
+    this.maintenanceQuery.refetch();
   }
 
   async updateMaintenanceRequest(id: string, data: Partial<MaintenanceRequest> | string) {
@@ -1135,18 +1220,20 @@ export class DataService {
     const hotelId = this.currentHotelId();
     if (!hotelId) return;
 
-    const id = crypto.randomUUID();
-    const newDoc: StoredDocument = {
-      ...docData,
-      id,
+    await this.createStoredDocMut.mutateAsync({
       hotelId,
-      uploadedAt: new Date().toISOString()
-    };
-    // await setDoc(doc(this.firestore, 'storedDocuments', id), newDoc);
-    // TODO: Add StoredDocument to DC if needed.
+      title: docData.title,
+      category: docData.category,
+      uploadedBy: docData.uploadedBy,
+      fileType: docData.fileType,
+      data: docData.data,
+      tags: docData.tags,
+      guestId: docData.guestId,
+      summary: docData.summary
+    });
 
-    this.log('Document', 'Upload', `Document ${newDoc.title} uploaded.`);
-    return newDoc;
+    this.log('Document', 'Upload', `Document ${docData.title} uploaded.`);
+    this.storedDocumentsQuery.refetch();
   }
 
   async deleteDocument(id: string) {

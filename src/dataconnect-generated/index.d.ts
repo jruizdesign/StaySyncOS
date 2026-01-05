@@ -20,6 +20,18 @@ export interface Booking_Key {
   __typename?: 'Booking_Key';
 }
 
+export interface CreateAmenityDcData {
+  amenity_insert: Amenity_Key;
+}
+
+export interface CreateAmenityDcVariables {
+  hotelId: UUIDString;
+  name: string;
+  description?: string | null;
+  location?: string | null;
+  status: string;
+}
+
 export interface CreateBookingDcData {
   booking_insert: Booking_Key;
 }
@@ -76,6 +88,20 @@ export interface CreateHotelVariables {
   propertyId: string;
 }
 
+export interface CreateHousekeepingTaskDcData {
+  housekeepingTask_insert: HousekeepingTask_Key;
+}
+
+export interface CreateHousekeepingTaskDcVariables {
+  hotelId: UUIDString;
+  roomId: UUIDString;
+  status: string;
+  priority: string;
+  scheduledFor: TimestampString;
+  assignedToId?: UUIDString | null;
+  notes?: string | null;
+}
+
 export interface CreateLogDcData {
   log_insert: Log_Key;
 }
@@ -86,6 +112,19 @@ export interface CreateLogDcVariables {
   user: string;
   category: string;
   details: string;
+}
+
+export interface CreateMaintenanceDcData {
+  maintenanceRequest_insert: MaintenanceRequest_Key;
+}
+
+export interface CreateMaintenanceDcVariables {
+  hotelId: UUIDString;
+  roomId: UUIDString;
+  description: string;
+  priority: string;
+  status: string;
+  reportedBy: string;
 }
 
 export interface CreateRoomData {
@@ -101,6 +140,20 @@ export interface CreateRoomVariables {
   capacity?: number | null;
 }
 
+export interface CreateShiftDcData {
+  shift_insert: Shift_Key;
+}
+
+export interface CreateShiftDcVariables {
+  hotelId: UUIDString;
+  staffId: UUIDString;
+  date: DateString;
+  startTime: string;
+  endTime: string;
+  shiftType: string;
+  notes?: string | null;
+}
+
 export interface CreateStaffDcData {
   staff_insert: Staff_Key;
 }
@@ -113,6 +166,22 @@ export interface CreateStaffDcVariables {
   status: string;
   currentStatus: string;
   pin?: string | null;
+}
+
+export interface CreateStoredDocumentDcData {
+  storedDocument_insert: StoredDocument_Key;
+}
+
+export interface CreateStoredDocumentDcVariables {
+  hotelId: UUIDString;
+  title: string;
+  category: string;
+  uploadedBy: string;
+  fileType: string;
+  data: string;
+  tags?: unknown | null;
+  guestId?: UUIDString | null;
+  summary?: string | null;
 }
 
 export interface CreateTimeLogDcData {
@@ -205,6 +274,20 @@ export interface ListAllHotelsData {
     address: string;
     propertyId: string;
   } & Hotel_Key)[];
+}
+
+export interface ListAmenitiesData {
+  amenities: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    location?: string | null;
+    status: string;
+  } & Amenity_Key)[];
+}
+
+export interface ListAmenitiesVariables {
+  hotelId: UUIDString;
 }
 
 export interface ListAvailableRoomsData {
@@ -311,6 +394,45 @@ export interface ListHotelsByUserVariables {
   userId: string;
 }
 
+export interface ListHousekeepingData {
+  housekeepingTasks: ({
+    id: UUIDString;
+    status: string;
+    priority: string;
+    notes?: string | null;
+    scheduledFor: TimestampString;
+    completedAt?: TimestampString | null;
+    room: {
+      id: UUIDString;
+      roomNumber: string;
+    } & Room_Key;
+      assignedTo?: {
+        id: UUIDString;
+        firstName: string;
+        lastName: string;
+      } & Staff_Key;
+  } & HousekeepingTask_Key)[];
+}
+
+export interface ListHousekeepingVariables {
+  hotelId: UUIDString;
+}
+
+export interface ListInventoryData {
+  inventoryItems: ({
+    id: UUIDString;
+    name: string;
+    category: string;
+    quantity: number;
+    minQuantity: number;
+    unit: string;
+  } & InventoryItem_Key)[];
+}
+
+export interface ListInventoryVariables {
+  hotelId: UUIDString;
+}
+
 export interface ListLogsData {
   logs: ({
     id: UUIDString;
@@ -323,6 +445,48 @@ export interface ListLogsData {
 }
 
 export interface ListLogsVariables {
+  hotelId: UUIDString;
+}
+
+export interface ListMaintenanceData {
+  maintenanceRequests: ({
+    id: UUIDString;
+    description: string;
+    priority: string;
+    status: string;
+    reportedBy: string;
+    reportedAt: TimestampString;
+    completedAt?: TimestampString | null;
+    cost?: number | null;
+    notes?: string | null;
+    room: {
+      id: UUIDString;
+      roomNumber: string;
+    } & Room_Key;
+  } & MaintenanceRequest_Key)[];
+}
+
+export interface ListMaintenanceVariables {
+  hotelId: UUIDString;
+}
+
+export interface ListShiftsData {
+  shifts: ({
+    id: UUIDString;
+    date: DateString;
+    startTime: string;
+    endTime: string;
+    shiftType: string;
+    notes?: string | null;
+    staff: {
+      id: UUIDString;
+      firstName: string;
+      lastName: string;
+    } & Staff_Key;
+  } & Shift_Key)[];
+}
+
+export interface ListShiftsVariables {
   hotelId: UUIDString;
 }
 
@@ -339,6 +503,28 @@ export interface ListStaffData {
 }
 
 export interface ListStaffVariables {
+  hotelId: UUIDString;
+}
+
+export interface ListStoredDocumentsData {
+  storedDocuments: ({
+    id: UUIDString;
+    title: string;
+    category: string;
+    uploadedBy: string;
+    uploadedAt: TimestampString;
+    fileType: string;
+    data: string;
+    tags?: unknown | null;
+    summary?: string | null;
+    guest?: {
+      id: UUIDString;
+      name: string;
+    } & Guest_Key;
+  } & StoredDocument_Key)[];
+}
+
+export interface ListStoredDocumentsVariables {
   hotelId: UUIDString;
 }
 
@@ -384,6 +570,43 @@ export interface MaintenanceRequest_Key {
 export interface Room_Key {
   id: UUIDString;
   __typename?: 'Room_Key';
+}
+
+export interface SeedAmenitiesData {
+  a1: Amenity_Key;
+  a2: Amenity_Key;
+}
+
+export interface SeedAmenitiesVariables {
+  hotelId: UUIDString;
+}
+
+export interface SeedInventoryData {
+  i1: InventoryItem_Key;
+  i2: InventoryItem_Key;
+}
+
+export interface SeedInventoryVariables {
+  hotelId: UUIDString;
+}
+
+export interface SeedRoomsData {
+  r1: Room_Key;
+  r2: Room_Key;
+  r3: Room_Key;
+}
+
+export interface SeedRoomsVariables {
+  hotelId: UUIDString;
+}
+
+export interface SeedStaffData {
+  s1: Staff_Key;
+  s2: Staff_Key;
+}
+
+export interface SeedStaffVariables {
+  hotelId: UUIDString;
 }
 
 export interface Shift_Key {
@@ -474,6 +697,20 @@ export interface UpdateTimeLogDcVariables {
   breaks?: unknown | null;
   totalHours?: number | null;
   status?: string | null;
+}
+
+export interface UpsertInventoryItemDcData {
+  inventoryItem_upsert: InventoryItem_Key;
+}
+
+export interface UpsertInventoryItemDcVariables {
+  id: UUIDString;
+  hotelId: UUIDString;
+  name: string;
+  category: string;
+  quantity: number;
+  minQuantity: number;
+  unit: string;
 }
 
 export interface UpsertUserData {
@@ -844,4 +1081,196 @@ export const listUsersDcRef: ListUsersDcRef;
 
 export function listUsersDc(): QueryPromise<ListUsersDcData, undefined>;
 export function listUsersDc(dc: DataConnect): QueryPromise<ListUsersDcData, undefined>;
+
+interface ListMaintenanceRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListMaintenanceVariables): QueryRef<ListMaintenanceData, ListMaintenanceVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListMaintenanceVariables): QueryRef<ListMaintenanceData, ListMaintenanceVariables>;
+  operationName: string;
+}
+export const listMaintenanceRef: ListMaintenanceRef;
+
+export function listMaintenance(vars: ListMaintenanceVariables): QueryPromise<ListMaintenanceData, ListMaintenanceVariables>;
+export function listMaintenance(dc: DataConnect, vars: ListMaintenanceVariables): QueryPromise<ListMaintenanceData, ListMaintenanceVariables>;
+
+interface CreateMaintenanceDcRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateMaintenanceDcVariables): MutationRef<CreateMaintenanceDcData, CreateMaintenanceDcVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateMaintenanceDcVariables): MutationRef<CreateMaintenanceDcData, CreateMaintenanceDcVariables>;
+  operationName: string;
+}
+export const createMaintenanceDcRef: CreateMaintenanceDcRef;
+
+export function createMaintenanceDc(vars: CreateMaintenanceDcVariables): MutationPromise<CreateMaintenanceDcData, CreateMaintenanceDcVariables>;
+export function createMaintenanceDc(dc: DataConnect, vars: CreateMaintenanceDcVariables): MutationPromise<CreateMaintenanceDcData, CreateMaintenanceDcVariables>;
+
+interface ListShiftsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListShiftsVariables): QueryRef<ListShiftsData, ListShiftsVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListShiftsVariables): QueryRef<ListShiftsData, ListShiftsVariables>;
+  operationName: string;
+}
+export const listShiftsRef: ListShiftsRef;
+
+export function listShifts(vars: ListShiftsVariables): QueryPromise<ListShiftsData, ListShiftsVariables>;
+export function listShifts(dc: DataConnect, vars: ListShiftsVariables): QueryPromise<ListShiftsData, ListShiftsVariables>;
+
+interface CreateShiftDcRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateShiftDcVariables): MutationRef<CreateShiftDcData, CreateShiftDcVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateShiftDcVariables): MutationRef<CreateShiftDcData, CreateShiftDcVariables>;
+  operationName: string;
+}
+export const createShiftDcRef: CreateShiftDcRef;
+
+export function createShiftDc(vars: CreateShiftDcVariables): MutationPromise<CreateShiftDcData, CreateShiftDcVariables>;
+export function createShiftDc(dc: DataConnect, vars: CreateShiftDcVariables): MutationPromise<CreateShiftDcData, CreateShiftDcVariables>;
+
+interface ListHousekeepingRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListHousekeepingVariables): QueryRef<ListHousekeepingData, ListHousekeepingVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListHousekeepingVariables): QueryRef<ListHousekeepingData, ListHousekeepingVariables>;
+  operationName: string;
+}
+export const listHousekeepingRef: ListHousekeepingRef;
+
+export function listHousekeeping(vars: ListHousekeepingVariables): QueryPromise<ListHousekeepingData, ListHousekeepingVariables>;
+export function listHousekeeping(dc: DataConnect, vars: ListHousekeepingVariables): QueryPromise<ListHousekeepingData, ListHousekeepingVariables>;
+
+interface CreateHousekeepingTaskDcRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateHousekeepingTaskDcVariables): MutationRef<CreateHousekeepingTaskDcData, CreateHousekeepingTaskDcVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateHousekeepingTaskDcVariables): MutationRef<CreateHousekeepingTaskDcData, CreateHousekeepingTaskDcVariables>;
+  operationName: string;
+}
+export const createHousekeepingTaskDcRef: CreateHousekeepingTaskDcRef;
+
+export function createHousekeepingTaskDc(vars: CreateHousekeepingTaskDcVariables): MutationPromise<CreateHousekeepingTaskDcData, CreateHousekeepingTaskDcVariables>;
+export function createHousekeepingTaskDc(dc: DataConnect, vars: CreateHousekeepingTaskDcVariables): MutationPromise<CreateHousekeepingTaskDcData, CreateHousekeepingTaskDcVariables>;
+
+interface ListInventoryRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListInventoryVariables): QueryRef<ListInventoryData, ListInventoryVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListInventoryVariables): QueryRef<ListInventoryData, ListInventoryVariables>;
+  operationName: string;
+}
+export const listInventoryRef: ListInventoryRef;
+
+export function listInventory(vars: ListInventoryVariables): QueryPromise<ListInventoryData, ListInventoryVariables>;
+export function listInventory(dc: DataConnect, vars: ListInventoryVariables): QueryPromise<ListInventoryData, ListInventoryVariables>;
+
+interface UpsertInventoryItemDcRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpsertInventoryItemDcVariables): MutationRef<UpsertInventoryItemDcData, UpsertInventoryItemDcVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpsertInventoryItemDcVariables): MutationRef<UpsertInventoryItemDcData, UpsertInventoryItemDcVariables>;
+  operationName: string;
+}
+export const upsertInventoryItemDcRef: UpsertInventoryItemDcRef;
+
+export function upsertInventoryItemDc(vars: UpsertInventoryItemDcVariables): MutationPromise<UpsertInventoryItemDcData, UpsertInventoryItemDcVariables>;
+export function upsertInventoryItemDc(dc: DataConnect, vars: UpsertInventoryItemDcVariables): MutationPromise<UpsertInventoryItemDcData, UpsertInventoryItemDcVariables>;
+
+interface ListAmenitiesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListAmenitiesVariables): QueryRef<ListAmenitiesData, ListAmenitiesVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListAmenitiesVariables): QueryRef<ListAmenitiesData, ListAmenitiesVariables>;
+  operationName: string;
+}
+export const listAmenitiesRef: ListAmenitiesRef;
+
+export function listAmenities(vars: ListAmenitiesVariables): QueryPromise<ListAmenitiesData, ListAmenitiesVariables>;
+export function listAmenities(dc: DataConnect, vars: ListAmenitiesVariables): QueryPromise<ListAmenitiesData, ListAmenitiesVariables>;
+
+interface CreateAmenityDcRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateAmenityDcVariables): MutationRef<CreateAmenityDcData, CreateAmenityDcVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateAmenityDcVariables): MutationRef<CreateAmenityDcData, CreateAmenityDcVariables>;
+  operationName: string;
+}
+export const createAmenityDcRef: CreateAmenityDcRef;
+
+export function createAmenityDc(vars: CreateAmenityDcVariables): MutationPromise<CreateAmenityDcData, CreateAmenityDcVariables>;
+export function createAmenityDc(dc: DataConnect, vars: CreateAmenityDcVariables): MutationPromise<CreateAmenityDcData, CreateAmenityDcVariables>;
+
+interface ListStoredDocumentsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListStoredDocumentsVariables): QueryRef<ListStoredDocumentsData, ListStoredDocumentsVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListStoredDocumentsVariables): QueryRef<ListStoredDocumentsData, ListStoredDocumentsVariables>;
+  operationName: string;
+}
+export const listStoredDocumentsRef: ListStoredDocumentsRef;
+
+export function listStoredDocuments(vars: ListStoredDocumentsVariables): QueryPromise<ListStoredDocumentsData, ListStoredDocumentsVariables>;
+export function listStoredDocuments(dc: DataConnect, vars: ListStoredDocumentsVariables): QueryPromise<ListStoredDocumentsData, ListStoredDocumentsVariables>;
+
+interface CreateStoredDocumentDcRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateStoredDocumentDcVariables): MutationRef<CreateStoredDocumentDcData, CreateStoredDocumentDcVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateStoredDocumentDcVariables): MutationRef<CreateStoredDocumentDcData, CreateStoredDocumentDcVariables>;
+  operationName: string;
+}
+export const createStoredDocumentDcRef: CreateStoredDocumentDcRef;
+
+export function createStoredDocumentDc(vars: CreateStoredDocumentDcVariables): MutationPromise<CreateStoredDocumentDcData, CreateStoredDocumentDcVariables>;
+export function createStoredDocumentDc(dc: DataConnect, vars: CreateStoredDocumentDcVariables): MutationPromise<CreateStoredDocumentDcData, CreateStoredDocumentDcVariables>;
+
+interface SeedRoomsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedRoomsVariables): MutationRef<SeedRoomsData, SeedRoomsVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedRoomsVariables): MutationRef<SeedRoomsData, SeedRoomsVariables>;
+  operationName: string;
+}
+export const seedRoomsRef: SeedRoomsRef;
+
+export function seedRooms(vars: SeedRoomsVariables): MutationPromise<SeedRoomsData, SeedRoomsVariables>;
+export function seedRooms(dc: DataConnect, vars: SeedRoomsVariables): MutationPromise<SeedRoomsData, SeedRoomsVariables>;
+
+interface SeedStaffRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedStaffVariables): MutationRef<SeedStaffData, SeedStaffVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedStaffVariables): MutationRef<SeedStaffData, SeedStaffVariables>;
+  operationName: string;
+}
+export const seedStaffRef: SeedStaffRef;
+
+export function seedStaff(vars: SeedStaffVariables): MutationPromise<SeedStaffData, SeedStaffVariables>;
+export function seedStaff(dc: DataConnect, vars: SeedStaffVariables): MutationPromise<SeedStaffData, SeedStaffVariables>;
+
+interface SeedInventoryRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedInventoryVariables): MutationRef<SeedInventoryData, SeedInventoryVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedInventoryVariables): MutationRef<SeedInventoryData, SeedInventoryVariables>;
+  operationName: string;
+}
+export const seedInventoryRef: SeedInventoryRef;
+
+export function seedInventory(vars: SeedInventoryVariables): MutationPromise<SeedInventoryData, SeedInventoryVariables>;
+export function seedInventory(dc: DataConnect, vars: SeedInventoryVariables): MutationPromise<SeedInventoryData, SeedInventoryVariables>;
+
+interface SeedAmenitiesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SeedAmenitiesVariables): MutationRef<SeedAmenitiesData, SeedAmenitiesVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SeedAmenitiesVariables): MutationRef<SeedAmenitiesData, SeedAmenitiesVariables>;
+  operationName: string;
+}
+export const seedAmenitiesRef: SeedAmenitiesRef;
+
+export function seedAmenities(vars: SeedAmenitiesVariables): MutationPromise<SeedAmenitiesData, SeedAmenitiesVariables>;
+export function seedAmenities(dc: DataConnect, vars: SeedAmenitiesVariables): MutationPromise<SeedAmenitiesData, SeedAmenitiesVariables>;
 

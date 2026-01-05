@@ -1,4 +1,4 @@
-import { ListAvailableRoomsData, ListAvailableRoomsVariables, CreateRoomData, CreateRoomVariables, UpdateRoomStatusData, UpdateRoomStatusVariables, CreateHotelData, CreateHotelVariables, UpdateHotelConfigData, UpdateHotelConfigVariables, GetFirstHotelData, GetHotelByIdData, GetHotelByIdVariables, ListAllHotelsData, ListGuestsData, ListGuestsVariables, CreateGuestDcData, CreateGuestDcVariables, UpdateGuestDcData, UpdateGuestDcVariables, DeleteGuestDcData, DeleteGuestDcVariables, ListBookingsData, ListBookingsVariables, CreateBookingDcData, CreateBookingDcVariables, UpdateBookingDcData, UpdateBookingDcVariables, ListLogsData, ListLogsVariables, CreateLogDcData, CreateLogDcVariables, ListStaffData, ListStaffVariables, CreateStaffDcData, CreateStaffDcVariables, UpdateStaffDcData, UpdateStaffDcVariables, ListTimeLogsData, ListTimeLogsVariables, CreateTimeLogDcData, CreateTimeLogDcVariables, UpdateTimeLogDcData, UpdateTimeLogDcVariables, ListFinancialDocumentsData, ListFinancialDocumentsVariables, CreateFinancialDocumentDcData, CreateFinancialDocumentDcVariables, UpsertUserData, UpsertUserVariables, LinkUserToHotelData, LinkUserToHotelVariables, ListHotelsByUserData, ListHotelsByUserVariables, ListUsersDcData } from '../';
+import { ListAvailableRoomsData, ListAvailableRoomsVariables, CreateRoomData, CreateRoomVariables, UpdateRoomStatusData, UpdateRoomStatusVariables, CreateHotelData, CreateHotelVariables, UpdateHotelConfigData, UpdateHotelConfigVariables, GetFirstHotelData, GetHotelByIdData, GetHotelByIdVariables, ListAllHotelsData, ListGuestsData, ListGuestsVariables, CreateGuestDcData, CreateGuestDcVariables, UpdateGuestDcData, UpdateGuestDcVariables, DeleteGuestDcData, DeleteGuestDcVariables, ListBookingsData, ListBookingsVariables, CreateBookingDcData, CreateBookingDcVariables, UpdateBookingDcData, UpdateBookingDcVariables, ListLogsData, ListLogsVariables, CreateLogDcData, CreateLogDcVariables, ListStaffData, ListStaffVariables, CreateStaffDcData, CreateStaffDcVariables, UpdateStaffDcData, UpdateStaffDcVariables, ListTimeLogsData, ListTimeLogsVariables, CreateTimeLogDcData, CreateTimeLogDcVariables, UpdateTimeLogDcData, UpdateTimeLogDcVariables, ListFinancialDocumentsData, ListFinancialDocumentsVariables, CreateFinancialDocumentDcData, CreateFinancialDocumentDcVariables, UpsertUserData, UpsertUserVariables, LinkUserToHotelData, LinkUserToHotelVariables, ListHotelsByUserData, ListHotelsByUserVariables, ListUsersDcData, ListMaintenanceData, ListMaintenanceVariables, CreateMaintenanceDcData, CreateMaintenanceDcVariables, ListShiftsData, ListShiftsVariables, CreateShiftDcData, CreateShiftDcVariables, ListHousekeepingData, ListHousekeepingVariables, CreateHousekeepingTaskDcData, CreateHousekeepingTaskDcVariables, ListInventoryData, ListInventoryVariables, UpsertInventoryItemDcData, UpsertInventoryItemDcVariables, ListAmenitiesData, ListAmenitiesVariables, CreateAmenityDcData, CreateAmenityDcVariables, ListStoredDocumentsData, ListStoredDocumentsVariables, CreateStoredDocumentDcData, CreateStoredDocumentDcVariables, SeedRoomsData, SeedRoomsVariables, SeedStaffData, SeedStaffVariables, SeedInventoryData, SeedInventoryVariables, SeedAmenitiesData, SeedAmenitiesVariables } from '../';
 import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise} from '@angular/fire/data-connect';
 import { CreateQueryResult, CreateMutationResult} from '@tanstack/angular-query-experimental';
 import { CreateDataConnectQueryResult, CreateDataConnectQueryOptions, CreateDataConnectMutationResult, DataConnectMutationOptionsUndefinedMutationFn } from '@tanstack-query-firebase/angular/data-connect';
@@ -100,3 +100,57 @@ export function injectListHotelsByUser(args: ListHotelsByUserArgs, options?: Lis
 
 export type ListUsersDcOptions = () => Omit<CreateDataConnectQueryOptions<ListUsersDcData, undefined>, 'queryFn'>;
 export function injectListUsersDc(options?: ListUsersDcOptions, injector?: Injector): CreateDataConnectQueryResult<ListUsersDcData, undefined>;
+
+type ListMaintenanceArgs = ListMaintenanceVariables | (() => ListMaintenanceVariables);
+export type ListMaintenanceOptions = () => Omit<CreateDataConnectQueryOptions<ListMaintenanceData, ListMaintenanceVariables>, 'queryFn'>;
+export function injectListMaintenance(args: ListMaintenanceArgs, options?: ListMaintenanceOptions, injector?: Injector): CreateDataConnectQueryResult<ListMaintenanceData, ListMaintenanceVariables>;
+
+type CreateMaintenanceDcOptions = DataConnectMutationOptionsUndefinedMutationFn<CreateMaintenanceDcData, FirebaseError, CreateMaintenanceDcVariables>;
+export function injectCreateMaintenanceDc(options?: CreateMaintenanceDcOptions, injector?: Injector): CreateDataConnectMutationResult<CreateMaintenanceDcData, CreateMaintenanceDcVariables, CreateMaintenanceDcVariables>;
+
+type ListShiftsArgs = ListShiftsVariables | (() => ListShiftsVariables);
+export type ListShiftsOptions = () => Omit<CreateDataConnectQueryOptions<ListShiftsData, ListShiftsVariables>, 'queryFn'>;
+export function injectListShifts(args: ListShiftsArgs, options?: ListShiftsOptions, injector?: Injector): CreateDataConnectQueryResult<ListShiftsData, ListShiftsVariables>;
+
+type CreateShiftDcOptions = DataConnectMutationOptionsUndefinedMutationFn<CreateShiftDcData, FirebaseError, CreateShiftDcVariables>;
+export function injectCreateShiftDc(options?: CreateShiftDcOptions, injector?: Injector): CreateDataConnectMutationResult<CreateShiftDcData, CreateShiftDcVariables, CreateShiftDcVariables>;
+
+type ListHousekeepingArgs = ListHousekeepingVariables | (() => ListHousekeepingVariables);
+export type ListHousekeepingOptions = () => Omit<CreateDataConnectQueryOptions<ListHousekeepingData, ListHousekeepingVariables>, 'queryFn'>;
+export function injectListHousekeeping(args: ListHousekeepingArgs, options?: ListHousekeepingOptions, injector?: Injector): CreateDataConnectQueryResult<ListHousekeepingData, ListHousekeepingVariables>;
+
+type CreateHousekeepingTaskDcOptions = DataConnectMutationOptionsUndefinedMutationFn<CreateHousekeepingTaskDcData, FirebaseError, CreateHousekeepingTaskDcVariables>;
+export function injectCreateHousekeepingTaskDc(options?: CreateHousekeepingTaskDcOptions, injector?: Injector): CreateDataConnectMutationResult<CreateHousekeepingTaskDcData, CreateHousekeepingTaskDcVariables, CreateHousekeepingTaskDcVariables>;
+
+type ListInventoryArgs = ListInventoryVariables | (() => ListInventoryVariables);
+export type ListInventoryOptions = () => Omit<CreateDataConnectQueryOptions<ListInventoryData, ListInventoryVariables>, 'queryFn'>;
+export function injectListInventory(args: ListInventoryArgs, options?: ListInventoryOptions, injector?: Injector): CreateDataConnectQueryResult<ListInventoryData, ListInventoryVariables>;
+
+type UpsertInventoryItemDcOptions = DataConnectMutationOptionsUndefinedMutationFn<UpsertInventoryItemDcData, FirebaseError, UpsertInventoryItemDcVariables>;
+export function injectUpsertInventoryItemDc(options?: UpsertInventoryItemDcOptions, injector?: Injector): CreateDataConnectMutationResult<UpsertInventoryItemDcData, UpsertInventoryItemDcVariables, UpsertInventoryItemDcVariables>;
+
+type ListAmenitiesArgs = ListAmenitiesVariables | (() => ListAmenitiesVariables);
+export type ListAmenitiesOptions = () => Omit<CreateDataConnectQueryOptions<ListAmenitiesData, ListAmenitiesVariables>, 'queryFn'>;
+export function injectListAmenities(args: ListAmenitiesArgs, options?: ListAmenitiesOptions, injector?: Injector): CreateDataConnectQueryResult<ListAmenitiesData, ListAmenitiesVariables>;
+
+type CreateAmenityDcOptions = DataConnectMutationOptionsUndefinedMutationFn<CreateAmenityDcData, FirebaseError, CreateAmenityDcVariables>;
+export function injectCreateAmenityDc(options?: CreateAmenityDcOptions, injector?: Injector): CreateDataConnectMutationResult<CreateAmenityDcData, CreateAmenityDcVariables, CreateAmenityDcVariables>;
+
+type ListStoredDocumentsArgs = ListStoredDocumentsVariables | (() => ListStoredDocumentsVariables);
+export type ListStoredDocumentsOptions = () => Omit<CreateDataConnectQueryOptions<ListStoredDocumentsData, ListStoredDocumentsVariables>, 'queryFn'>;
+export function injectListStoredDocuments(args: ListStoredDocumentsArgs, options?: ListStoredDocumentsOptions, injector?: Injector): CreateDataConnectQueryResult<ListStoredDocumentsData, ListStoredDocumentsVariables>;
+
+type CreateStoredDocumentDcOptions = DataConnectMutationOptionsUndefinedMutationFn<CreateStoredDocumentDcData, FirebaseError, CreateStoredDocumentDcVariables>;
+export function injectCreateStoredDocumentDc(options?: CreateStoredDocumentDcOptions, injector?: Injector): CreateDataConnectMutationResult<CreateStoredDocumentDcData, CreateStoredDocumentDcVariables, CreateStoredDocumentDcVariables>;
+
+type SeedRoomsOptions = DataConnectMutationOptionsUndefinedMutationFn<SeedRoomsData, FirebaseError, SeedRoomsVariables>;
+export function injectSeedRooms(options?: SeedRoomsOptions, injector?: Injector): CreateDataConnectMutationResult<SeedRoomsData, SeedRoomsVariables, SeedRoomsVariables>;
+
+type SeedStaffOptions = DataConnectMutationOptionsUndefinedMutationFn<SeedStaffData, FirebaseError, SeedStaffVariables>;
+export function injectSeedStaff(options?: SeedStaffOptions, injector?: Injector): CreateDataConnectMutationResult<SeedStaffData, SeedStaffVariables, SeedStaffVariables>;
+
+type SeedInventoryOptions = DataConnectMutationOptionsUndefinedMutationFn<SeedInventoryData, FirebaseError, SeedInventoryVariables>;
+export function injectSeedInventory(options?: SeedInventoryOptions, injector?: Injector): CreateDataConnectMutationResult<SeedInventoryData, SeedInventoryVariables, SeedInventoryVariables>;
+
+type SeedAmenitiesOptions = DataConnectMutationOptionsUndefinedMutationFn<SeedAmenitiesData, FirebaseError, SeedAmenitiesVariables>;
+export function injectSeedAmenities(options?: SeedAmenitiesOptions, injector?: Injector): CreateDataConnectMutationResult<SeedAmenitiesData, SeedAmenitiesVariables, SeedAmenitiesVariables>;
