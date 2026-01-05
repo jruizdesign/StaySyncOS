@@ -61,6 +61,17 @@ export function updateHotelConfig(dcOrVars, vars) {
   return executeMutation(updateHotelConfigRef(dcOrVars, vars));
 }
 
+export const deleteHotelRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteHotel', inputVars);
+}
+deleteHotelRef.operationName = 'DeleteHotel';
+
+export function deleteHotel(dcOrVars, vars) {
+  return executeMutation(deleteHotelRef(dcOrVars, vars));
+}
+
 export const getFirstHotelRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();

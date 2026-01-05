@@ -204,6 +204,14 @@ export interface DeleteGuestDcVariables {
   id: UUIDString;
 }
 
+export interface DeleteHotelData {
+  hotel_delete?: Hotel_Key | null;
+}
+
+export interface DeleteHotelVariables {
+  id: UUIDString;
+}
+
 export interface Department_Key {
   id: UUIDString;
   __typename?: 'Department_Key';
@@ -795,6 +803,18 @@ export const updateHotelConfigRef: UpdateHotelConfigRef;
 
 export function updateHotelConfig(vars: UpdateHotelConfigVariables): MutationPromise<UpdateHotelConfigData, UpdateHotelConfigVariables>;
 export function updateHotelConfig(dc: DataConnect, vars: UpdateHotelConfigVariables): MutationPromise<UpdateHotelConfigData, UpdateHotelConfigVariables>;
+
+interface DeleteHotelRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteHotelVariables): MutationRef<DeleteHotelData, DeleteHotelVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteHotelVariables): MutationRef<DeleteHotelData, DeleteHotelVariables>;
+  operationName: string;
+}
+export const deleteHotelRef: DeleteHotelRef;
+
+export function deleteHotel(vars: DeleteHotelVariables): MutationPromise<DeleteHotelData, DeleteHotelVariables>;
+export function deleteHotel(dc: DataConnect, vars: DeleteHotelVariables): MutationPromise<DeleteHotelData, DeleteHotelVariables>;
 
 interface GetFirstHotelRef {
   /* Allow users to create refs without passing in DataConnect */

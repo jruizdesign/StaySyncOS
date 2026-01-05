@@ -11,7 +11,7 @@ The generated SDK creates injectable wrapper functions.
 
 Here's an example:
 ```
-import { injectListAvailableRooms, injectCreateRoom, injectUpdateRoomStatus, injectCreateHotel, injectUpdateHotelConfig, injectGetFirstHotel, injectGetHotelById, injectListAllHotels, injectListGuests, injectCreateGuestDc } from '@dataconnect/generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectUpdateRoomStatus, injectCreateHotel, injectUpdateHotelConfig, injectDeleteHotel, injectGetFirstHotel, injectGetHotelById, injectListAllHotels, injectListGuests } from '@dataconnect/generated/angular';
 
 @Component({
   selector: 'my-component',
@@ -24,11 +24,11 @@ class MyComponent {
   private readonly UpdateRoomStatusOperation = injectUpdateRoomStatus(updateRoomStatusVars);
   private readonly CreateHotelOperation = injectCreateHotel(createHotelVars);
   private readonly UpdateHotelConfigOperation = injectUpdateHotelConfig(updateHotelConfigVars);
+  private readonly DeleteHotelOperation = injectDeleteHotel(deleteHotelVars);
   private readonly GetFirstHotelOperation = injectGetFirstHotel();
   private readonly GetHotelByIdOperation = injectGetHotelById(getHotelByIdVars);
   private readonly ListAllHotelsOperation = injectListAllHotels();
   private readonly ListGuestsOperation = injectListGuests(listGuestsVars);
-  private readonly CreateGuestDCOperation = injectCreateGuestDc(createGuestDcVars);
   }
 ```
 
@@ -71,7 +71,7 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { listAvailableRooms, createRoom, updateRoomStatus, createHotel, updateHotelConfig, getFirstHotel, getHotelById, listAllHotels, listGuests, createGuestDc } from '@dataconnect/generated';
+import { listAvailableRooms, createRoom, updateRoomStatus, createHotel, updateHotelConfig, deleteHotel, getFirstHotel, getHotelById, listAllHotels, listGuests } from '@dataconnect/generated';
 
 
 // Operation ListAvailableRooms:  For variables, look at type ListAvailableRoomsVars in ../index.d.ts
@@ -89,6 +89,9 @@ const { data } = await CreateHotel(dataConnect, createHotelVars);
 // Operation UpdateHotelConfig:  For variables, look at type UpdateHotelConfigVars in ../index.d.ts
 const { data } = await UpdateHotelConfig(dataConnect, updateHotelConfigVars);
 
+// Operation DeleteHotel:  For variables, look at type DeleteHotelVars in ../index.d.ts
+const { data } = await DeleteHotel(dataConnect, deleteHotelVars);
+
 // Operation GetFirstHotel: 
 const { data } = await GetFirstHotel(dataConnect);
 
@@ -100,9 +103,6 @@ const { data } = await ListAllHotels(dataConnect);
 
 // Operation ListGuests:  For variables, look at type ListGuestsVars in ../index.d.ts
 const { data } = await ListGuests(dataConnect, listGuestsVars);
-
-// Operation CreateGuestDC:  For variables, look at type CreateGuestDcVars in ../index.d.ts
-const { data } = await CreateGuestDc(dataConnect, createGuestDcVars);
 
 
 ```

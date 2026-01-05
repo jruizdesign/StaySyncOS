@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { AiService } from './ai.service';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel, injectListGuests, injectCreateGuestDc, injectUpdateGuestDc, injectDeleteGuestDc, injectListBookings, injectCreateBookingDc, injectUpdateBookingDc, injectListLogs, injectCreateLogDc, injectListStaff, injectCreateStaffDc, injectUpdateStaffDc, injectListTimeLogs, injectCreateTimeLogDc, injectUpdateTimeLogDc, injectListFinancialDocuments, injectCreateFinancialDocumentDc, injectUpdateHotelConfig, injectListMaintenance, injectCreateMaintenanceDc, injectListShifts, injectCreateShiftDc, injectListHousekeeping, injectCreateHousekeepingTaskDc, injectListInventory, injectUpsertInventoryItemDc, injectListAmenities, injectCreateAmenityDc, injectListStoredDocuments, injectCreateStoredDocumentDc } from '../dataconnect-generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel, injectListGuests, injectCreateGuestDc, injectUpdateGuestDc, injectDeleteGuestDc, injectListBookings, injectCreateBookingDc, injectUpdateBookingDc, injectListLogs, injectCreateLogDc, injectListStaff, injectCreateStaffDc, injectUpdateStaffDc, injectListTimeLogs, injectCreateTimeLogDc, injectUpdateTimeLogDc, injectListFinancialDocuments, injectCreateFinancialDocumentDc, injectUpdateHotelConfig, injectListMaintenance, injectCreateMaintenanceDc, injectListShifts, injectCreateShiftDc, injectListHousekeeping, injectCreateHousekeepingTaskDc, injectListInventory, injectUpsertInventoryItemDc, injectListAmenities, injectCreateAmenityDc, injectListStoredDocuments, injectCreateStoredDocumentDc, injectDeleteHotel } from '../dataconnect-generated/angular';
 import { ListAvailableRoomsData } from '../dataconnect-generated';
 
 // Interfaces
@@ -256,6 +256,7 @@ export class DataService {
   updateRoomStatusMut = injectUpdateRoomStatus();
   createHotelMut = injectCreateHotel();
   updateHotelConfigMut = injectUpdateHotelConfig();
+  deleteHotelMut = injectDeleteHotel();
   upsertUserMut = injectUpsertUser();
   linkUserToHotelMut = injectLinkUserToHotel();
 
@@ -747,6 +748,16 @@ export class DataService {
     this.currentHotelQuery.refetch();
   }
 
+  async deleteHotel(id: string) {
+    try {
+      await this.deleteHotelMut.mutateAsync({ id });
+      this.allHotelsQuery.refetch();
+    } catch (e) {
+      console.error('[DataService] Failed to delete hotel', e);
+      throw e;
+    }
+  }
+
   // Legacy Actions (kept for other components)
   async addGuest(guest: Omit<Guest, 'id' | 'hotelId'>) {
     const hotelId = this.currentHotelId();
@@ -1170,19 +1181,43 @@ export class DataService {
   }
 
   // Update addMaintenanceRequest to be flexible
-  async addMaintenanceRequest(req: Partial<MaintenanceRequest> & { roomId: string, description: string }) {
+  async addMaintenanceRequest(req: Partial<MaintenanceRequest> & { roomId: string, description: string }): Promise<MaintenanceRequest | undefined> {
     const hotelId = this.currentHotelId();
     if (!hotelId) throw new Error("No hotel linked");
 
-    await this.createMaintenanceMut.mutateAsync({
-      hotelId,
-      roomId: req.roomId,
-      description: req.description,
-      priority: req.priority || 'Medium',
-      status: 'Pending',
-      reportedBy: req.reportedBy || 'System'
-    });
-    this.maintenanceQuery.refetch();
+    try {
+      const res = await this.createMaintenanceMut.mutateAsync({
+        hotelId,
+        roomId: req.roomId,
+        description: req.description,
+        priority: req.priority || 'Medium',
+        status: 'Pending',
+        reportedBy: req.reportedBy || 'System'
+      });
+
+      const room = this.rooms().find(r => r.id === req.roomId);
+      const newId = res.data?.maintenanceRequest_insert.id;
+
+      if (newId) {
+        const fullReq: MaintenanceRequest = {
+          id: newId,
+          hotelId,
+          roomId: req.roomId,
+          roomNumber: room?.roomNumber || 'Unknown',
+          description: req.description,
+          priority: (req.priority as any) || 'Medium',
+          status: 'Pending',
+          reportedBy: req.reportedBy || 'System',
+          reportedAt: new Date().toISOString(),
+          cost: 0
+        };
+        this.maintenanceQuery.refetch();
+        return fullReq;
+      }
+    } catch (e) {
+      console.error("Failed to add maintenance request", e);
+    }
+    return undefined;
   }
 
   async updateMaintenanceRequest(id: string, data: Partial<MaintenanceRequest> | string) {

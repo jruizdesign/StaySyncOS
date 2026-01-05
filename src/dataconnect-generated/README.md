@@ -33,6 +33,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*UpdateRoomStatus*](#updateroomstatus)
   - [*CreateHotel*](#createhotel)
   - [*UpdateHotelConfig*](#updatehotelconfig)
+  - [*DeleteHotel*](#deletehotel)
   - [*CreateGuestDC*](#createguestdc)
   - [*UpdateGuestDC*](#updateguestdc)
   - [*DeleteGuestDC*](#deleteguestdc)
@@ -2682,6 +2683,115 @@ console.log(data.hotel_update);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.hotel_update);
+});
+```
+
+## DeleteHotel
+You can execute the `DeleteHotel` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+deleteHotel(vars: DeleteHotelVariables): MutationPromise<DeleteHotelData, DeleteHotelVariables>;
+
+interface DeleteHotelRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteHotelVariables): MutationRef<DeleteHotelData, DeleteHotelVariables>;
+}
+export const deleteHotelRef: DeleteHotelRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+deleteHotel(dc: DataConnect, vars: DeleteHotelVariables): MutationPromise<DeleteHotelData, DeleteHotelVariables>;
+
+interface DeleteHotelRef {
+  ...
+  (dc: DataConnect, vars: DeleteHotelVariables): MutationRef<DeleteHotelData, DeleteHotelVariables>;
+}
+export const deleteHotelRef: DeleteHotelRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the deleteHotelRef:
+```typescript
+const name = deleteHotelRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `DeleteHotel` mutation requires an argument of type `DeleteHotelVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface DeleteHotelVariables {
+  id: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `DeleteHotel` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `DeleteHotelData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface DeleteHotelData {
+  hotel_delete?: Hotel_Key | null;
+}
+```
+### Using `DeleteHotel`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, deleteHotel, DeleteHotelVariables } from '@dataconnect/generated';
+
+// The `DeleteHotel` mutation requires an argument of type `DeleteHotelVariables`:
+const deleteHotelVars: DeleteHotelVariables = {
+  id: ..., 
+};
+
+// Call the `deleteHotel()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await deleteHotel(deleteHotelVars);
+// Variables can be defined inline as well.
+const { data } = await deleteHotel({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await deleteHotel(dataConnect, deleteHotelVars);
+
+console.log(data.hotel_delete);
+
+// Or, you can use the `Promise` API.
+deleteHotel(deleteHotelVars).then((response) => {
+  const data = response.data;
+  console.log(data.hotel_delete);
+});
+```
+
+### Using `DeleteHotel`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, deleteHotelRef, DeleteHotelVariables } from '@dataconnect/generated';
+
+// The `DeleteHotel` mutation requires an argument of type `DeleteHotelVariables`:
+const deleteHotelVars: DeleteHotelVariables = {
+  id: ..., 
+};
+
+// Call the `deleteHotelRef()` function to get a reference to the mutation.
+const ref = deleteHotelRef(deleteHotelVars);
+// Variables can be defined inline as well.
+const ref = deleteHotelRef({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = deleteHotelRef(dataConnect, deleteHotelVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.hotel_delete);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.hotel_delete);
 });
 ```
 

@@ -1,4 +1,4 @@
-import { listAvailableRoomsRef, createRoomRef, updateRoomStatusRef, createHotelRef, updateHotelConfigRef, getFirstHotelRef, getHotelByIdRef, listAllHotelsRef, listGuestsRef, createGuestDcRef, updateGuestDcRef, deleteGuestDcRef, listBookingsRef, createBookingDcRef, updateBookingDcRef, listLogsRef, createLogDcRef, listStaffRef, createStaffDcRef, updateStaffDcRef, listTimeLogsRef, createTimeLogDcRef, updateTimeLogDcRef, listFinancialDocumentsRef, createFinancialDocumentDcRef, upsertUserRef, linkUserToHotelRef, listHotelsByUserRef, listUsersDcRef, listMaintenanceRef, createMaintenanceDcRef, listShiftsRef, createShiftDcRef, listHousekeepingRef, createHousekeepingTaskDcRef, listInventoryRef, upsertInventoryItemDcRef, listAmenitiesRef, createAmenityDcRef, listStoredDocumentsRef, createStoredDocumentDcRef, seedRoomsRef, seedStaffRef, seedInventoryRef, seedAmenitiesRef } from '../../';
+import { listAvailableRoomsRef, createRoomRef, updateRoomStatusRef, createHotelRef, updateHotelConfigRef, deleteHotelRef, getFirstHotelRef, getHotelByIdRef, listAllHotelsRef, listGuestsRef, createGuestDcRef, updateGuestDcRef, deleteGuestDcRef, listBookingsRef, createBookingDcRef, updateBookingDcRef, listLogsRef, createLogDcRef, listStaffRef, createStaffDcRef, updateStaffDcRef, listTimeLogsRef, createTimeLogDcRef, updateTimeLogDcRef, listFinancialDocumentsRef, createFinancialDocumentDcRef, upsertUserRef, linkUserToHotelRef, listHotelsByUserRef, listUsersDcRef, listMaintenanceRef, createMaintenanceDcRef, listShiftsRef, createShiftDcRef, listHousekeepingRef, createHousekeepingTaskDcRef, listInventoryRef, upsertInventoryItemDcRef, listAmenitiesRef, createAmenityDcRef, listStoredDocumentsRef, createStoredDocumentDcRef, seedRoomsRef, seedStaffRef, seedInventoryRef, seedAmenitiesRef } from '../../';
 import { DataConnect, CallerSdkTypeEnum } from '@angular/fire/data-connect';
 import { injectDataConnectQuery, injectDataConnectMutation } from '@tanstack-query-firebase/angular/data-connect';
 import { inject, EnvironmentInjector } from '@angular/core';
@@ -29,6 +29,10 @@ export function injectCreateHotel(args, injector) {
 
 export function injectUpdateHotelConfig(args, injector) {
   return injectDataConnectMutation(updateHotelConfigRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+export function injectDeleteHotel(args, injector) {
+  return injectDataConnectMutation(deleteHotelRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
 }
 
 export function injectGetFirstHotel(options, injector) {

@@ -39,6 +39,7 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*UpdateRoomStatus*](#updateroomstatus)
   - [*CreateHotel*](#createhotel)
   - [*UpdateHotelConfig*](#updatehotelconfig)
+  - [*DeleteHotel*](#deletehotel)
   - [*CreateGuestDC*](#createguestdc)
   - [*UpdateGuestDC*](#updateguestdc)
   - [*DeleteGuestDC*](#deleteguestdc)
@@ -2132,6 +2133,103 @@ export class MyComponent {
 
     // You can also pass in a `UpdateHotelConfigOptions` object (not function) to `CreateDataConnectMutationResult.mutate()`.
     this.mutation.mutate(updateHotelConfigVars, this.options());
+  }
+}
+```
+
+## DeleteHotel
+You can execute the `DeleteHotel` Mutation using the `CreateDataConnectMutationResult` object returned by the following Mutation injector (which is defined in [dataconnect-generated/angular/index.d.ts](./index.d.ts)):
+```javascript
+injectDeleteHotel(options?: DeleteHotelOptions, injector?: Injector): CreateDataConnectMutationResult<DeleteHotelData, DeleteHotelVariables, DeleteHotelVariables>;
+```
+
+### Variables
+The `DeleteHotel` Mutation requires an argument of type `DeleteHotelVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface DeleteHotelVariables {
+  id: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `DeleteHotel` Mutation injector returns a `CreateDataConnectMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `CreateDataConnectMutationResult.status()` function. You can also check for pending / success / error status using the `CreateDataConnectMutationResult.isPending()`, `CreateDataConnectMutationResult.isSuccess()`, and `CreateDataConnectMutationResult.isError()` functions.
+
+To execute the Mutation, call `CreateDataConnectMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation. 
+
+To access the data returned by a Mutation, use the `CreateDataConnectMutationResult.data()` function. The data for the `DeleteHotel` Mutation is of type `DeleteHotelData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface DeleteHotelData {
+  hotel_delete?: Hotel_Key | null;
+}
+```
+
+You can also call `CreateDataConnectMutationResult.mutateAsync()`, which executes the Mutation and returns a promise with the data returned from the Mutation. To learn more, see the [TanStack Angular Query documentation](https://tanstack.com/query/latest/docs/framework/angular/guides/mutations#promises).
+
+To learn more about the `CreateDataConnectMutationResult` object, see the [TanStack Query Firebase documentation](https://docs.page/invertase/tanstack-query-firebase/angular/data-connect/functions/injectDataConnectMutation) and the [TanStack Angular Query documentation](https://tanstack.com/query/v5/docs/framework/angular/reference/functions/injectmutation).
+
+### Using `DeleteHotel`'s Mutation injector
+
+```javascript
+... // other imports
+import { connectorConfig, DeleteHotelVariables } from '@dataconnect/generated';
+import { injectDeleteHotel, DeleteHotelOptions } from '@dataconnect/generated/angular'
+import { DataConnect } from '@angular/fire/data-connect';
+import { initializeApp } from '@angular/fire/app';
+
+@Component({
+  ... // other component fields
+  template: `
+    <!-- You can render your component dynamically based on the status of the Mutation. -->
+    @if (mutation.isPending()) {
+      Loading...
+    }
+    @if (mutation.error()) {
+      An error has occurred: {{ mutation.error() }}
+    }
+    <!-- If the Mutation is successful, you can access the data returned using
+      the CreateDataConnectMutationResult.data() function. -->
+    @if (mutation.data(); as data) {
+      <!-- Use your data to display something -->
+      <div>Mutation successful!</div>
+    }
+    <!-- Let's create a button that executes our mutation when clicked. -->
+    <button
+      (disabled)="mutation.isPending()"
+      (click)="executeMutation()"
+    >
+      {{ mutation.isPending() ? 'Pending...' : 'Mutate!' }}
+    </button>
+  `,
+})
+export class MyComponent {
+  // Call the Mutation injector function to get a `CreateDataConnectMutationResult` object which holds the state of your Mutation.
+  mutation = injectDeleteHotel();
+
+  // You can also pass in a `DeleteHotelOptions` function (not object) to the Mutation injector function.
+  options: DeleteHotelOptions = () => {
+    return {
+      onSuccess: () => { console.log('Mutation succeeded!'); }
+    };
+  };
+  mutation = injectDeleteHotel(this.options);
+
+  // After calling the Mutation injector function, you must call `CreateDataConnectMutationResult.mutate()` to execute the Mutation.
+  executeMutation() {
+    // The `DeleteHotel` Mutation requires an argument of type `DeleteHotelVariables`:
+    const deleteHotelVars: DeleteHotelVariables = {
+      id: ..., 
+    };
+    this.mutation.mutate(deleteHotelVars);
+    // Variables can be defined inline as well.
+    this.mutation.mutate({ id: ..., });
+
+    // You can call `CreateDataConnectMutationResult.mutateAsync()` to execute the Mutation and return a promise with the data returned from the Mutation.
+    this.mutation.mutateAsync(deleteHotelVars);
+
+    // You can also pass in a `DeleteHotelOptions` object (not function) to `CreateDataConnectMutationResult.mutate()`.
+    this.mutation.mutate(deleteHotelVars, this.options());
   }
 }
 ```

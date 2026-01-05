@@ -31,6 +31,10 @@ mutation UpdateHotelConfig($id: UUID!, $name: String, $address: String, $email: 
   hotel_update(id: $id, data: {name: $name, address: $address, email: $email, phoneNumber: $phoneNumber, demoMode: $demoMode, maintenanceEmail: $maintenanceEmail})
 }
 
+mutation DeleteHotel($id: UUID!) @auth(level: PUBLIC) {
+  hotel_delete(id: $id)
+}
+
 query GetFirstHotel @auth(level: PUBLIC) {
   hotels(limit: 1) {
     id

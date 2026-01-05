@@ -1,4 +1,4 @@
-const { listAvailableRoomsRef, createRoomRef, updateRoomStatusRef, createHotelRef, updateHotelConfigRef, getFirstHotelRef, getHotelByIdRef, listAllHotelsRef, listGuestsRef, createGuestDcRef, updateGuestDcRef, deleteGuestDcRef, listBookingsRef, createBookingDcRef, updateBookingDcRef, listLogsRef, createLogDcRef, listStaffRef, createStaffDcRef, updateStaffDcRef, listTimeLogsRef, createTimeLogDcRef, updateTimeLogDcRef, listFinancialDocumentsRef, createFinancialDocumentDcRef, upsertUserRef, linkUserToHotelRef, listHotelsByUserRef, listUsersDcRef, listMaintenanceRef, createMaintenanceDcRef, listShiftsRef, createShiftDcRef, listHousekeepingRef, createHousekeepingTaskDcRef, listInventoryRef, upsertInventoryItemDcRef, listAmenitiesRef, createAmenityDcRef, listStoredDocumentsRef, createStoredDocumentDcRef, seedRoomsRef, seedStaffRef, seedInventoryRef, seedAmenitiesRef } = require('../');
+const { listAvailableRoomsRef, createRoomRef, updateRoomStatusRef, createHotelRef, updateHotelConfigRef, deleteHotelRef, getFirstHotelRef, getHotelByIdRef, listAllHotelsRef, listGuestsRef, createGuestDcRef, updateGuestDcRef, deleteGuestDcRef, listBookingsRef, createBookingDcRef, updateBookingDcRef, listLogsRef, createLogDcRef, listStaffRef, createStaffDcRef, updateStaffDcRef, listTimeLogsRef, createTimeLogDcRef, updateTimeLogDcRef, listFinancialDocumentsRef, createFinancialDocumentDcRef, upsertUserRef, linkUserToHotelRef, listHotelsByUserRef, listUsersDcRef, listMaintenanceRef, createMaintenanceDcRef, listShiftsRef, createShiftDcRef, listHousekeepingRef, createHousekeepingTaskDcRef, listInventoryRef, upsertInventoryItemDcRef, listAmenitiesRef, createAmenityDcRef, listStoredDocumentsRef, createStoredDocumentDcRef, seedRoomsRef, seedStaffRef, seedInventoryRef, seedAmenitiesRef } = require('../');
 const { DataConnect, CallerSdkTypeEnum } = require('@angular/fire/data-connect');
 const { injectDataConnectQuery, injectDataConnectMutation } = require('@tanstack-query-firebase/angular/data-connect');
 const { inject, EnvironmentInjector } = require('@angular/core');
@@ -30,6 +30,10 @@ exports.injectCreateHotel = function injectCreateHotel(args, injector) {
 
 exports.injectUpdateHotelConfig = function injectUpdateHotelConfig(args, injector) {
   return injectDataConnectMutation(updateHotelConfigRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
+}
+
+exports.injectDeleteHotel = function injectDeleteHotel(args, injector) {
+  return injectDataConnectMutation(deleteHotelRef, args, injector, CallerSdkTypeEnum.GeneratedAngular);
 }
 
 exports.injectGetFirstHotel = function injectGetFirstHotel(options, injector) {
