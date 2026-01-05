@@ -298,7 +298,9 @@ export class DataService {
   firstHotelQuery = injectGetFirstHotel(() => ({}));
 
   // Query all hotels for SuperAdmins
-  allHotelsQuery = injectListAllHotels(() => ({}));
+  allHotelsQuery = injectListAllHotels(() => ({
+    enabled: this.auth.currentUser()?.email === 'jruizdesign@gmail.com'
+  }));
 
   // Query hotels for specific user
   hotelsByUserQuery = injectListHotelsByUser(

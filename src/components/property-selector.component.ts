@@ -119,63 +119,57 @@ export class PropertySelectorComponent {
     auth = inject(AuthService);
     router = inject(Router);
 
-    hotels = signal<any[]>([]);
-    loading = signal(true);
+    hotels = computed(() => {
+        const profile = this.data.userProfile() as any;
+        const user = this.auth.currentUser();
+        if (!user || profile === null) return [];
+
+        const isAdmin = profile?.role === 'SuperAdmin' ||
+            user?.role === 'SuperAdmin' ||
+            user?.email === 'jruizdesign@gmail.com';
+
+        if (isAdmin) {
+            return this.data.allHotelsQuery.data()?.hotels || [];
+        } else {
+            const data = this.data.hotelsByUserQuery.data();
+            return data?.user?.userHotels_on_user?.map(uh => uh.hotel) || [];
+        }
+    });
+
+    loading = computed(() => {
+        const profilePre = this.data.userProfile();
+        if (profilePre === null) return true; // Waiting for profile
+
+        const profile = profilePre as any;
+        const user = this.auth.currentUser();
+        if (!user) return false;
+
+        const isAdmin = profile?.role === 'SuperAdmin' ||
+            user?.role === 'SuperAdmin' ||
+            user?.email === 'jruizdesign@gmail.com';
+
+        if (isAdmin) {
+            return this.data.allHotelsQuery.isFetching();
+        } else {
+            return this.data.hotelsByUserQuery.isFetching();
+        }
+    });
 
     constructor() {
-        effect(async () => {
+        // Automatically redirect if only one hotel is available and we're not an admin
+        effect(() => {
+            const h = this.hotels();
+            const l = this.loading();
             const profile = this.data.userProfile() as any;
-            const user = this.auth.currentUser();
 
-            // Only run if we have a user and the profile has been fully loaded
-            // profile is null if loading, undefined if document doesn't exist
-            if (!user || profile === null) {
-                console.log('[PropertySelector] Waiting for user/profile...', { user: !!user, profile });
-                return;
+            if (!l && h.length === 1 && profile?.role !== 'SuperAdmin') {
+                console.log('[PropertySelector] Auto-selecting single property:', h[0].id);
+                this.selectHotel(h[0].id);
             }
 
-            // Avoid re-running if already loading or hotels are already populated
-            if (this.hotels().length > 0 && !this.loading()) return;
-
-            // 1. Unified Admin Check
-            const isAdmin = profile?.role === 'SuperAdmin' ||
-                user.role === 'SuperAdmin' ||
-                user.email === 'jruizdesign@gmail.com';
-
-            console.log('[PropertySelector] Evaluating Admin status:', {
-                email: user.email,
-                profileRole: profile?.role,
-                authRole: user.role,
-                isAdmin
-            });
-
-            if (isAdmin) {
-                console.log('[PropertySelector] Authorized for global list. Loading...');
-                await this.loadAllHotels();
-                return;
-            }
-
-            // 2. Regular User logic - strictly restricted to assigned hotels
-            console.log('[PropertySelector] Loading restricted properties for user...');
-            if (profile['hotelIds'] && Array.isArray(profile['hotelIds']) && profile['hotelIds'].length > 0) {
-                await this.loadHotels(profile['hotelIds']);
-            } else if (profile['hotelId']) {
-                // Single hotel user - redirect if only one, but if they are here, load it
-                await this.loadHotels([profile['hotelId']]);
-                if (this.hotels().length === 1 && !this.loading()) {
-                    this.selectHotel(this.hotels()[0].id);
-                }
-            } else {
-                // Check Data Connect directly for links
-                const res = await this.data.hotelsByUserQuery.refetch();
-                const linked = res.data.user?.userHotels_on_user?.map(uh => uh.hotel) || [];
-                if (linked.length) {
-                    this.hotels.set(linked);
-                    if (linked.length === 1) this.selectHotel(linked[0].id);
-                } else {
-                    this.loading.set(false);
-                    this.router.navigate(['/setup']);
-                }
+            if (!l && h.length === 0 && profile && profile.role !== 'SuperAdmin') {
+                console.log('[PropertySelector] No properties found for user, redirecting to setup');
+                this.router.navigate(['/setup']);
             }
         });
     }
@@ -199,57 +193,11 @@ export class PropertySelectorComponent {
     }
 
     async loadAllHotels() {
-        const profile = this.data.userProfile() as any;
-        const user = this.auth.currentUser();
-        const isAdmin = profile?.role === 'SuperAdmin' ||
-            user?.role === 'SuperAdmin' ||
-            user?.email === 'jruizdesign@gmail.com';
-
-        if (!isAdmin) {
-            console.warn('[PropertySelector] Security Guard: Non-admin attempted to load all hotels. Redirecting to restricted load.');
-            const ids = profile?.hotelIds || (profile?.hotelId ? [profile.hotelId] : []);
-            return this.loadHotels(ids);
-        }
-
-        this.loading.set(true);
-        try {
-            console.log('[PropertySelector] Loading global property list...');
-            const res = await this.data.allHotelsQuery.refetch();
-            this.hotels.set(res.data.hotels || []);
-        } catch (err) {
-            console.error('[PropertySelector] Failed to load all hotels', err);
-        } finally {
-            this.loading.set(false);
-        }
+        await this.data.allHotelsQuery.refetch();
     }
 
     async loadHotels(ids: string[]) {
-        this.loading.set(true);
-        try {
-            const user = this.auth.currentUser();
-            if (user?.id) {
-                const res = await this.data.hotelsByUserQuery.refetch();
-                const hotelsViaUser = res.data.user?.userHotels_on_user?.map(uh => uh.hotel) || [];
-
-                if (hotelsViaUser.length) {
-                    this.hotels.set(hotelsViaUser);
-                    return;
-                }
-            }
-
-            // Fallback for transition or if user-hotel link is only in Firestore
-            const promises = ids.map(id => getDoc(doc(this.data.firestore, `hotels/${id}`)));
-            const snapshots = await Promise.all(promises);
-            const loaded = snapshots
-                .filter(snap => snap.exists())
-                .map(snap => ({ id: snap.id, ...snap.data() }));
-
-            this.hotels.set(loaded);
-        } catch (err) {
-            console.error('Failed to load hotels', err);
-        } finally {
-            this.loading.set(false);
-        }
+        await this.data.hotelsByUserQuery.refetch();
     }
 
     async createDemoHotel() {
