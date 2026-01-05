@@ -531,11 +531,13 @@ export class DataService {
   });
 
   constructor() {
-    // Sync profile role to AuthService
+    // Synchronize profile role to AuthService
     effect(() => {
       const profile = this.userProfile();
       if (profile && profile['role']) {
         this.auth.profileRole.set(profile['role']);
+      } else {
+        this.auth.profileRole.set(null);
       }
     });
 

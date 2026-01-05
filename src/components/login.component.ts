@@ -120,22 +120,11 @@ export class LoginComponent {
         await this.auth.login(this.email, this.password);
       }
 
-      // Promote specific account to SuperAdmin for development
+      // Sync user to Data Connect
       const uid = this.auth.auth.currentUser?.uid;
       if (uid) {
-        if (this.email === 'jruizdesign@gmail.com') {
-          console.log('[LoginComponent] Auto-promoting jruizdesign@gmail.com to SuperAdmin...');
-          const { doc, setDoc, getFirestore } = await import('firebase/firestore');
-          await setDoc(doc(getFirestore(), `users/${uid}`), {
-            role: 'SuperAdmin',
-            email: this.email,
-            username: 'Super Admin'
-          }, { merge: true });
-
-          await this.data.ensureUserExists(uid, this.email, 'SuperAdmin');
-        } else {
-          await this.data.ensureUserExists(uid, this.email, 'Staff');
-        }
+        // New users default to Staff role. Admin status is evaluated by AuthService.
+        await this.data.ensureUserExists(uid, this.email, 'Staff');
       }
 
       // Wait for auth state to propagate (fix for race condition)

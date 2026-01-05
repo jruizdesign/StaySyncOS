@@ -52,11 +52,7 @@ import { doc, setDoc } from 'firebase/firestore';
                  </div>
               </div>
               
-              <div class="flex justify-between items-center pt-6 mt-2 border-t border-gray-50">
-                   <button type="button" (click)="promoteToSuperAdmin()" class="text-xs text-indigo-500 hover:text-indigo-700 font-medium hover:underline">
-                       Promote to SuperAdmin (Dev)
-                   </button>
-
+              <div class="flex justify-end items-center pt-6 mt-2 border-t border-gray-50">
                    <button type="submit" [disabled]="configForm.pristine" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all font-medium">
                        Save Changes
                    </button>
@@ -457,19 +453,4 @@ export class SettingsComponent {
         }
     }
 
-    async promoteToSuperAdmin() {
-        const user = this.auth.currentUser();
-        if (!user) return;
-
-        if (!confirm('Promote your account to SuperAdmin? This will grant access to ALL properties.')) return;
-
-        try {
-            await setDoc(doc(this.data.firestore, "users/" + user.id), { role: 'SuperAdmin' }, { merge: true });
-            alert('Success! You are now a SuperAdmin. Please reload the page to see the changes.');
-            window.location.reload();
-        } catch (e) {
-            console.error(e);
-            alert('Failed to promote account: ' + e);
-        }
-    }
 }
