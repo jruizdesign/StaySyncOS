@@ -29,7 +29,8 @@
     "node": "^24.12.0",
     "nvm": "^0.0.4",
     "rxjs": "^7.8.2",
-    "tailwindcss": "latest"
+    "tailwindcss": "latest",
+    "zone.js": "^0.14.2"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",

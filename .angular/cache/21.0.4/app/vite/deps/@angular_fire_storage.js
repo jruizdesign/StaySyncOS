@@ -1,9 +1,7 @@
 import {
+  AppCheckInstances,
   AuthInstances
-} from "./chunk-JSLPOX7Y.js";
-import {
-  AppCheckInstances
-} from "./chunk-R3ACYMDY.js";
+} from "./chunk-UHWAUC3G.js";
 import "./chunk-JZ26HNWK.js";
 import {
   FirebaseApp,
@@ -13,7 +11,7 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-DH6FCQQZ.js";
+} from "./chunk-KLPP4O2O.js";
 import {
   Component,
   FirebaseError,
@@ -29,7 +27,7 @@ import {
   pingServer,
   registerVersion,
   updateEmulatorBanner
-} from "./chunk-YWX26FOZ.js";
+} from "./chunk-VAAWZPH7.js";
 import "./chunk-U5AZPYUM.js";
 import {
   NgModule,
@@ -44,8 +42,8 @@ import {
   makeEnvironmentProviders,
   ɵɵdefineInjector
 } from "./chunk-CIW2LLUI.js";
-import "./chunk-BZLT2HVW.js";
 import "./chunk-XYFQ7QOX.js";
+import "./chunk-BZLT2HVW.js";
 import {
   Observable,
   concatMap,

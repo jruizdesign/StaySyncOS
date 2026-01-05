@@ -274,8 +274,8 @@ export class DataService {
 
     if (!uid) throw new Error("No user logged in to link.");
 
-    // Link in Firestore
-    // await setDoc(doc(this.firestore, `users/${uid}`), { hotelId }, { merge: true });
+    // Link in Firestore (required for guards and legacy profile logic)
+    await setDoc(doc(this.firestore, `users/${uid}`), { hotelId }, { merge: true });
 
     // Link in Data Connect
     try {
@@ -286,6 +286,7 @@ export class DataService {
     }
 
     this.log('System', 'Recovery', `User linked to existing hotel ${hotelId}`);
+    this.currentHotelQuery.refetch();
     return true;
   }
 
@@ -551,7 +552,7 @@ export class DataService {
             // Link in DC
             await this.linkUserToHotelMut.mutateAsync({ userId: u.uid, hotelId: newId });
 
-            // await setDoc(doc(this.firestore, `users/${u.uid}`), { hotelId: newId }, { merge: true });
+            await setDoc(doc(this.firestore, `users/${u.uid}`), { hotelId: newId }, { merge: true });
             this.log('System', 'Initialization', 'Created hotel and linked to user.');
             await this.seedRooms(newId);
             this.seedStaff(newId);
@@ -581,7 +582,7 @@ export class DataService {
         await this.linkUserToHotelMut.mutateAsync({ userId: user.id, hotelId: newId });
 
         // Link in Firestore
-        // await setDoc(doc(this.firestore, `users/${user.id}`), { hotelId: newId }, { merge: true });
+        await setDoc(doc(this.firestore, `users/${user.id}`), { hotelId: newId }, { merge: true });
         this.log('System', 'Initialization', 'Created hotel and linked to user.');
 
         // Seed initial rooms

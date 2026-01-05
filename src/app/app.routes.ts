@@ -70,29 +70,41 @@ export const setupGuard: CanActivateFn = (route, state) => {
         filter(u => u !== undefined),
         take(1),
         switchMap(user => {
-            if (!user) return of(router.parseUrl('/login'));
+            if (!user) {
+                console.log('[SetupGuard] No user, redirecting to /login');
+                return of(router.parseUrl('/login'));
+            }
+
+            // Check if we already have a selected hotel in DataService (prevents loop)
+            if (data.selectedHotelId()) {
+                console.log('[SetupGuard] Hotel already selected:', data.selectedHotelId(), 'allowing access.');
+                return of(true);
+            }
 
             return docData(doc(firestore, `users/${user.uid}`)).pipe(
                 take(1),
                 map((profile: any) => {
-                    // 1. SuperAdmin & Multi-property check
-                    const isSuperAdmin = profile?.role === 'SuperAdmin';
-                    const hasMultiProps = profile?.hotelIds && Array.isArray(profile.hotelIds) && profile.hotelIds.length > 0;
+                    console.log('[SetupGuard] Profile check:', profile);
+
+                    if (!profile) {
+                        console.log('[SetupGuard] No profile found, redirecting to /setup');
+                        return router.parseUrl('/setup');
+                    }
+
+                    const isSuperAdmin = profile.role === 'SuperAdmin';
+                    const hasMultiProps = profile.hotelIds && Array.isArray(profile.hotelIds) && profile.hotelIds.length > 0;
 
                     if (isSuperAdmin || hasMultiProps) {
-                        // If multiple hotels or SuperAdmin, user MUST have a selected Hotel ID to pass this guard
-                        if (data.selectedHotelId()) {
-                            return true;
-                        }
-                        // Otherwise, redirect to selector
+                        console.log('[SetupGuard] SuperAdmin or multiple properties, redirecting to /select-property');
                         return router.parseUrl('/select-property');
                     }
 
-                    // 2. Single property check
-                    if (profile && profile.hotelId) {
+                    if (profile.hotelId) {
+                        console.log('[SetupGuard] Single hotelId found:', profile.hotelId, 'allowing access.');
                         return true;
                     }
 
+                    console.log('[SetupGuard] No hotel information, redirecting to /setup');
                     return router.parseUrl('/setup');
                 })
             );

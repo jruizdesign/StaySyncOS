@@ -658,34 +658,6 @@ function replaceTemplate(template, data) {
   });
 }
 var PATTERN = /\{\$([^}]+)}/g;
-function jsonEval(str) {
-  return JSON.parse(str);
-}
-var decode = function(token) {
-  let header = {}, claims = {}, data = {}, signature = "";
-  try {
-    const parts = token.split(".");
-    header = jsonEval(base64Decode(parts[0]) || "");
-    claims = jsonEval(base64Decode(parts[1]) || "");
-    signature = parts[2];
-    data = claims["d"] || {};
-    delete claims["d"];
-  } catch (e) {
-  }
-  return {
-    header,
-    claims,
-    data,
-    signature
-  };
-};
-var issuedAtTime = function(token) {
-  const claims = decode(token).claims;
-  if (typeof claims === "object" && claims.hasOwnProperty("iat")) {
-    return claims["iat"];
-  }
-  return null;
-};
 function isEmpty(obj) {
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -909,21 +881,7 @@ function implementsAnyMethods(obj, methods) {
 }
 function noop() {
 }
-var DEFAULT_INTERVAL_MILLIS = 1e3;
-var DEFAULT_BACKOFF_FACTOR = 2;
 var MAX_VALUE_MILLIS = 4 * 60 * 60 * 1e3;
-var RANDOM_FACTOR = 0.5;
-function calculateBackoffMillis(backoffCount, intervalMillis = DEFAULT_INTERVAL_MILLIS, backoffFactor = DEFAULT_BACKOFF_FACTOR) {
-  const currBaseValue = intervalMillis * Math.pow(backoffFactor, backoffCount);
-  const randomWait = Math.round(
-    // A fraction of the backoff value to add/subtract.
-    // Deviation: changes multiplication order to improve readability.
-    RANDOM_FACTOR * currBaseValue * // A random float (rounded to int by Math.round above) in the range [-1, 1]. Determines
-    // if we add or subtract.
-    (Math.random() - 0.5) * 2
-  );
-  return Math.min(MAX_VALUE_MILLIS, currBaseValue + randomWait);
-}
 function getModularInstance(service) {
   if (service && service._delegate) {
     return service._delegate;
@@ -2373,14 +2331,12 @@ export {
   isIndexedDBAvailable,
   FirebaseError,
   ErrorFactory,
-  issuedAtTime,
   isEmpty,
   deepEqual,
   querystring,
   querystringDecode,
   extractQuerystring,
   createSubscribe,
-  calculateBackoffMillis,
   getModularInstance,
   Component,
   LogLevel,
@@ -2407,4 +2363,4 @@ export {
   onLog,
   setLogLevel2 as setLogLevel
 };
-//# sourceMappingURL=chunk-YWX26FOZ.js.map
+//# sourceMappingURL=chunk-VAAWZPH7.js.map

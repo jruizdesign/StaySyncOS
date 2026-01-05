@@ -23,7 +23,7 @@ import {
   toQueryRef,
   validateArgs,
   validateDCOptions
-} from "./chunk-T7TARFXG.js";
+} from "./chunk-5YQOG6S4.js";
 import {
   FirebaseApp,
   FirebaseApps,
@@ -32,10 +32,10 @@ import {
   ɵgetAllInstancesOf,
   ɵgetDefaultInstanceOf,
   ɵzoneWrap
-} from "./chunk-DH6FCQQZ.js";
+} from "./chunk-KLPP4O2O.js";
 import {
   registerVersion
-} from "./chunk-YWX26FOZ.js";
+} from "./chunk-VAAWZPH7.js";
 import "./chunk-U5AZPYUM.js";
 import {
   NgModule,
@@ -50,8 +50,8 @@ import {
   makeEnvironmentProviders,
   ɵɵdefineInjector
 } from "./chunk-CIW2LLUI.js";
-import "./chunk-BZLT2HVW.js";
 import "./chunk-XYFQ7QOX.js";
+import "./chunk-BZLT2HVW.js";
 import {
   concatMap,
   distinct,

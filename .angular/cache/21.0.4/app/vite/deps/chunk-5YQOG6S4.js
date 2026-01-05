@@ -12,7 +12,7 @@ import {
   pingServer,
   registerVersion,
   updateEmulatorBanner
-} from "./chunk-YWX26FOZ.js";
+} from "./chunk-VAAWZPH7.js";
 
 // node_modules/@firebase/data-connect/dist/index.esm2017.js
 var name = "@firebase/data-connect";
@@ -793,4 +793,4 @@ export {
   validateArgs,
   subscribe
 };
-//# sourceMappingURL=chunk-T7TARFXG.js.map
+//# sourceMappingURL=chunk-5YQOG6S4.js.map

@@ -1,6 +1,7 @@
+import 'zone.js';
 import '@angular/compiler';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withHashLocation } from '@angular/router';
 import { AppComponent } from './src/app.component';
 import { routes } from './src/app/app.routes';
@@ -27,48 +28,58 @@ if (isLocal) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideZonelessChangeDetection(),
+    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withHashLocation()),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideAuth(() => {
       const auth = getAuth();
       if (isLocal) {
-        const host = window.location.hostname;
-        console.log(`🔗 Connecting to Auth Emulator at http://${host}:9099`);
-        connectAuthEmulator(auth, `http://${host}:9099`, { disableWarnings: true });
+        console.log(`🔗 Connecting to Auth Emulator at http://127.0.0.1:9099`);
+        connectAuthEmulator(auth, `http://127.0.0.1:9099`, { disableWarnings: true });
       }
       return auth;
     }),
     provideStorage(() => {
       const storage = getStorage();
-      if (isLocal) connectStorageEmulator(storage, window.location.hostname, 9199);
+      if (isLocal) {
+        console.log(`🔗 Connecting to Storage Emulator at http://127.0.0.1:9199`);
+        connectStorageEmulator(storage, '127.0.0.1', 9199);
+      }
       return storage;
     }),
     provideFunctions(() => {
       const functions = getFunctions();
-      if (isLocal) connectFunctionsEmulator(functions, window.location.hostname, 5001);
+      if (isLocal) {
+        console.log(`🔗 Connecting to Functions Emulator at http://127.0.0.1:5001`);
+        connectFunctionsEmulator(functions, '127.0.0.1', 5001);
+      }
       return functions;
     }),
     provideFirestore(() => {
       const firestore = getFirestore();
-      if (isLocal) connectFirestoreEmulator(firestore, window.location.hostname, 8080);
+      if (isLocal) {
+        console.log(`🔗 Connecting to Firestore Emulator at http://127.0.0.1:8080`);
+        connectFirestoreEmulator(firestore, '127.0.0.1', 8080);
+      }
       return firestore;
     }),
     provideDataConnect(() => {
       const dc = getDataConnect(getApp(), connectorConfig);
-      if (isLocal) connectDataConnectEmulator(dc, window.location.hostname, 9399);
+      if (isLocal) {
+        console.log(`🔗 Connecting to Data Connect Emulator at http://127.0.0.1:9399`);
+        connectDataConnectEmulator(dc, '127.0.0.1', 9399);
+      }
       return dc;
     }),
-    provideAppCheck(() => {
-      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-        return undefined as any; // Disable App Check on localhost
+    // App Check disabled for localhost stability
+    provideAngularQuery(new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: isLocal ? 0 : 3,
+          staleTime: 1000 * 60, // 1 minute
+        }
       }
-      return initializeAppCheck(undefined, {
-        provider: new ReCaptchaEnterpriseProvider('6Ldk8TssAAAAAHmIfBZ4GDSaaeR772oXEPSoVtfC'),
-        isTokenAutoRefreshEnabled: true
-      });
-    }),
-    provideAngularQuery(new QueryClient())
+    }))
   ]
 }).catch(err => console.error(err));
 

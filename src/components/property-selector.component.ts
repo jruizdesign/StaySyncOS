@@ -110,39 +110,32 @@ export class PropertySelectorComponent {
     loading = signal(true);
 
     constructor() {
-        effect(() => {
+        effect(async () => {
             const profile = this.data.userProfile() as any;
             const user = this.auth.currentUser();
 
-            console.log('[PropertySelector] Debug Info:', {
-                hasUser: !!user,
-                userEmail: user?.email,
-                hasProfile: !!profile,
-                profileRole: profile?.role
-            });
+            // Only run if we have a user and the profile has been checked (not initially null)
+            if (!user || profile === null) return;
 
-            if (this.loading() && this.hotels().length > 0) return; // Already have data
-            if (!user) {
-                this.loading.set(false);
-                return;
-            }
+            // Avoid re-running if already loading or hotels are already populated
+            if (this.hotels().length > 0) return;
 
-            // 1. Unified Admin Check (Role OR Email Fallback)
+            console.log('[PropertySelector] Evaluating state:', { role: profile?.role, email: user.email });
+
+            // 1. Unified Admin Check
             const isAdmin = profile?.role === 'SuperAdmin' || user.email === 'jruizdesign@gmail.com';
 
             if (isAdmin) {
-                console.log('[PropertySelector] SuperAdmin/Admin detected. Fetching global list...');
-                this.loadAllHotels();
+                await this.loadAllHotels();
                 return;
             }
 
             // 2. Regular User logic
-            if (profile && profile['hotelIds'] && Array.isArray(profile['hotelIds']) && profile['hotelIds'].length > 0) {
-                this.loadHotels(profile['hotelIds']);
-            } else if (profile && profile['hotelId']) {
-                console.log('[PropertySelector] Auto-selecting assigned hotel:', profile['hotelId']);
+            if (profile['hotelIds'] && Array.isArray(profile['hotelIds']) && profile['hotelIds'].length > 0) {
+                await this.loadHotels(profile['hotelIds']);
+            } else if (profile['hotelId']) {
                 this.selectHotel(profile['hotelId']);
-            } else if (profile !== null) {
+            } else {
                 this.loading.set(false);
                 this.router.navigate(['/setup']);
             }

@@ -7,7 +7,7 @@ import {
   onLog,
   registerVersion,
   setLogLevel
-} from "./chunk-YWX26FOZ.js";
+} from "./chunk-VAAWZPH7.js";
 import {
   pendingUntilEvent
 } from "./chunk-U5AZPYUM.js";
@@ -336,4 +336,4 @@ export {
   registerVersion2 as registerVersion,
   setLogLevel2 as setLogLevel
 };
-//# sourceMappingURL=chunk-DH6FCQQZ.js.map
+//# sourceMappingURL=chunk-KLPP4O2O.js.map
