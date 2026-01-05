@@ -5415,6 +5415,8 @@ The `data` property is an object of type `SeedAmenitiesData`, which is defined i
 export interface SeedAmenitiesData {
   a1: Amenity_Key;
   a2: Amenity_Key;
+  a3: Amenity_Key;
+  a4: Amenity_Key;
 }
 ```
 ### Using `SeedAmenities`'s action shortcut function
@@ -5440,12 +5442,16 @@ const { data } = await seedAmenities(dataConnect, seedAmenitiesVars);
 
 console.log(data.a1);
 console.log(data.a2);
+console.log(data.a3);
+console.log(data.a4);
 
 // Or, you can use the `Promise` API.
 seedAmenities(seedAmenitiesVars).then((response) => {
   const data = response.data;
   console.log(data.a1);
   console.log(data.a2);
+  console.log(data.a3);
+  console.log(data.a4);
 });
 ```
 
@@ -5475,12 +5481,16 @@ const { data } = await executeMutation(ref);
 
 console.log(data.a1);
 console.log(data.a2);
+console.log(data.a3);
+console.log(data.a4);
 
 // Or, you can use the `Promise` API.
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.a1);
   console.log(data.a2);
+  console.log(data.a3);
+  console.log(data.a4);
 });
 ```
 

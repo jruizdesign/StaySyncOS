@@ -4478,6 +4478,8 @@ To access the data returned by a Mutation, use the `CreateDataConnectMutationRes
 export interface SeedAmenitiesData {
   a1: Amenity_Key;
   a2: Amenity_Key;
+  a3: Amenity_Key;
+  a4: Amenity_Key;
 }
 ```
 

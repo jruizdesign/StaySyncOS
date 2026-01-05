@@ -575,6 +575,8 @@ export interface Room_Key {
 export interface SeedAmenitiesData {
   a1: Amenity_Key;
   a2: Amenity_Key;
+  a3: Amenity_Key;
+  a4: Amenity_Key;
 }
 
 export interface SeedAmenitiesVariables {
