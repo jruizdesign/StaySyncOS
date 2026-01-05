@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { AiService } from './ai.service';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel, injectListGuests, injectCreateGuestDc, injectUpdateGuestDc, injectDeleteGuestDc, injectListBookings, injectCreateBookingDc, injectUpdateBookingDc, injectListLogs, injectCreateLogDc, injectListStaff, injectCreateStaffDc, injectUpdateStaffDc, injectListTimeLogs, injectCreateTimeLogDc, injectUpdateTimeLogDc, injectListFinancialDocuments, injectCreateFinancialDocumentDc, injectUpdateHotelConfig, injectListMaintenance, injectCreateMaintenanceDc, injectListShifts, injectCreateShiftDc, injectListHousekeeping, injectCreateHousekeepingTaskDc, injectListInventory, injectUpsertInventoryItemDc, injectListAmenities, injectCreateAmenityDc, injectListStoredDocuments, injectCreateStoredDocumentDc, injectDeleteHotel, injectLogAiUsage, injectListAiUsage } from '../dataconnect-generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel, injectListGuests, injectCreateGuestDc, injectUpdateGuestDc, injectDeleteGuestDc, injectListBookings, injectCreateBookingDc, injectUpdateBookingDc, injectListLogs, injectCreateLogDc, injectListStaff, injectCreateStaffDc, injectUpdateStaffDc, injectListTimeLogs, injectCreateTimeLogDc, injectUpdateTimeLogDc, injectListFinancialDocuments, injectCreateFinancialDocumentDc, injectUpdateHotelConfig, injectListMaintenance, injectCreateMaintenanceDc, injectListShifts, injectCreateShiftDc, injectListHousekeeping, injectCreateHousekeepingTaskDc, injectListInventory, injectUpsertInventoryItemDc, injectListAmenities, injectCreateAmenityDc, injectListStoredDocuments, injectCreateStoredDocumentDc, injectDeleteHotel, injectLogAiUsage, injectListAiUsage, injectGetUserByEmail } from '../dataconnect-generated/angular';
 import { ListAvailableRoomsData } from '../dataconnect-generated';
 
 // Interfaces
@@ -255,6 +255,8 @@ export class DataService {
     () => ({ hotelId: this.currentHotelId()! }),
     () => ({ enabled: !!this.currentHotelId() })
   );
+
+  getUserByEmailQuery = injectGetUserByEmail();
 
   // Mutations
   createRoomMut = injectCreateRoom();
@@ -788,6 +790,41 @@ export class DataService {
       // this.aiUsageQuery.refetch();
     } catch (e) {
       console.error('[DataService] Failed to log AI usage', e);
+    }
+  }
+
+  async linkUserByEmail(email: string, role: string) {
+    const hotelId = this.currentHotelId();
+    if (!hotelId) throw new Error('No hotel selected');
+
+    try {
+      const res = await this.getUserByEmailQuery.execute({ email });
+      const user = res.data.users[0];
+
+      if (!user) {
+        throw new Error('User not found. They must sign up for StaySyncOS at least once first.');
+      }
+
+      // 1. Link in Data Connect
+      await this.linkUserToHotelMut.mutateAsync({ userId: user.id, hotelId });
+
+      // 2. Update role in Data Connect if different
+      if (user.role !== role) {
+        await this.upsertUserMut.mutateAsync({ id: user.id, email: user.email, role });
+      }
+
+      // 3. Update role/hotel in Firestore for standard permissions
+      await setDoc(doc(this.firestore, `users/${user.id}`), {
+        hotelId,
+        role,
+        hotelIds: arrayUnion(hotelId)
+      }, { merge: true });
+
+      this.log('System', 'Staff', `Linked user ${email} as ${role}`);
+      return user.id;
+    } catch (e: any) {
+      console.error('[DataService] Failed to link user', e);
+      throw e;
     }
   }
 
