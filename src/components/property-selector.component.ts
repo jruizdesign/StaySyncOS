@@ -127,19 +127,30 @@ export class PropertySelectorComponent {
             const profile = this.data.userProfile() as any;
             const user = this.auth.currentUser();
 
-            // Only run if we have a user and the profile has been checked (not initially null)
-            if (!user || profile === null) return;
+            // Only run if we have a user and the profile has been fully loaded
+            // profile is null if loading, undefined if document doesn't exist
+            if (!user || profile === null) {
+                console.log('[PropertySelector] Waiting for user/profile...', { user: !!user, profile });
+                return;
+            }
 
             // Avoid re-running if already loading or hotels are already populated
-            if (this.hotels().length > 0) return;
-
-            console.log('[PropertySelector] Evaluating state:', { role: profile?.role, email: user.email });
+            if (this.hotels().length > 0 && !this.loading()) return;
 
             // 1. Unified Admin Check
-            const isAdmin = profile?.role === 'SuperAdmin' || user.email === 'jruizdesign@gmail.com';
+            const isAdmin = profile?.role === 'SuperAdmin' ||
+                user.role === 'SuperAdmin' ||
+                user.email === 'jruizdesign@gmail.com';
+
+            console.log('[PropertySelector] Evaluating Admin status:', {
+                email: user.email,
+                profileRole: profile?.role,
+                authRole: user.role,
+                isAdmin
+            });
 
             if (isAdmin) {
-                console.log('[PropertySelector] Loading global property list for admin...');
+                console.log('[PropertySelector] Authorized for global list. Loading...');
                 await this.loadAllHotels();
                 return;
             }
@@ -172,22 +183,38 @@ export class PropertySelectorComponent {
     async refreshList() {
         const profile = this.data.userProfile() as any;
         const user = this.auth.currentUser();
-        const isAdmin = profile?.role === 'SuperAdmin' || user?.email === 'jruizdesign@gmail.com';
+        const isAdmin = profile?.role === 'SuperAdmin' ||
+            user?.role === 'SuperAdmin' ||
+            user?.email === 'jruizdesign@gmail.com';
+
+        console.log('[PropertySelector] Refresh requested. IsAdmin:', isAdmin);
 
         if (isAdmin) {
             await this.loadAllHotels();
         } else {
             // Non-admins only refresh their assigned hotels
-            await this.loadHotels(profile?.hotelIds || [profile?.hotelId].filter(Boolean));
+            const ids = profile?.hotelIds || (profile?.hotelId ? [profile.hotelId] : []);
+            await this.loadHotels(ids);
         }
     }
 
     async loadAllHotels() {
+        const profile = this.data.userProfile() as any;
+        const user = this.auth.currentUser();
+        const isAdmin = profile?.role === 'SuperAdmin' ||
+            user?.role === 'SuperAdmin' ||
+            user?.email === 'jruizdesign@gmail.com';
+
+        if (!isAdmin) {
+            console.warn('[PropertySelector] Security Guard: Non-admin attempted to load all hotels. Redirecting to restricted load.');
+            const ids = profile?.hotelIds || (profile?.hotelId ? [profile.hotelId] : []);
+            return this.loadHotels(ids);
+        }
+
         this.loading.set(true);
         try {
-            console.log('[PropertySelector] Loading all hotels via Data Connect...');
+            console.log('[PropertySelector] Loading global property list...');
             const res = await this.data.allHotelsQuery.refetch();
-            console.log('[PropertySelector] All hotels result:', res.data.hotels);
             this.hotels.set(res.data.hotels || []);
         } catch (err) {
             console.error('[PropertySelector] Failed to load all hotels', err);
