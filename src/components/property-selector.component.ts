@@ -146,7 +146,7 @@ export class PropertySelectorComponent {
         this.loading.set(true);
         try {
             console.log('[PropertySelector] Loading all hotels via Data Connect...');
-            const res = await this.data.allHotelsQuery.execute();
+            const res = await this.data.allHotelsQuery.refetch();
             console.log('[PropertySelector] All hotels result:', res.data.hotels);
             this.hotels.set(res.data.hotels || []);
         } catch (err) {
@@ -161,7 +161,7 @@ export class PropertySelectorComponent {
         try {
             const user = this.auth.currentUser();
             if (user?.id) {
-                const res = await this.data.hotelsByUserQuery.execute({ userId: user.id });
+                const res = await this.data.hotelsByUserQuery.refetch();
                 const hotelsViaUser = res.data.user?.userHotels_on_user?.map(uh => uh.hotel) || [];
 
                 if (hotelsViaUser.length) {
