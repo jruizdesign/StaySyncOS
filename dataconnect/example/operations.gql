@@ -31,7 +31,7 @@ mutation UpdateHotelConfig($id: UUID!, $name: String, $address: String, $email: 
   hotel_update(id: $id, data: {name: $name, address: $address, email: $email, phoneNumber: $phoneNumber, demoMode: $demoMode, maintenanceEmail: $maintenanceEmail})
 }
 
-mutation DeleteHotel($id: UUID!) @auth(level: USER) {
+mutation DeleteHotel($id: UUID!) @auth(expr: "auth.token.email == 'jruizdesign@gmail.com'") {
   hotel_delete(id: $id)
 }
 

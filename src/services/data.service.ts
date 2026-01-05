@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, effect, inject, Signal } from '@angular/core';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { Firestore, collectionData, docData } from '@angular/fire/firestore';
-import { collection, doc, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy, where } from 'firebase/firestore';
+import { collection, doc, addDoc, updateDoc, deleteDoc, setDoc, query, orderBy, where, arrayUnion } from 'firebase/firestore';
 import { Observable, of } from 'rxjs';
 import { AiService } from './ai.service';
 import { switchMap } from 'rxjs/operators';
@@ -256,7 +256,10 @@ export class DataService {
     () => ({ enabled: !!this.currentHotelId() })
   );
 
-  getUserByEmailQuery = injectGetUserByEmail();
+  getUserByEmailQuery = injectGetUserByEmail(
+    () => ({ email: '' }),
+    () => ({ enabled: false })
+  );
 
   // Mutations
   createRoomMut = injectCreateRoom();
@@ -292,10 +295,10 @@ export class DataService {
   logAiUsageMut = injectLogAiUsage();
 
   // Query to find any existing hotel (recovery mode)
-  firstHotelQuery = injectGetFirstHotel();
+  firstHotelQuery = injectGetFirstHotel(() => ({}));
 
   // Query all hotels for SuperAdmins
-  allHotelsQuery = injectListAllHotels();
+  allHotelsQuery = injectListAllHotels(() => ({}));
 
   // Query hotels for specific user
   hotelsByUserQuery = injectListHotelsByUser(
@@ -814,7 +817,13 @@ export class DataService {
       }
 
       // 3. Create Staff profile for kiosk if it doesn't exist
-      await this.addStaff({ name, role, pin });
+      await this.addStaff({
+        name,
+        role: role as any,
+        pin,
+        status: 'Active',
+        currentStatus: 'Clocked Out'
+      });
 
       // 4. Update role/hotel in Firestore for standard permissions
       await setDoc(doc(this.firestore, `users/${user.id}`), {
