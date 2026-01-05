@@ -226,6 +226,14 @@ query ListUsersDC @auth(level: PUBLIC) {
   }
 }
 
+query GetUserByEmail($email: String!) @auth(level: PUBLIC) {
+  users(where: {email: {eq: $email}}) {
+    id
+    email
+    role
+  }
+}
+
 # Maintenance Operations
 query ListMaintenance($hotelId: UUID!) @auth(level: PUBLIC) {
   maintenanceRequests(where: {hotelId: {eq: $hotelId}}, orderBy: [{reportedAt: DESC}]) {
@@ -330,5 +338,21 @@ query ListStoredDocuments($hotelId: UUID!) @auth(level: PUBLIC) {
 
 mutation CreateStoredDocumentDC($hotelId: UUID!, $title: String!, $category: String!, $uploadedBy: String!, $fileType: String!, $data: String!, $tags: Any, $guestId: UUID, $summary: String) @auth(level: PUBLIC) {
   storedDocument_insert(data: {hotelId: $hotelId, title: $title, category: $category, uploadedBy: $uploadedBy, fileType: $fileType, data: $data, tags: $tags, guestId: $guestId, summary: $summary})
+}
+
+# AI Usage Operations
+mutation LogAiUsage($hotelId: UUID!, $userId: String!, $feature: String!, $model: String!, $promptTokens: Int, $responseTokens: Int, $totalTokens: Int) @auth(level: PUBLIC) {
+  aiUsage_insert(data: {hotelId: $hotelId, userId: $userId, feature: $feature, model: $model, promptTokens: $promptTokens, responseTokens: $responseTokens, totalTokens: $totalTokens})
+}
+
+query ListAiUsage($hotelId: UUID!) @auth(level: PUBLIC) {
+  aiUsages(where: {hotelId: {eq: $hotelId}}, orderBy: [{timestamp: DESC}]) {
+    id
+    userId
+    timestamp
+    feature
+    model
+    totalTokens
+  }
 }
 

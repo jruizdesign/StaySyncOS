@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { GoogleGenAI, Type } from "@google/genai";
 import { MaintenanceRequest, FinancialDocument } from './data.service';
 import { environment } from '../environment';
@@ -9,6 +10,7 @@ import { environment } from '../environment';
 export class AiService {
   private ai: GoogleGenAI;
   private apiKey: string = '';
+  usage$ = new Subject<{ feature: string; model: string; promptTokens?: number; responseTokens?: number }>();
 
   constructor() {
     // Safe API Key retrieval (placeholder for now)
@@ -34,8 +36,16 @@ export class AiService {
       `;
 
       const response = await this.ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.0-flash',
         contents: prompt
+      });
+
+      // Report usage
+      this.usage$.next({
+        feature: 'Daily Report',
+        model: 'gemini-2.0-flash',
+        promptTokens: response.usageMetadata?.promptTokenCount,
+        responseTokens: response.usageMetadata?.candidatesTokenCount
       });
 
       return response.text || "No insights generated.";
@@ -52,8 +62,15 @@ export class AiService {
       const prompt = `Draft a polite but firm email to guest ${guestName} regarding an outstanding balance of $${amount}. Keep it professional and under 100 words.`;
 
       const response = await this.ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.0-flash',
         contents: prompt
+      });
+
+      this.usage$.next({
+        feature: 'Payment Reminder',
+        model: 'gemini-2.0-flash',
+        promptTokens: response.usageMetadata?.promptTokenCount,
+        responseTokens: response.usageMetadata?.candidatesTokenCount
       });
 
       return response.text || "Could not generate draft.";
@@ -78,8 +95,15 @@ export class AiService {
         `;
 
       const response = await this.ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.0-flash',
         contents: prompt
+      });
+
+      this.usage$.next({
+        feature: 'Maintenance Alert',
+        model: 'gemini-2.0-flash',
+        promptTokens: response.usageMetadata?.promptTokenCount,
+        responseTokens: response.usageMetadata?.candidatesTokenCount
       });
 
       return response.text || "New Work Order Generated.";
@@ -106,7 +130,7 @@ export class AiService {
       4. A brief 1-sentence summary of the content.`;
 
       const response = await this.ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.0-flash',
         contents: {
           parts: [
             { inlineData: { mimeType, data } },
@@ -125,6 +149,13 @@ export class AiService {
             }
           }
         }
+      });
+
+      this.usage$.next({
+        feature: 'Document Analysis',
+        model: 'gemini-2.0-flash',
+        promptTokens: response.usageMetadata?.promptTokenCount,
+        responseTokens: response.usageMetadata?.candidatesTokenCount
       });
 
       const result = JSON.parse(response.text || '{}');
@@ -157,7 +188,7 @@ export class AiService {
 
     try {
       const response = await this.ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.0-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -169,6 +200,13 @@ export class AiService {
             }
           }
         }
+      });
+
+      this.usage$.next({
+        feature: 'System Doc Analysis',
+        model: 'gemini-2.0-flash',
+        promptTokens: response.usageMetadata?.promptTokenCount,
+        responseTokens: response.usageMetadata?.candidatesTokenCount
       });
 
       return JSON.parse(response.text || '{}');

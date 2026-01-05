@@ -336,6 +336,17 @@ export function listUsersDc(dc) {
   return executeQuery(listUsersDcRef(dc));
 }
 
+export const getUserByEmailRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetUserByEmail', inputVars);
+}
+getUserByEmailRef.operationName = 'GetUserByEmail';
+
+export function getUserByEmail(dcOrVars, vars) {
+  return executeQuery(getUserByEmailRef(dcOrVars, vars));
+}
+
 export const listMaintenanceRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -466,6 +477,28 @@ createStoredDocumentDcRef.operationName = 'CreateStoredDocumentDC';
 
 export function createStoredDocumentDc(dcOrVars, vars) {
   return executeMutation(createStoredDocumentDcRef(dcOrVars, vars));
+}
+
+export const logAiUsageRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'LogAiUsage', inputVars);
+}
+logAiUsageRef.operationName = 'LogAiUsage';
+
+export function logAiUsage(dcOrVars, vars) {
+  return executeMutation(logAiUsageRef(dcOrVars, vars));
+}
+
+export const listAiUsageRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListAiUsage', inputVars);
+}
+listAiUsageRef.operationName = 'ListAiUsage';
+
+export function listAiUsage(dcOrVars, vars) {
+  return executeQuery(listAiUsageRef(dcOrVars, vars));
 }
 
 export const seedRoomsRef = (dcOrVars, vars) => {

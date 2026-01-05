@@ -1,3 +1,184 @@
+extend type AiUsage {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "AiUsage", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `AiUsage` table.
+  """
+  _count: Int! @fdc_generated(from: "AiUsage.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `AiUsage` table where the `feature` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  feature_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "AiUsage.feature", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `AiUsage` table where the `hotelId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  hotelId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "AiUsage.hotelId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `AiUsage` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "AiUsage.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `AiUsage` table where the `model` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  model_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "AiUsage.model", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `AiUsage` table where the `promptTokens` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  promptTokens_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "AiUsage.promptTokens", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `AiUsage` table where the `responseTokens` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  responseTokens_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "AiUsage.responseTokens", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `AiUsage` table where the `timestamp` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  timestamp_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "AiUsage.timestamp", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `AiUsage` table where the `totalTokens` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  totalTokens_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "AiUsage.totalTokens", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `AiUsage` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "AiUsage.userId", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `promptTokens` field in the `AiUsage` table.
+  """
+  promptTokens_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "AiUsage.promptTokens", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `responseTokens` field in the `AiUsage` table.
+  """
+  responseTokens_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "AiUsage.responseTokens", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `totalTokens` field in the `AiUsage` table.
+  """
+  totalTokens_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "AiUsage.totalTokens", purpose: QUERY_SUM)
+  """
+  ✨ Average the `promptTokens` field in the `AiUsage` table.
+  """
+  promptTokens_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "AiUsage.promptTokens", purpose: QUERY_AVG)
+  """
+  ✨ Average the `responseTokens` field in the `AiUsage` table.
+  """
+  responseTokens_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "AiUsage.responseTokens", purpose: QUERY_AVG)
+  """
+  ✨ Average the `totalTokens` field in the `AiUsage` table.
+  """
+  totalTokens_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "AiUsage.totalTokens", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `promptTokens` field in the `AiUsage` table.
+  """
+  promptTokens_min: Int @fdc_generated(from: "AiUsage.promptTokens", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `responseTokens` field in the `AiUsage` table.
+  """
+  responseTokens_min: Int @fdc_generated(from: "AiUsage.responseTokens", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `timestamp` field in the `AiUsage` table.
+  """
+  timestamp_min: Timestamp @fdc_generated(from: "AiUsage.timestamp", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `totalTokens` field in the `AiUsage` table.
+  """
+  totalTokens_min: Int @fdc_generated(from: "AiUsage.totalTokens", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `promptTokens` field in the `AiUsage` table.
+  """
+  promptTokens_max: Int @fdc_generated(from: "AiUsage.promptTokens", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `responseTokens` field in the `AiUsage` table.
+  """
+  responseTokens_max: Int @fdc_generated(from: "AiUsage.responseTokens", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `timestamp` field in the `AiUsage` table.
+  """
+  timestamp_max: Timestamp @fdc_generated(from: "AiUsage.timestamp", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `totalTokens` field in the `AiUsage` table.
+  """
+  totalTokens_max: Int @fdc_generated(from: "AiUsage.totalTokens", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "AiUsage.id", purpose: GLOBAL_ID)
+}
 extend type Amenity {
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
@@ -744,6 +925,40 @@ extend type Guest {
   _id: ID! @fdc_generated(from: "Guest.id", purpose: GLOBAL_ID)
 }
 extend type Hotel {
+  """
+  ✨ List `AiUsage` objects in a one-to-many relationship (where `AiUsage`.`hotel` is this object).
+  """
+  aiUsages_on_hotel(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: AiUsage_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [AiUsage_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: AiUsage_Having
+  ): [AiUsage!]! @fdc_generated(from: "AiUsage.hotel", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
   """
   ✨ List `Amenity` objects in a one-to-many relationship (where `Amenity`.`hotel` is this object).
   """

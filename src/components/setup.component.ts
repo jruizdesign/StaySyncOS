@@ -24,77 +24,97 @@ import { DataService } from '../services/data.service';
           <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg shadow-emerald-900/50 mb-4">
              <span class="text-3xl font-bold text-white">S</span>
           </div>
-          <h1 class="text-3xl font-bold text-white tracking-tight">System Setup</h1>
-          <p class="text-slate-400 mt-2">Initialize your property details to get started.</p>
+          <h1 class="text-3xl font-bold text-white tracking-tight">
+            {{ auth.currentUser()?.role === 'Staff' ? 'Access Pending' : 'System Setup' }}
+          </h1>
+          <p class="text-slate-400 mt-2">
+            {{ auth.currentUser()?.role === 'Staff' ? 'Your account is active, but you haven\'t been linked to a property yet.' : 'Initialize your property details to get started.' }}
+          </p>
         </div>
 
-        <!-- Recovery / Link Existing -->
-        @if (existingHotel()) {
-          <div class="bg-indigo-600/20 border border-indigo-500/50 rounded-2xl p-6 mb-8 text-center animate-fade-in">
-             <div class="text-indigo-300 font-medium mb-2">We found an existing hotel</div>
-             <div class="text-white text-xl font-bold mb-4">{{ existingHotel().name }}</div>
-             <p class="text-indigo-200/80 text-sm mb-6">Is this your property? You can link your account to it immediately.</p>
-             <button (click)="linkExisting()" [disabled]="loading()" 
-                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-lg shadow-lg shadow-indigo-900/50 transition-all">
-                {{ loading() ? 'Linking...' : 'Yes, Access Dashboard' }}
-             </button>
+        @if (auth.currentUser()?.role === 'Staff') {
+          <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl text-center">
+            <div class="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <h3 class="text-white font-bold text-xl mb-4">Check for an Invite</h3>
+            <p class="text-slate-400 mb-8">Please ask your hotel manager to link your account ({{ auth.currentUser()?.email }}) to their property.</p>
+            <button (click)="logout()" class="text-slate-400 hover:text-white text-sm flex items-center gap-2 mx-auto transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+              Logout & Switch Account
+            </button>
+          </div>
+        } @else {
+          <!-- Recovery / Link Existing (SuperAdmin Only for safety) -->
+          @if (existingHotel() && auth.currentUser()?.role === 'SuperAdmin') {
+            <div class="bg-indigo-600/20 border border-indigo-500/50 rounded-2xl p-6 mb-8 text-center animate-fade-in">
+               <div class="text-indigo-300 font-medium mb-2">Existing Property Detected</div>
+               <div class="text-white text-xl font-bold mb-4">{{ existingHotel().name }}</div>
+               <p class="text-indigo-200/80 text-sm mb-6">Link your administrative account to this property.</p>
+               <button (click)="linkExisting()" [disabled]="loading()" 
+                  class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-lg shadow-lg shadow-indigo-900/50 transition-all">
+                  {{ loading() ? 'Linking...' : 'Access Managed Property' }}
+               </button>
+            </div>
+            
+            <div class="relative flex py-5 items-center">
+                <div class="flex-grow border-t border-slate-700"></div>
+                <span class="flex-shrink-0 mx-4 text-slate-500 text-sm">Or create new</span>
+                <div class="flex-grow border-t border-slate-700"></div>
+            </div>
+          }
+
+          <!-- Setup Card -->
+          <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
+            <form (submit)="onSubmit($event)" class="space-y-6">
+              
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-300">Hotel Name</label>
+                <input [(ngModel)]="name" name="name" type="text" 
+                  class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                  placeholder="e.g. Grand Plaza Hotel" required>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-300">Address</label>
+                <input [(ngModel)]="address" name="address" type="text"
+                  class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                  placeholder="Full address" required>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-300">Property ID</label>
+                <input [(ngModel)]="propertyId" name="propertyId" type="text"
+                  class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                  placeholder="e.g. PROP-001" required>
+              </div>
+
+              @if (error()) {
+                <div class="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm text-center">
+                  {{ errorMessage() }}
+                </div>
+              }
+
+              <button type="submit" [disabled]="loading()"
+                class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg shadow-lg shadow-emerald-900/50 transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+                {{ loading() ? 'Initializing System...' : 'Complete Setup' }}
+              </button>
+              
+            </form>
           </div>
           
-          <div class="relative flex py-5 items-center">
-              <div class="flex-grow border-t border-slate-700"></div>
-              <span class="flex-shrink-0 mx-4 text-slate-500 text-sm">Or create new</span>
-              <div class="flex-grow border-t border-slate-700"></div>
+          <p class="text-center text-slate-500 text-xs mt-8">
+            Administrative privileges required for setup.
+          </p>
+          
+          <div class="text-center mt-4">
+            <button (click)="logout()" class="text-slate-400 hover:text-white text-sm underline">
+              Logout
+            </button>
           </div>
         }
-
-        <!-- Setup Card -->
-        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
-          <form (submit)="onSubmit($event)" class="space-y-6">
-            
-            <div class="space-y-2">
-              <label class="text-sm font-medium text-slate-300">Hotel Name</label>
-              <input [(ngModel)]="name" name="name" type="text" 
-                class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
-                placeholder="e.g. Grand Plaza Hotel" required>
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-sm font-medium text-slate-300">Address</label>
-              <input [(ngModel)]="address" name="address" type="text"
-                class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
-                placeholder="Full address" required>
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-sm font-medium text-slate-300">Property ID</label>
-              <input [(ngModel)]="propertyId" name="propertyId" type="text"
-                class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
-                placeholder="e.g. PROP-001" required>
-            </div>
-
-            @if (error()) {
-              <div class="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm text-center">
-                {{ errorMessage() }}
-              </div>
-            }
-
-            <button type="submit" [disabled]="loading()"
-              class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg shadow-lg shadow-emerald-900/50 transition-all transform hover:scale-[1.02] active:scale-[0.98]">
-              {{ loading() ? 'Initializing System...' : 'Complete Setup' }}
-            </button>
-            
-          </form>
-        </div>
-        
-        <p class="text-center text-slate-500 text-xs mt-8">
-          Initial configuration for admin access.
-        </p>
-        
-        <div class="text-center mt-4">
-          <button (click)="logout()" class="text-slate-400 hover:text-white text-sm underline">
-            Wrong account? Logout
-          </button>
-        </div>
       </div>
     </div>
   `,

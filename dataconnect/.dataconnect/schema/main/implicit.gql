@@ -1,3 +1,13 @@
+extend type AiUsage {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "AiUsage", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `AiUsage`.`hotel`. It must match the value of `Hotel`.`id`. See `@ref` for how to customize it.
+  """
+  hotelId: UUID! @fdc_generated(from: "AiUsage.hotel", purpose: IMPLICIT_REF_FIELD)
+}
 extend type Amenity {
   """
   ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.

@@ -173,3 +173,14 @@ type Department @table {
   name: String!
   head: Staff
 }
+
+type AiUsage @table {
+  hotel: Hotel!
+  userId: String!
+  timestamp: Timestamp! @default(expr: "request.time")
+  feature: String! # e.g., "Daily Report", "Maintenance Alert"
+  model: String! # e.g., "gemini-2.0-flash"
+  promptTokens: Int
+  responseTokens: Int
+  totalTokens: Int
+}

@@ -1,4 +1,10 @@
 """
+✨ `AiUsage_KeyOutput` returns the primary key fields of table type `AiUsage`.
+
+It has the same format as `AiUsage_Key`, but is only used as mutation return value.
+"""
+scalar AiUsage_KeyOutput
+"""
 ✨ `Amenity_KeyOutput` returns the primary key fields of table type `Amenity`.
 
 It has the same format as `Amenity_Key`, but is only used as mutation return value.
@@ -100,6 +106,461 @@ scalar User_KeyOutput
 It has the same format as `UserHotel_Key`, but is only used as mutation return value.
 """
 scalar UserHotel_KeyOutput
+"""
+✨ Generated data input type for table 'AiUsage'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input AiUsage_Data {
+  """
+  ✨ Generated from Field `AiUsage`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `AiUsage`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `AiUsage`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID
+  """
+  ✨ `_expr` server value variant of `hotelId` (✨ Generated from Field `AiUsage`.`hotelId` of type `UUID!`)
+  """
+  hotelId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `AiUsage`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Key
+  """
+  ✨ Generated from Field `AiUsage`.`feature` of type `String!`
+  """
+  feature: String
+  """
+  ✨ `_expr` server value variant of `feature` (✨ Generated from Field `AiUsage`.`feature` of type `String!`)
+  """
+  feature_expr: String_Expr
+  """
+  ✨ Generated from Field `AiUsage`.`model` of type `String!`
+  """
+  model: String
+  """
+  ✨ `_expr` server value variant of `model` (✨ Generated from Field `AiUsage`.`model` of type `String!`)
+  """
+  model_expr: String_Expr
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens` of type `Int`
+  """
+  promptTokens: Int
+  """
+  ✨ `_expr` server value variant of `promptTokens` (✨ Generated from Field `AiUsage`.`promptTokens` of type `Int`)
+  """
+  promptTokens_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `promptTokens` (✨ Generated from Field `AiUsage`.`promptTokens` of type `Int`)
+  """
+  promptTokens_update: [Int_Update!]
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens` of type `Int`
+  """
+  responseTokens: Int
+  """
+  ✨ `_expr` server value variant of `responseTokens` (✨ Generated from Field `AiUsage`.`responseTokens` of type `Int`)
+  """
+  responseTokens_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `responseTokens` (✨ Generated from Field `AiUsage`.`responseTokens` of type `Int`)
+  """
+  responseTokens_update: [Int_Update!]
+  """
+  ✨ Generated from Field `AiUsage`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: Timestamp
+  """
+  ✨ `_expr` server value variant of `timestamp` (✨ Generated from Field `AiUsage`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `timestamp` (✨ Generated from Field `AiUsage`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `timestamp` (✨ Generated from Field `AiUsage`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens` of type `Int`
+  """
+  totalTokens: Int
+  """
+  ✨ `_expr` server value variant of `totalTokens` (✨ Generated from Field `AiUsage`.`totalTokens` of type `Int`)
+  """
+  totalTokens_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `totalTokens` (✨ Generated from Field `AiUsage`.`totalTokens` of type `Int`)
+  """
+  totalTokens_update: [Int_Update!]
+  """
+  ✨ Generated from Field `AiUsage`.`userId` of type `String!`
+  """
+  userId: String
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `AiUsage`.`userId` of type `String!`)
+  """
+  userId_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'AiUsage'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input AiUsage_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [AiUsage_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: AiUsage_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [AiUsage_Filter!]
+  """
+  ✨ Generated from Field `AiUsage`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`hotelId` of type `UUID!`
+  """
+  hotelId: UUID_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`feature` of type `String!`
+  """
+  feature: String_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`model` of type `String!`
+  """
+  model: String_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens` of type `Int`
+  """
+  promptTokens: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens` of type `Int`
+  """
+  responseTokens: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: Timestamp_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens` of type `Int`
+  """
+  totalTokens: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`userId` of type `String!`
+  """
+  userId: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'AiUsage'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input AiUsage_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [AiUsage_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: AiUsage_Filter
+}
+"""
+✨ Generated having input type for table 'AiUsage'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input AiUsage_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [AiUsage_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: AiUsage_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [AiUsage_Having!]
+  """
+  ✨ Generated from Field `AiUsage`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`feature_count` of type `Int!`
+  """
+  feature_count: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`model_count` of type `Int!`
+  """
+  model_count: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens_count` of type `Int!`
+  """
+  promptTokens_count: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens_count` of type `Int!`
+  """
+  responseTokens_count: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`timestamp_count` of type `Int!`
+  """
+  timestamp_count: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens_count` of type `Int!`
+  """
+  totalTokens_count: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens_sum` of type `Int`
+  """
+  promptTokens_sum: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens_sum` of type `Int`
+  """
+  responseTokens_sum: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens_sum` of type `Int`
+  """
+  totalTokens_sum: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens_avg` of type `Float`
+  """
+  promptTokens_avg: Float_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens_avg` of type `Float`
+  """
+  responseTokens_avg: Float_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens_avg` of type `Float`
+  """
+  totalTokens_avg: Float_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens_min` of type `Int`
+  """
+  promptTokens_min: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens_min` of type `Int`
+  """
+  responseTokens_min: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`timestamp_min` of type `Timestamp`
+  """
+  timestamp_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens_min` of type `Int`
+  """
+  totalTokens_min: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens_max` of type `Int`
+  """
+  promptTokens_max: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens_max` of type `Int`
+  """
+  responseTokens_max: Int_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`timestamp_max` of type `Timestamp`
+  """
+  timestamp_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens_max` of type `Int`
+  """
+  totalTokens_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'AiUsage'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input AiUsage_Key {
+  """
+  ✨ Generated from Field `AiUsage`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `AiUsage`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'AiUsage'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input AiUsage_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: AiUsage_Filter
+}
+"""
+✨ Generated order input type for table 'AiUsage'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input AiUsage_Order {
+  """
+  ✨ Generated from Field `AiUsage`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`hotelId` of type `UUID!`
+  """
+  hotelId: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`hotel` of type `Hotel!`
+  """
+  hotel: Hotel_Order
+  """
+  ✨ Generated from Field `AiUsage`.`feature` of type `String!`
+  """
+  feature: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`model` of type `String!`
+  """
+  model: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens` of type `Int`
+  """
+  promptTokens: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens` of type `Int`
+  """
+  responseTokens: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens` of type `Int`
+  """
+  totalTokens: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`userId` of type `String!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`feature_count` of type `Int!`
+  """
+  feature_count: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`hotelId_count` of type `Int!`
+  """
+  hotelId_count: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`model_count` of type `Int!`
+  """
+  model_count: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens_count` of type `Int!`
+  """
+  promptTokens_count: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens_count` of type `Int!`
+  """
+  responseTokens_count: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`timestamp_count` of type `Int!`
+  """
+  timestamp_count: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens_count` of type `Int!`
+  """
+  totalTokens_count: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens_sum` of type `Int`
+  """
+  promptTokens_sum: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens_sum` of type `Int`
+  """
+  responseTokens_sum: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens_sum` of type `Int`
+  """
+  totalTokens_sum: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens_avg` of type `Float`
+  """
+  promptTokens_avg: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens_avg` of type `Float`
+  """
+  responseTokens_avg: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens_avg` of type `Float`
+  """
+  totalTokens_avg: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens_min` of type `Int`
+  """
+  promptTokens_min: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens_min` of type `Int`
+  """
+  responseTokens_min: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`timestamp_min` of type `Timestamp`
+  """
+  timestamp_min: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens_min` of type `Int`
+  """
+  totalTokens_min: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`promptTokens_max` of type `Int`
+  """
+  promptTokens_max: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`responseTokens_max` of type `Int`
+  """
+  responseTokens_max: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`timestamp_max` of type `Timestamp`
+  """
+  timestamp_max: OrderDirection
+  """
+  ✨ Generated from Field `AiUsage`.`totalTokens_max` of type `Int`
+  """
+  totalTokens_max: OrderDirection
+}
 """
 ✨ Generated data input type for table 'Amenity'. It includes all necessary fields for creating or upserting rows into table.
 """
@@ -2144,6 +2605,10 @@ input Hotel_Filter {
   ✨ Generated from Field `Hotel`.`propertyId` of type `String!`
   """
   propertyId: String_Filter
+  """
+  ✨ Generated from Field `Hotel`.`aiUsages_on_hotel` of type `[AiUsage!]!`
+  """
+  aiUsages_on_hotel: AiUsage_ListFilter
   """
   ✨ Generated from Field `Hotel`.`amenities_on_hotel` of type `[Amenity!]!`
   """

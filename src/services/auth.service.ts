@@ -48,7 +48,7 @@ export class AuthService {
       id: u.uid,
       email: u.email || '',
       username: u.displayName || u.email || 'User',
-      role: role || 'Manager'
+      role: role || 'Staff'
     };
   });
 

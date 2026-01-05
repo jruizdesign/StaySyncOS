@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { AiService } from './ai.service';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel, injectListGuests, injectCreateGuestDc, injectUpdateGuestDc, injectDeleteGuestDc, injectListBookings, injectCreateBookingDc, injectUpdateBookingDc, injectListLogs, injectCreateLogDc, injectListStaff, injectCreateStaffDc, injectUpdateStaffDc, injectListTimeLogs, injectCreateTimeLogDc, injectUpdateTimeLogDc, injectListFinancialDocuments, injectCreateFinancialDocumentDc, injectUpdateHotelConfig, injectListMaintenance, injectCreateMaintenanceDc, injectListShifts, injectCreateShiftDc, injectListHousekeeping, injectCreateHousekeepingTaskDc, injectListInventory, injectUpsertInventoryItemDc, injectListAmenities, injectCreateAmenityDc, injectListStoredDocuments, injectCreateStoredDocumentDc, injectDeleteHotel } from '../dataconnect-generated/angular';
+import { injectListAvailableRooms, injectCreateRoom, injectCreateHotel, injectGetHotelById, injectUpdateRoomStatus, injectGetFirstHotel, injectListAllHotels, injectListHotelsByUser, injectUpsertUser, injectLinkUserToHotel, injectListGuests, injectCreateGuestDc, injectUpdateGuestDc, injectDeleteGuestDc, injectListBookings, injectCreateBookingDc, injectUpdateBookingDc, injectListLogs, injectCreateLogDc, injectListStaff, injectCreateStaffDc, injectUpdateStaffDc, injectListTimeLogs, injectCreateTimeLogDc, injectUpdateTimeLogDc, injectListFinancialDocuments, injectCreateFinancialDocumentDc, injectUpdateHotelConfig, injectListMaintenance, injectCreateMaintenanceDc, injectListShifts, injectCreateShiftDc, injectListHousekeeping, injectCreateHousekeepingTaskDc, injectListInventory, injectUpsertInventoryItemDc, injectListAmenities, injectCreateAmenityDc, injectListStoredDocuments, injectCreateStoredDocumentDc, injectDeleteHotel, injectLogAiUsage, injectListAiUsage } from '../dataconnect-generated/angular';
 import { ListAvailableRoomsData } from '../dataconnect-generated';
 
 // Interfaces
@@ -251,6 +251,11 @@ export class DataService {
     () => ({ enabled: !!this.currentHotelId() })
   );
 
+  aiUsageQuery = injectListAiUsage(
+    () => ({ hotelId: this.currentHotelId()! }),
+    () => ({ enabled: !!this.currentHotelId() })
+  );
+
   // Mutations
   createRoomMut = injectCreateRoom();
   updateRoomStatusMut = injectUpdateRoomStatus();
@@ -282,6 +287,7 @@ export class DataService {
   upsertInventoryMut = injectUpsertInventoryItemDc();
   createAmenityMut = injectCreateAmenityDc();
   createStoredDocMut = injectCreateStoredDocumentDc();
+  logAiUsageMut = injectLogAiUsage();
 
   // Query to find any existing hotel (recovery mode)
   firstHotelQuery = injectGetFirstHotel();
@@ -523,6 +529,11 @@ export class DataService {
         this.auth.profileRole.set(profile['role']);
       }
     });
+
+    // Listen for AI usage and log to database
+    this.ai.usage$.subscribe(u => {
+      this.logAiUsage(u.feature, u.model, u.promptTokens, u.responseTokens);
+    });
   }
 
   // Helper to get collections references (internal use)
@@ -755,6 +766,28 @@ export class DataService {
     } catch (e) {
       console.error('[DataService] Failed to delete hotel', e);
       throw e;
+    }
+  }
+
+  async logAiUsage(feature: string, model: string, promptTokens?: number, responseTokens?: number) {
+    const hotelId = this.currentHotelId();
+    const userId = this.auth.currentUser()?.id;
+    if (!hotelId || !userId) return;
+
+    try {
+      await this.logAiUsageMut.mutateAsync({
+        hotelId,
+        userId,
+        feature,
+        model,
+        promptTokens,
+        responseTokens,
+        totalTokens: (promptTokens || 0) + (responseTokens || 0)
+      });
+      // Optionally refetch query if you have a dashboard for it
+      // this.aiUsageQuery.refetch();
+    } catch (e) {
+      console.error('[DataService] Failed to log AI usage', e);
     }
   }
 

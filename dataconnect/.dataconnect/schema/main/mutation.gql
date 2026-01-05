@@ -1,5 +1,14 @@
 extend type Mutation {
   """
+  ✨ Insert a single `AiUsage` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  aiUsage_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: AiUsage_Data!
+  ): AiUsage_KeyOutput! @fdc_generated(from: "AiUsage", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `Amenity` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   amenity_insert(
@@ -152,6 +161,15 @@ extend type Mutation {
     """
     data: UserHotel_Data!
   ): UserHotel_KeyOutput! @fdc_generated(from: "UserHotel", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `AiUsage` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  aiUsage_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [AiUsage_Data!]!
+  ): [AiUsage_KeyOutput!]! @fdc_generated(from: "AiUsage", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `Amenity` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -306,6 +324,15 @@ extend type Mutation {
     data: [UserHotel_Data!]!
   ): [UserHotel_KeyOutput!]! @fdc_generated(from: "UserHotel", purpose: INSERT_MULTIPLE)
   """
+  ✨ Insert or update a single `AiUsage` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `AiUsage`.
+  """
+  aiUsage_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: AiUsage_Data!
+  ): AiUsage_KeyOutput! @fdc_generated(from: "AiUsage", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `Amenity` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Amenity`.
   """
   amenity_upsert(
@@ -459,6 +486,15 @@ extend type Mutation {
     data: UserHotel_Data!
   ): UserHotel_KeyOutput! @fdc_generated(from: "UserHotel", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update `AiUsage` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `AiUsage`.
+  """
+  aiUsage_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [AiUsage_Data!]!
+  ): [AiUsage_KeyOutput!]! @fdc_generated(from: "AiUsage", purpose: UPSERT_MULTIPLE)
+  """
   ✨ Insert or update `Amenity` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Amenity`.
   """
   amenity_upsertMany(
@@ -611,6 +647,30 @@ extend type Mutation {
     """
     data: [UserHotel_Data!]!
   ): [UserHotel_KeyOutput!]! @fdc_generated(from: "UserHotel", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `AiUsage` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `AiUsage` or `null` if not found.
+  """
+  aiUsage_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AiUsage_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AiUsage_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: AiUsage_Data!
+  ): AiUsage_KeyOutput @fdc_generated(from: "AiUsage", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `Amenity` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Amenity` or `null` if not found.
   """
@@ -1020,6 +1080,25 @@ extend type Mutation {
     data: UserHotel_Data!
   ): UserHotel_KeyOutput @fdc_generated(from: "UserHotel", purpose: UPDATE_SINGLE)
   """
+  ✨ Update `AiUsage` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  aiUsage_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: AiUsage_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: AiUsage_Data!
+  ): Int! @fdc_generated(from: "AiUsage", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `Amenity` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   amenity_updateMany(
@@ -1343,6 +1422,25 @@ extend type Mutation {
     data: UserHotel_Data!
   ): Int! @fdc_generated(from: "UserHotel", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Delete a single `AiUsage` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  aiUsage_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AiUsage_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AiUsage_FirstRow
+  ): AiUsage_KeyOutput @fdc_generated(from: "AiUsage", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `Amenity` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   amenity_delete(
@@ -1665,6 +1763,20 @@ extend type Mutation {
     """
     first: UserHotel_FirstRow
   ): UserHotel_KeyOutput @fdc_generated(from: "UserHotel", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `AiUsage` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  aiUsage_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: AiUsage_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "AiUsage", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `Amenity` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

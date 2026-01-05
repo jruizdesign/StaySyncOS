@@ -28,12 +28,14 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*ListFinancialDocuments*](#listfinancialdocuments)
   - [*ListHotelsByUser*](#listhotelsbyuser)
   - [*ListUsersDC*](#listusersdc)
+  - [*GetUserByEmail*](#getuserbyemail)
   - [*ListMaintenance*](#listmaintenance)
   - [*ListShifts*](#listshifts)
   - [*ListHousekeeping*](#listhousekeeping)
   - [*ListInventory*](#listinventory)
   - [*ListAmenities*](#listamenities)
   - [*ListStoredDocuments*](#liststoreddocuments)
+  - [*ListAiUsage*](#listaiusage)
 - [**Mutations**](#mutations)
   - [*CreateRoom*](#createroom)
   - [*UpdateRoomStatus*](#updateroomstatus)
@@ -59,6 +61,7 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*UpsertInventoryItemDC*](#upsertinventoryitemdc)
   - [*CreateAmenityDC*](#createamenitydc)
   - [*CreateStoredDocumentDC*](#createstoreddocumentdc)
+  - [*LogAiUsage*](#logaiusage)
   - [*SeedRooms*](#seedrooms)
   - [*SeedStaff*](#seedstaff)
   - [*SeedInventory*](#seedinventory)
@@ -1159,6 +1162,88 @@ export class MyComponent {
 }
 ```
 
+## GetUserByEmail
+You can execute the `GetUserByEmail` Query using the following Query injector, which is defined in [dataconnect-generated/angular/index.d.ts](./index.d.ts):
+
+```javascript
+injectGetUserByEmail(args: GetUserByEmailArgs, options?: GetUserByEmailOptions, injector?: Injector): CreateDataConnectQueryResult<GetUserByEmailData, GetUserByEmailVariables>;
+```
+
+### Variables
+The `GetUserByEmail` Query requires an argument of type `GetUserByEmailVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface GetUserByEmailVariables {
+  email: string;
+}
+```
+### Return Type
+Recall that calling the `GetUserByEmail` Query injector returns a `CreateDataConnectQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `CreateDataConnectQueryResult.status()` function. You can also check for pending / success / error status using the `CreateDataConnectQueryResult.isPending()`, `CreateDataConnectQueryResult.isSuccess()`, and `CreateDataConnectQueryResult.isError()` functions.
+
+To access the data returned by a Query, use the `CreateDataConnectQueryResult.data()` function. The data for the `GetUserByEmail` Query is of type `GetUserByEmailData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface GetUserByEmailData {
+  users: ({
+    id: string;
+    email: string;
+    role: string;
+  } & User_Key)[];
+}
+```
+
+To learn more about the `CreateDataConnectQueryResult` object, see the [TanStack Query Firebase documentation](https://docs.page/invertase/tanstack-query-firebase/angular/data-connect/functions/injectDataConnectQuery) and the [TanStack Angular Query documentation](https://tanstack.com/query/v5/docs/framework/angular/reference/functions/injectquery).
+
+### Using `GetUserByEmail`'s Query injector
+
+```javascript
+... // other imports
+import { connectorConfig, GetUserByEmailVariables } from '@dataconnect/generated';
+import { injectGetUserByEmail, GetUserByEmailOptions } from '@dataconnect/generated/angular'
+import { DataConnect } from '@angular/fire/data-connect';
+import { initializeApp } from '@angular/fire/app';
+
+@Component({
+  ... // other component fields
+  template: `
+    <!-- You can render your component dynamically based on the status of the Query. -->
+    @if (query.isPending()) {
+      Loading...
+    }
+    @if (query.error()) {
+      An error has occurred: {{ query.error() }}
+    }
+    <!-- If the Query is successful, you can access the data returned using
+      the CreateDataConnectQueryResult.data() function. -->
+    @if (query.data(); as data) {
+      <!-- use your data to display something -->
+            <div>Query successful!</div>
+    }
+  `,
+})
+export class MyComponent {
+  // The `GetUserByEmail` Query requires an argument of type `GetUserByEmailVariables`:
+  getUserByEmailVars: GetUserByEmailVariables = {
+    email: ..., 
+  };
+
+  // Since the execution of the query is eager, you don't have to call `execute` to "execute" the Query.
+  // Call the Query injector function to get a `CreateDataConnectQueryResult` object which holds the state of your Query.
+  query = injectGetUserByEmail(this.getUserByEmailVars);
+  // Variables can be defined inline as well.
+  query = injectGetUserByEmail({ email: ..., });
+
+  // You can also pass in an options function (not object) of type `GetUserByEmailOptions` to the Query injector function.
+  options: GetUserByEmailOptions = () => {
+    return {
+      staleTime: 5 * 1000
+    };
+  };
+  query = injectGetUserByEmail(this.getUserByEmailVars, this.options);
+}
+```
+
 ## ListMaintenance
 You can execute the `ListMaintenance` Query using the following Query injector, which is defined in [dataconnect-generated/angular/index.d.ts](./index.d.ts):
 
@@ -1693,6 +1778,91 @@ export class MyComponent {
     };
   };
   query = injectListStoredDocuments(this.listStoredDocumentsVars, this.options);
+}
+```
+
+## ListAiUsage
+You can execute the `ListAiUsage` Query using the following Query injector, which is defined in [dataconnect-generated/angular/index.d.ts](./index.d.ts):
+
+```javascript
+injectListAiUsage(args: ListAiUsageArgs, options?: ListAiUsageOptions, injector?: Injector): CreateDataConnectQueryResult<ListAiUsageData, ListAiUsageVariables>;
+```
+
+### Variables
+The `ListAiUsage` Query requires an argument of type `ListAiUsageVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface ListAiUsageVariables {
+  hotelId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `ListAiUsage` Query injector returns a `CreateDataConnectQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `CreateDataConnectQueryResult.status()` function. You can also check for pending / success / error status using the `CreateDataConnectQueryResult.isPending()`, `CreateDataConnectQueryResult.isSuccess()`, and `CreateDataConnectQueryResult.isError()` functions.
+
+To access the data returned by a Query, use the `CreateDataConnectQueryResult.data()` function. The data for the `ListAiUsage` Query is of type `ListAiUsageData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListAiUsageData {
+  aiUsages: ({
+    id: UUIDString;
+    userId: string;
+    timestamp: TimestampString;
+    feature: string;
+    model: string;
+    totalTokens?: number | null;
+  } & AiUsage_Key)[];
+}
+```
+
+To learn more about the `CreateDataConnectQueryResult` object, see the [TanStack Query Firebase documentation](https://docs.page/invertase/tanstack-query-firebase/angular/data-connect/functions/injectDataConnectQuery) and the [TanStack Angular Query documentation](https://tanstack.com/query/v5/docs/framework/angular/reference/functions/injectquery).
+
+### Using `ListAiUsage`'s Query injector
+
+```javascript
+... // other imports
+import { connectorConfig, ListAiUsageVariables } from '@dataconnect/generated';
+import { injectListAiUsage, ListAiUsageOptions } from '@dataconnect/generated/angular'
+import { DataConnect } from '@angular/fire/data-connect';
+import { initializeApp } from '@angular/fire/app';
+
+@Component({
+  ... // other component fields
+  template: `
+    <!-- You can render your component dynamically based on the status of the Query. -->
+    @if (query.isPending()) {
+      Loading...
+    }
+    @if (query.error()) {
+      An error has occurred: {{ query.error() }}
+    }
+    <!-- If the Query is successful, you can access the data returned using
+      the CreateDataConnectQueryResult.data() function. -->
+    @if (query.data(); as data) {
+      <!-- use your data to display something -->
+            <div>Query successful!</div>
+    }
+  `,
+})
+export class MyComponent {
+  // The `ListAiUsage` Query requires an argument of type `ListAiUsageVariables`:
+  listAiUsageVars: ListAiUsageVariables = {
+    hotelId: ..., 
+  };
+
+  // Since the execution of the query is eager, you don't have to call `execute` to "execute" the Query.
+  // Call the Query injector function to get a `CreateDataConnectQueryResult` object which holds the state of your Query.
+  query = injectListAiUsage(this.listAiUsageVars);
+  // Variables can be defined inline as well.
+  query = injectListAiUsage({ hotelId: ..., });
+
+  // You can also pass in an options function (not object) of type `ListAiUsageOptions` to the Query injector function.
+  options: ListAiUsageOptions = () => {
+    return {
+      staleTime: 5 * 1000
+    };
+  };
+  query = injectListAiUsage(this.listAiUsageVars, this.options);
 }
 ```
 
@@ -4251,6 +4421,115 @@ export class MyComponent {
 
     // You can also pass in a `CreateStoredDocumentDcOptions` object (not function) to `CreateDataConnectMutationResult.mutate()`.
     this.mutation.mutate(createStoredDocumentDcVars, this.options());
+  }
+}
+```
+
+## LogAiUsage
+You can execute the `LogAiUsage` Mutation using the `CreateDataConnectMutationResult` object returned by the following Mutation injector (which is defined in [dataconnect-generated/angular/index.d.ts](./index.d.ts)):
+```javascript
+injectLogAiUsage(options?: LogAiUsageOptions, injector?: Injector): CreateDataConnectMutationResult<LogAiUsageData, LogAiUsageVariables, LogAiUsageVariables>;
+```
+
+### Variables
+The `LogAiUsage` Mutation requires an argument of type `LogAiUsageVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface LogAiUsageVariables {
+  hotelId: UUIDString;
+  userId: string;
+  feature: string;
+  model: string;
+  promptTokens?: number | null;
+  responseTokens?: number | null;
+  totalTokens?: number | null;
+}
+```
+### Return Type
+Recall that calling the `LogAiUsage` Mutation injector returns a `CreateDataConnectMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `CreateDataConnectMutationResult.status()` function. You can also check for pending / success / error status using the `CreateDataConnectMutationResult.isPending()`, `CreateDataConnectMutationResult.isSuccess()`, and `CreateDataConnectMutationResult.isError()` functions.
+
+To execute the Mutation, call `CreateDataConnectMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation. 
+
+To access the data returned by a Mutation, use the `CreateDataConnectMutationResult.data()` function. The data for the `LogAiUsage` Mutation is of type `LogAiUsageData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface LogAiUsageData {
+  aiUsage_insert: AiUsage_Key;
+}
+```
+
+You can also call `CreateDataConnectMutationResult.mutateAsync()`, which executes the Mutation and returns a promise with the data returned from the Mutation. To learn more, see the [TanStack Angular Query documentation](https://tanstack.com/query/latest/docs/framework/angular/guides/mutations#promises).
+
+To learn more about the `CreateDataConnectMutationResult` object, see the [TanStack Query Firebase documentation](https://docs.page/invertase/tanstack-query-firebase/angular/data-connect/functions/injectDataConnectMutation) and the [TanStack Angular Query documentation](https://tanstack.com/query/v5/docs/framework/angular/reference/functions/injectmutation).
+
+### Using `LogAiUsage`'s Mutation injector
+
+```javascript
+... // other imports
+import { connectorConfig, LogAiUsageVariables } from '@dataconnect/generated';
+import { injectLogAiUsage, LogAiUsageOptions } from '@dataconnect/generated/angular'
+import { DataConnect } from '@angular/fire/data-connect';
+import { initializeApp } from '@angular/fire/app';
+
+@Component({
+  ... // other component fields
+  template: `
+    <!-- You can render your component dynamically based on the status of the Mutation. -->
+    @if (mutation.isPending()) {
+      Loading...
+    }
+    @if (mutation.error()) {
+      An error has occurred: {{ mutation.error() }}
+    }
+    <!-- If the Mutation is successful, you can access the data returned using
+      the CreateDataConnectMutationResult.data() function. -->
+    @if (mutation.data(); as data) {
+      <!-- Use your data to display something -->
+      <div>Mutation successful!</div>
+    }
+    <!-- Let's create a button that executes our mutation when clicked. -->
+    <button
+      (disabled)="mutation.isPending()"
+      (click)="executeMutation()"
+    >
+      {{ mutation.isPending() ? 'Pending...' : 'Mutate!' }}
+    </button>
+  `,
+})
+export class MyComponent {
+  // Call the Mutation injector function to get a `CreateDataConnectMutationResult` object which holds the state of your Mutation.
+  mutation = injectLogAiUsage();
+
+  // You can also pass in a `LogAiUsageOptions` function (not object) to the Mutation injector function.
+  options: LogAiUsageOptions = () => {
+    return {
+      onSuccess: () => { console.log('Mutation succeeded!'); }
+    };
+  };
+  mutation = injectLogAiUsage(this.options);
+
+  // After calling the Mutation injector function, you must call `CreateDataConnectMutationResult.mutate()` to execute the Mutation.
+  executeMutation() {
+    // The `LogAiUsage` Mutation requires an argument of type `LogAiUsageVariables`:
+    const logAiUsageVars: LogAiUsageVariables = {
+      hotelId: ..., 
+      userId: ..., 
+      feature: ..., 
+      model: ..., 
+      promptTokens: ..., // optional
+      responseTokens: ..., // optional
+      totalTokens: ..., // optional
+    };
+    this.mutation.mutate(logAiUsageVars);
+    // Variables can be defined inline as well.
+    this.mutation.mutate({ hotelId: ..., userId: ..., feature: ..., model: ..., promptTokens: ..., responseTokens: ..., totalTokens: ..., });
+
+    // You can call `CreateDataConnectMutationResult.mutateAsync()` to execute the Mutation and return a promise with the data returned from the Mutation.
+    this.mutation.mutateAsync(logAiUsageVars);
+
+    // You can also pass in a `LogAiUsageOptions` object (not function) to `CreateDataConnectMutationResult.mutate()`.
+    this.mutation.mutate(logAiUsageVars, this.options());
   }
 }
 ```

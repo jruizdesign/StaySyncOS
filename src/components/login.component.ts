@@ -134,7 +134,7 @@ export class LoginComponent {
 
           await this.data.ensureUserExists(uid, this.email, 'SuperAdmin');
         } else {
-          await this.data.ensureUserExists(uid, this.email, 'Manager');
+          await this.data.ensureUserExists(uid, this.email, 'Staff');
         }
       }
 

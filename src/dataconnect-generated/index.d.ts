@@ -10,6 +10,11 @@ export type DateString = string;
 
 
 
+export interface AiUsage_Key {
+  id: UUIDString;
+  __typename?: 'AiUsage_Key';
+}
+
 export interface Amenity_Key {
   id: UUIDString;
   __typename?: 'Amenity_Key';
@@ -246,6 +251,18 @@ export interface GetHotelByIdVariables {
   id: UUIDString;
 }
 
+export interface GetUserByEmailData {
+  users: ({
+    id: string;
+    email: string;
+    role: string;
+  } & User_Key)[];
+}
+
+export interface GetUserByEmailVariables {
+  email: string;
+}
+
 export interface Guest_Key {
   id: UUIDString;
   __typename?: 'Guest_Key';
@@ -272,6 +289,21 @@ export interface LinkUserToHotelData {
 
 export interface LinkUserToHotelVariables {
   userId: string;
+  hotelId: UUIDString;
+}
+
+export interface ListAiUsageData {
+  aiUsages: ({
+    id: UUIDString;
+    userId: string;
+    timestamp: TimestampString;
+    feature: string;
+    model: string;
+    totalTokens?: number | null;
+  } & AiUsage_Key)[];
+}
+
+export interface ListAiUsageVariables {
   hotelId: UUIDString;
 }
 
@@ -563,6 +595,20 @@ export interface ListUsersDcData {
     email: string;
     role: string;
   } & User_Key)[];
+}
+
+export interface LogAiUsageData {
+  aiUsage_insert: AiUsage_Key;
+}
+
+export interface LogAiUsageVariables {
+  hotelId: UUIDString;
+  userId: string;
+  feature: string;
+  model: string;
+  promptTokens?: number | null;
+  responseTokens?: number | null;
+  totalTokens?: number | null;
 }
 
 export interface Log_Key {
@@ -1104,6 +1150,18 @@ export const listUsersDcRef: ListUsersDcRef;
 export function listUsersDc(): QueryPromise<ListUsersDcData, undefined>;
 export function listUsersDc(dc: DataConnect): QueryPromise<ListUsersDcData, undefined>;
 
+interface GetUserByEmailRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetUserByEmailVariables): QueryRef<GetUserByEmailData, GetUserByEmailVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetUserByEmailVariables): QueryRef<GetUserByEmailData, GetUserByEmailVariables>;
+  operationName: string;
+}
+export const getUserByEmailRef: GetUserByEmailRef;
+
+export function getUserByEmail(vars: GetUserByEmailVariables): QueryPromise<GetUserByEmailData, GetUserByEmailVariables>;
+export function getUserByEmail(dc: DataConnect, vars: GetUserByEmailVariables): QueryPromise<GetUserByEmailData, GetUserByEmailVariables>;
+
 interface ListMaintenanceRef {
   /* Allow users to create refs without passing in DataConnect */
   (vars: ListMaintenanceVariables): QueryRef<ListMaintenanceData, ListMaintenanceVariables>;
@@ -1247,6 +1305,30 @@ export const createStoredDocumentDcRef: CreateStoredDocumentDcRef;
 
 export function createStoredDocumentDc(vars: CreateStoredDocumentDcVariables): MutationPromise<CreateStoredDocumentDcData, CreateStoredDocumentDcVariables>;
 export function createStoredDocumentDc(dc: DataConnect, vars: CreateStoredDocumentDcVariables): MutationPromise<CreateStoredDocumentDcData, CreateStoredDocumentDcVariables>;
+
+interface LogAiUsageRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: LogAiUsageVariables): MutationRef<LogAiUsageData, LogAiUsageVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: LogAiUsageVariables): MutationRef<LogAiUsageData, LogAiUsageVariables>;
+  operationName: string;
+}
+export const logAiUsageRef: LogAiUsageRef;
+
+export function logAiUsage(vars: LogAiUsageVariables): MutationPromise<LogAiUsageData, LogAiUsageVariables>;
+export function logAiUsage(dc: DataConnect, vars: LogAiUsageVariables): MutationPromise<LogAiUsageData, LogAiUsageVariables>;
+
+interface ListAiUsageRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListAiUsageVariables): QueryRef<ListAiUsageData, ListAiUsageVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListAiUsageVariables): QueryRef<ListAiUsageData, ListAiUsageVariables>;
+  operationName: string;
+}
+export const listAiUsageRef: ListAiUsageRef;
+
+export function listAiUsage(vars: ListAiUsageVariables): QueryPromise<ListAiUsageData, ListAiUsageVariables>;
+export function listAiUsage(dc: DataConnect, vars: ListAiUsageVariables): QueryPromise<ListAiUsageData, ListAiUsageVariables>;
 
 interface SeedRoomsRef {
   /* Allow users to create refs without passing in DataConnect */
