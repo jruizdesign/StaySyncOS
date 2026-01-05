@@ -119,6 +119,8 @@ export class PropertySelectorComponent {
     auth = inject(AuthService);
     router = inject(Router);
 
+
+
     hotels = computed(() => {
         const profile = this.data.userProfile() as any;
         const user = this.auth.currentUser();
@@ -137,16 +139,19 @@ export class PropertySelectorComponent {
     });
 
     loading = computed(() => {
+        const user = this.auth.currentUser();
+        if (!user) return false;
+
+        if (user.email === 'jruizdesign@gmail.com') {
+            return this.data.allHotelsQuery.isFetching();
+        }
+
         const profilePre = this.data.userProfile();
         if (profilePre === null) return true; // Waiting for profile
 
         const profile = profilePre as any;
-        const user = this.auth.currentUser();
-        if (!user) return false;
-
         const isAdmin = profile?.role === 'SuperAdmin' ||
-            user?.role === 'SuperAdmin' ||
-            user?.email === 'jruizdesign@gmail.com';
+            user?.role === 'SuperAdmin';
 
         if (isAdmin) {
             return this.data.allHotelsQuery.isFetching();
@@ -201,7 +206,6 @@ export class PropertySelectorComponent {
     }
 
     async createDemoHotel() {
-        this.loading.set(true);
         try {
             console.log('[PropertySelector] Creating initial property...');
             const newId = await this.data.createHotelForUser('StaySync Grand Hotel', '777 Broadway, New York, NY', 'PROP-001');
@@ -209,8 +213,6 @@ export class PropertySelectorComponent {
             await this.loadAllHotels();
         } catch (err) {
             console.error('[PropertySelector] Failed to create demo hotel', err);
-        } finally {
-            this.loading.set(false);
         }
     }
 
@@ -223,7 +225,6 @@ export class PropertySelectorComponent {
     async confirmDelete(event: MouseEvent, hotel: any) {
         event.stopPropagation(); // Prevent selecting the hotel
         if (confirm(`Are you sure you want to delete "${hotel.name}"? This action cannot be undone.`)) {
-            this.loading.set(true);
             try {
                 await this.data.deleteHotel(hotel.id);
                 console.log('[PropertySelector] Deleted hotel:', hotel.id);
@@ -231,8 +232,6 @@ export class PropertySelectorComponent {
             } catch (err) {
                 console.error('[PropertySelector] Failed to delete hotel', err);
                 alert('Failed to delete hotel. Please try again.');
-            } finally {
-                this.loading.set(false);
             }
         }
     }

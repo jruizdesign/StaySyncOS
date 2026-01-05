@@ -295,7 +295,9 @@ export class DataService {
   logAiUsageMut = injectLogAiUsage();
 
   // Query to find any existing hotel (recovery mode)
-  firstHotelQuery = injectGetFirstHotel(() => ({}));
+  firstHotelQuery = injectGetFirstHotel(() => ({
+    enabled: !!this.auth.currentUser()
+  }));
 
   // Query all hotels for SuperAdmins
   allHotelsQuery = injectListAllHotels(() => ({

@@ -75,6 +75,12 @@ export const setupGuard: CanActivateFn = (route, state) => {
                 return of(router.parseUrl('/login'));
             }
 
+            // SuperAdmin Bypass (Performance)
+            if (user.email === 'jruizdesign@gmail.com') {
+                console.log('[SetupGuard] SuperAdmin detected by email, bypassing profile fetch.');
+                return of(router.parseUrl('/select-property'));
+            }
+
             // Check if we already have a selected hotel in DataService (prevents loop)
             if (data.selectedHotelId()) {
                 console.log('[SetupGuard] Hotel already selected:', data.selectedHotelId(), 'allowing access.');
