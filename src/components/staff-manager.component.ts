@@ -5,10 +5,10 @@ import { DataService, Staff, TimeLog, Shift } from '../services/data.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
-  selector: 'app-staff-manager',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  template: `
+    selector: 'app-staff-manager',
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, FormsModule],
+    template: `
     <div class="p-6 space-y-6 h-full flex flex-col">
       <!-- Header with Role-Based Controls -->
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
@@ -60,6 +60,10 @@ import { AuthService } from '../services/auth.service';
             </div>
 
             @if (adminMode() && viewMode() === 'directory') {
+                <button (click)="showInviteUser.set(true)" class="flex items-center gap-2 bg-emerald-600 text-white px-3 py-1.5 rounded-lg hover:bg-emerald-700 transition shadow-sm text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                    <span>Invite User</span>
+                </button>
                 <button (click)="showAddStaff.set(true)" class="flex items-center gap-2 bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition shadow-sm text-sm">
                     <span>+ Staff</span>
                 </button>
@@ -380,6 +384,51 @@ import { AuthService } from '../services/auth.service';
           </div>
         </div>
       }
+      
+      <!-- Invite User Modal -->
+      @if (showInviteUser()) {
+        <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
+             <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <h3 class="font-bold text-gray-800">Invite User to Hotel</h3>
+              <button (click)="showInviteUser.set(false)" class="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <form [formGroup]="inviteForm" (ngSubmit)="submitInvite()" class="p-6 space-y-4">
+              <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-3 text-sm text-indigo-800">
+                <p>This will grant the user access to this hotel. The user must already have a StaySyncOS account.</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">User Email</label>
+                <input formControlName="email" type="email" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" placeholder="user@example.com">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input formControlName="name" type="text" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow" placeholder="Jane Doe">
+              </div>
+               <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Application Role</label>
+                <select formControlName="role" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <option value="Staff">Staff (Standard Access)</option>
+                    <option value="Manager">Manager (Full Admin Access)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Kiosk PIN (4 digits)</label>
+                <input formControlName="pin" maxlength="4" type="password" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none font-mono tracking-widest" placeholder="••••">
+              </div>
+              <div class="flex justify-end pt-4 gap-3">
+                <button type="button" (click)="showInviteUser.set(false)" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium">Cancel</button>
+                <button type="submit" [disabled]="inviteForm.invalid || isInviting()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 font-medium shadow-sm flex items-center gap-2">
+                    @if (isInviting()) {
+                        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    }
+                    Invite & Link
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
 
       <!-- Add Shift Modal -->
       @if (showShiftModal()) {
@@ -463,7 +512,7 @@ import { AuthService } from '../services/auth.service';
       }
     </div>
   `,
-  styles: [`
+    styles: [`
     @keyframes fade-in {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -472,218 +521,245 @@ import { AuthService } from '../services/auth.service';
   `]
 })
 export class StaffManagerComponent {
-  data = inject(DataService);
-  auth = inject(AuthService);
-  fb = inject(FormBuilder);
-  
-  viewMode = signal<'directory' | 'schedule'>('directory');
-  adminMode = signal(false);
-  showAddStaff = signal(false);
-  
-  // Schedule State
-  scheduleStart = signal(new Date());
-  showShiftModal = signal(false);
-  pendingShiftStaff = signal<Staff | null>(null);
-  pendingShiftDate = signal<Date | null>(null);
-  pendingShiftStart = '09:00';
-  pendingShiftEnd = '17:00';
-  pendingShiftType: 'Regular' | 'Overtime' | 'TimeOff' = 'Regular';
-  pendingShiftNotes = '';
+    data = inject(DataService);
+    auth = inject(AuthService);
+    fb = inject(FormBuilder);
 
-  // Kiosk State
-  selectedStaff = signal<Staff | null>(null);
-  pinVerified = signal(false);
-  enteredPin = '';
+    viewMode = signal<'directory' | 'schedule'>('directory');
+    adminMode = signal(false);
+    showAddStaff = signal(false);
+    showInviteUser = signal(false);
+    isInviting = signal(false);
 
-  // Edit State
-  editingLog = signal<TimeLog | null>(null);
+    // Schedule State
+    scheduleStart = signal(new Date());
+    showShiftModal = signal(false);
+    pendingShiftStaff = signal<Staff | null>(null);
+    pendingShiftDate = signal<Date | null>(null);
+    pendingShiftStart = '09:00';
+    pendingShiftEnd = '17:00';
+    pendingShiftType: 'Regular' | 'Overtime' | 'TimeOff' = 'Regular';
+    pendingShiftNotes = '';
 
-  staffForm = this.fb.group({
-    name: ['', Validators.required],
-    role: ['Reception', Validators.required],
-    pin: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]]
-  });
+    // Kiosk State
+    selectedStaff = signal<Staff | null>(null);
+    pinVerified = signal(false);
+    enteredPin = '';
 
-  toggleAdminMode() {
-      // Security check inside method as well
-      if (this.auth.isManager()) {
-          this.adminMode.update(v => !v);
-      }
-  }
+    // Edit State
+    editingLog = signal<TimeLog | null>(null);
 
-  getRoleColor(role: string): { bg: string, text: string } {
-    switch (role) {
-        case 'Manager': return { bg: 'bg-indigo-100', text: 'text-indigo-700' };
-        case 'Reception': return { bg: 'bg-purple-100', text: 'text-purple-700' };
-        case 'Housekeeping': return { bg: 'bg-pink-100', text: 'text-pink-700' };
-        case 'Kitchen': return { bg: 'bg-orange-100', text: 'text-orange-700' };
-        case 'Maintenance': return { bg: 'bg-blue-100', text: 'text-blue-700' };
-        default: return { bg: 'bg-gray-100', text: 'text-gray-700' };
+    staffForm = this.fb.group({
+        name: ['', Validators.required],
+        role: ['Reception', Validators.required],
+        pin: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]]
+    });
+
+    inviteForm = this.fb.group({
+        email: ['', [Validators.required, Validators.email]],
+        name: ['', Validators.required],
+        role: ['Staff', Validators.required],
+        pin: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]]
+    });
+
+    toggleAdminMode() {
+        // Security check inside method as well
+        if (this.auth.isManager()) {
+            this.adminMode.update(v => !v);
+        }
     }
-  }
 
-  getRoleBadgeStyle(role: string): string {
-    const c = this.getRoleColor(role);
-    return `${c.bg} ${c.text} border-${c.text.split('-')[1]}-200`;
-  }
+    getRoleColor(role: string): { bg: string, text: string } {
+        switch (role) {
+            case 'Manager': return { bg: 'bg-indigo-100', text: 'text-indigo-700' };
+            case 'Reception': return { bg: 'bg-purple-100', text: 'text-purple-700' };
+            case 'Housekeeping': return { bg: 'bg-pink-100', text: 'text-pink-700' };
+            case 'Kitchen': return { bg: 'bg-orange-100', text: 'text-orange-700' };
+            case 'Maintenance': return { bg: 'bg-blue-100', text: 'text-blue-700' };
+            default: return { bg: 'bg-gray-100', text: 'text-gray-700' };
+        }
+    }
 
-  selectStaff(staff: Staff) {
-    this.selectedStaff.set(staff);
-    this.enteredPin = '';
-    this.pinVerified.set(false);
-  }
+    getRoleBadgeStyle(role: string): string {
+        const c = this.getRoleColor(role);
+        return `${c.bg} ${c.text} border-${c.text.split('-')[1]}-200`;
+    }
 
-  verifyPin(staff: Staff) {
-    if (this.enteredPin === staff.pin) {
-        this.pinVerified.set(true);
-    } else {
-        alert('Incorrect PIN');
+    selectStaff(staff: Staff) {
+        this.selectedStaff.set(staff);
+        this.enteredPin = '';
+        this.pinVerified.set(false);
+    }
+
+    verifyPin(staff: Staff) {
+        if (this.enteredPin === staff.pin) {
+            this.pinVerified.set(true);
+        } else {
+            alert('Incorrect PIN');
+            this.enteredPin = '';
+        }
+    }
+
+    clockAction(action: 'in' | 'out' | 'break' | 'endBreak') {
+        const s = this.selectedStaff();
+        if (!s) return;
+
+        if (action === 'in') this.data.clockIn(s.id);
+        if (action === 'out') this.data.clockOut(s.id);
+        if (action === 'break') this.data.startBreak(s.id);
+        if (action === 'endBreak') this.data.endBreak(s.id);
+
+        // Refresh local staff reference from signal after update
+        const updated = this.data.staff().find(u => u.id === s.id);
+        if (updated) this.selectedStaff.set(updated);
+    }
+
+    resetKiosk() {
+        this.selectedStaff.set(null);
+        this.pinVerified.set(false);
         this.enteredPin = '';
     }
-  }
 
-  clockAction(action: 'in' | 'out' | 'break' | 'endBreak') {
-    const s = this.selectedStaff();
-    if (!s) return;
+    // --- Schedule Logic ---
 
-    if (action === 'in') this.data.clockIn(s.id);
-    if (action === 'out') this.data.clockOut(s.id);
-    if (action === 'break') this.data.startBreak(s.id);
-    if (action === 'endBreak') this.data.endBreak(s.id);
-    
-    // Refresh local staff reference from signal after update
-    const updated = this.data.staff().find(u => u.id === s.id);
-    if (updated) this.selectedStaff.set(updated);
-  }
+    weekDays = computed(() => {
+        const start = new Date(this.scheduleStart());
+        // Adjust to Monday
+        const day = start.getDay();
+        const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+        const monday = new Date(start.setDate(diff));
 
-  resetKiosk() {
-      this.selectedStaff.set(null);
-      this.pinVerified.set(false);
-      this.enteredPin = '';
-  }
+        const days: Date[] = [];
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(monday);
+            d.setDate(monday.getDate() + i);
+            days.push(d);
+        }
+        return days;
+    });
 
-  // --- Schedule Logic ---
-
-  weekDays = computed(() => {
-      const start = new Date(this.scheduleStart());
-      // Adjust to Monday
-      const day = start.getDay();
-      const diff = start.getDate() - day + (day === 0 ? -6 : 1);
-      const monday = new Date(start.setDate(diff));
-      
-      const days: Date[] = [];
-      for(let i=0; i<7; i++) {
-          const d = new Date(monday);
-          d.setDate(monday.getDate() + i);
-          days.push(d);
-      }
-      return days;
-  });
-
-  isToday(date: Date): boolean {
-      const today = new Date();
-      return date.getDate() === today.getDate() && 
-             date.getMonth() === today.getMonth() && 
-             date.getFullYear() === today.getFullYear();
-  }
-
-  nextWeek() {
-      const d = new Date(this.scheduleStart());
-      d.setDate(d.getDate() + 7);
-      this.scheduleStart.set(d);
-  }
-
-  prevWeek() {
-      const d = new Date(this.scheduleStart());
-      d.setDate(d.getDate() - 7);
-      this.scheduleStart.set(d);
-  }
-
-  resetToToday() {
-      this.scheduleStart.set(new Date());
-  }
-
-  getShiftsForCell(staffId: string, date: Date): Shift[] {
-      const dateStr = date.toISOString().split('T')[0];
-      return this.data.shifts().filter(s => s.staffId === staffId && s.date === dateStr);
-  }
-
-  openShiftModal(staff: Staff, date: Date) {
-      if (!this.adminMode()) return;
-      this.pendingShiftStaff.set(staff);
-      this.pendingShiftDate.set(date);
-      this.pendingShiftStart = '09:00';
-      this.pendingShiftEnd = '17:00';
-      this.pendingShiftType = 'Regular';
-      this.pendingShiftNotes = '';
-      this.showShiftModal.set(true);
-  }
-
-  submitShift() {
-      const staff = this.pendingShiftStaff();
-      const date = this.pendingShiftDate();
-      if (!staff || !date) return;
-
-      this.data.addShift({
-          staffId: staff.id,
-          date: date.toISOString().split('T')[0],
-          startTime: this.pendingShiftStart,
-          endTime: this.pendingShiftEnd,
-          type: this.pendingShiftType,
-          notes: this.pendingShiftNotes
-      });
-      this.showShiftModal.set(false);
-  }
-
-  deleteShift(id: string) {
-      if (!this.adminMode()) return;
-      if (confirm('Delete this shift?')) {
-          this.data.deleteShift(id);
-      }
-  }
-
-  // --- CRUD ---
-
-  submitStaff() {
-    // strict check
-    if (!this.auth.isManager()) return;
-
-    if (this.staffForm.valid) {
-      this.data.addStaff(this.staffForm.value as any);
-      this.showAddStaff.set(false);
-      this.staffForm.reset({ role: 'Reception' });
+    isToday(date: Date): boolean {
+        const today = new Date();
+        return date.getDate() === today.getDate() &&
+            date.getMonth() === today.getMonth() &&
+            date.getFullYear() === today.getFullYear();
     }
-  }
 
-  editLog(log: TimeLog) {
-      if (!this.auth.isManager()) return;
-      this.editingLog.set(JSON.parse(JSON.stringify(log)));
-  }
+    nextWeek() {
+        const d = new Date(this.scheduleStart());
+        d.setDate(d.getDate() + 7);
+        this.scheduleStart.set(d);
+    }
 
-  formatForInput(isoString?: string | null): string {
-      if (!isoString) return '';
-      const d = new Date(isoString);
-      const pad = (n: number) => n < 10 ? '0' + n : n;
-      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  }
+    prevWeek() {
+        const d = new Date(this.scheduleStart());
+        d.setDate(d.getDate() - 7);
+        this.scheduleStart.set(d);
+    }
 
-  updateEditTime(field: 'startTime' | 'endTime', value: string) {
-      const log = this.editingLog();
-      if (log) {
-          const date = new Date(value);
-          if (!isNaN(date.getTime())) {
-              (log as any)[field] = date.toISOString();
-              this.editingLog.set({ ...log });
-          }
-      }
-  }
+    resetToToday() {
+        this.scheduleStart.set(new Date());
+    }
 
-  saveLogEdit() {
-      if (!this.auth.isManager()) return;
-      const log = this.editingLog();
-      if (log) {
-          this.data.updateTimeLog(log);
-          this.editingLog.set(null);
-      }
-  }
+    getShiftsForCell(staffId: string, date: Date): Shift[] {
+        const dateStr = date.toISOString().split('T')[0];
+        return this.data.shifts().filter(s => s.staffId === staffId && s.date === dateStr);
+    }
+
+    openShiftModal(staff: Staff, date: Date) {
+        if (!this.adminMode()) return;
+        this.pendingShiftStaff.set(staff);
+        this.pendingShiftDate.set(date);
+        this.pendingShiftStart = '09:00';
+        this.pendingShiftEnd = '17:00';
+        this.pendingShiftType = 'Regular';
+        this.pendingShiftNotes = '';
+        this.showShiftModal.set(true);
+    }
+
+    submitShift() {
+        const staff = this.pendingShiftStaff();
+        const date = this.pendingShiftDate();
+        if (!staff || !date) return;
+
+        this.data.addShift({
+            staffId: staff.id,
+            date: date.toISOString().split('T')[0],
+            startTime: this.pendingShiftStart,
+            endTime: this.pendingShiftEnd,
+            type: this.pendingShiftType,
+            notes: this.pendingShiftNotes
+        });
+        this.showShiftModal.set(false);
+    }
+
+    deleteShift(id: string) {
+        if (!this.adminMode()) return;
+        if (confirm('Delete this shift?')) {
+            this.data.deleteShift(id);
+        }
+    }
+
+    // --- CRUD ---
+
+    submitStaff() {
+        // strict check
+        if (!this.auth.isManager()) return;
+
+        if (this.staffForm.valid) {
+            this.data.addStaff(this.staffForm.value as any);
+            this.showAddStaff.set(false);
+            this.staffForm.reset({ role: 'Reception' });
+        }
+    }
+
+    async submitInvite() {
+        if (!this.auth.isManager()) return;
+        if (this.inviteForm.invalid) return;
+
+        this.isInviting.set(true);
+        try {
+            const { email, name, role, pin } = this.inviteForm.value;
+            await this.data.linkUserByEmail(email!, role!, name!, pin!);
+            alert(`Successfully linked ${email} to this hotel.`);
+            this.showInviteUser.set(false);
+            this.inviteForm.reset({ role: 'Staff' });
+        } catch (err: any) {
+            alert(err.message || 'Failed to link user.');
+        } finally {
+            this.isInviting.set(false);
+        }
+    }
+
+    editLog(log: TimeLog) {
+        if (!this.auth.isManager()) return;
+        this.editingLog.set(JSON.parse(JSON.stringify(log)));
+    }
+
+    formatForInput(isoString?: string | null): string {
+        if (!isoString) return '';
+        const d = new Date(isoString);
+        const pad = (n: number) => n < 10 ? '0' + n : n;
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    updateEditTime(field: 'startTime' | 'endTime', value: string) {
+        const log = this.editingLog();
+        if (log) {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+                (log as any)[field] = date.toISOString();
+                this.editingLog.set({ ...log });
+            }
+        }
+    }
+
+    saveLogEdit() {
+        if (!this.auth.isManager()) return;
+        const log = this.editingLog();
+        if (log) {
+            this.data.updateTimeLog(log);
+            this.editingLog.set(null);
+        }
+    }
 }

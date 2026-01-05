@@ -793,7 +793,7 @@ export class DataService {
     }
   }
 
-  async linkUserByEmail(email: string, role: string) {
+  async linkUserByEmail(email: string, role: string, name: string, pin: string) {
     const hotelId = this.currentHotelId();
     if (!hotelId) throw new Error('No hotel selected');
 
@@ -810,17 +810,20 @@ export class DataService {
 
       // 2. Update role in Data Connect if different
       if (user.role !== role) {
-        await this.upsertUserMut.mutateAsync({ id: user.id, email: user.email, role });
+        await this.upsertUserMut.mutateAsync({ id: user.id, email: user.email, role: role });
       }
 
-      // 3. Update role/hotel in Firestore for standard permissions
+      // 3. Create Staff profile for kiosk if it doesn't exist
+      await this.addStaff({ name, role, pin });
+
+      // 4. Update role/hotel in Firestore for standard permissions
       await setDoc(doc(this.firestore, `users/${user.id}`), {
         hotelId,
         role,
         hotelIds: arrayUnion(hotelId)
       }, { merge: true });
 
-      this.log('System', 'Staff', `Linked user ${email} as ${role}`);
+      this.log('System', 'Staff', `Linked user ${email} as ${role} and created staff profile`);
       return user.id;
     } catch (e: any) {
       console.error('[DataService] Failed to link user', e);
