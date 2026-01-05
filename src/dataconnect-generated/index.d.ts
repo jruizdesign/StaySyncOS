@@ -10,6 +10,11 @@ export type DateString = string;
 
 
 
+export interface Amenity_Key {
+  id: UUIDString;
+  __typename?: 'Amenity_Key';
+}
+
 export interface Booking_Key {
   id: UUIDString;
   __typename?: 'Booking_Key';
@@ -130,6 +135,11 @@ export interface DeleteGuestDcVariables {
   id: UUIDString;
 }
 
+export interface Department_Key {
+  id: UUIDString;
+  __typename?: 'Department_Key';
+}
+
 export interface FinancialDocument_Key {
   id: UUIDString;
   __typename?: 'FinancialDocument_Key';
@@ -167,6 +177,16 @@ export interface Guest_Key {
 export interface Hotel_Key {
   id: UUIDString;
   __typename?: 'Hotel_Key';
+}
+
+export interface HousekeepingTask_Key {
+  id: UUIDString;
+  __typename?: 'HousekeepingTask_Key';
+}
+
+export interface InventoryItem_Key {
+  id: UUIDString;
+  __typename?: 'InventoryItem_Key';
 }
 
 export interface LinkUserToHotelData {

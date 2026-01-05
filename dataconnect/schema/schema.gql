@@ -140,5 +140,36 @@ type UserHotel @table(key: ["user", "hotel"]) {
   hotel: Hotel!
 }
 
- 
- 
+type HousekeepingTask @table {
+  hotel: Hotel!
+  room: Room!
+  assignedTo: Staff
+  status: String! # Pending, In Progress, Completed
+  priority: String! # Routine, Urgent
+  notes: String
+  scheduledFor: Timestamp!
+  completedAt: Timestamp
+}
+
+type InventoryItem @table {
+  hotel: Hotel!
+  name: String!
+  category: String! # Toiletries, Linens, Food, Cleaning
+  quantity: Int!
+  minQuantity: Int!
+  unit: String! # pieces, liters, kg
+}
+
+type Amenity @table {
+  hotel: Hotel!
+  name: String!
+  description: String
+  location: String
+  status: String! # Open, Closed, Maintenance
+}
+
+type Department @table {
+  hotel: Hotel!
+  name: String!
+  head: Staff
+}

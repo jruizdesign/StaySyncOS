@@ -221,3 +221,90 @@ query ListUsersDC @auth(level: PUBLIC) {
     role
   }
 }
+
+# Maintenance Operations
+query ListMaintenance($hotelId: UUID!) @auth(level: PUBLIC) {
+  maintenanceRequests(where: {hotelId: {eq: $hotelId}}, orderBy: [{reportedAt: DESC}]) {
+    id
+    description
+    priority
+    status
+    reportedBy
+    reportedAt
+    completedAt
+    cost
+    notes
+    room { id, roomNumber }
+  }
+}
+
+mutation CreateMaintenanceDC($hotelId: UUID!, $roomId: UUID!, $description: String!, $priority: String!, $status: String!, $reportedBy: String!) @auth(level: PUBLIC) {
+  maintenanceRequest_insert(data: {hotelId: $hotelId, roomId: $roomId, description: $description, priority: $priority, status: $status, reportedBy: $reportedBy})
+}
+
+# Shift Operations
+query ListShifts($hotelId: UUID!) @auth(level: PUBLIC) {
+  shifts(where: {hotelId: {eq: $hotelId}}, orderBy: [{date: DESC}]) {
+    id
+    date
+    startTime
+    endTime
+    shiftType
+    notes
+    staff { id, firstName, lastName }
+  }
+}
+
+mutation CreateShiftDC($hotelId: UUID!, $staffId: UUID!, $date: Date!, $startTime: String!, $endTime: String!, $shiftType: String!, $notes: String) @auth(level: PUBLIC) {
+  shift_insert(data: {hotelId: $hotelId, staffId: $staffId, date: $date, startTime: $startTime, endTime: $endTime, shiftType: $shiftType, notes: $notes})
+}
+
+# Housekeeping Operations
+query ListHousekeeping($hotelId: UUID!) @auth(level: PUBLIC) {
+  housekeepingTasks(where: {hotelId: {eq: $hotelId}}) {
+    id
+    status
+    priority
+    notes
+    scheduledFor
+    completedAt
+    room { id, roomNumber }
+    assignedTo { id, firstName, lastName }
+  }
+}
+
+mutation CreateHousekeepingTaskDC($hotelId: UUID!, $roomId: UUID!, $status: String!, $priority: String!, $scheduledFor: Timestamp!, $assignedToId: UUID, $notes: String) @auth(level: PUBLIC) {
+  housekeepingTask_insert(data: {hotelId: $hotelId, roomId: $roomId, status: $status, priority: $priority, scheduledFor: $scheduledFor, assignedToId: $assignedToId, notes: $notes})
+}
+
+# Inventory Operations
+query ListInventory($hotelId: UUID!) @auth(level: PUBLIC) {
+  inventoryItems(where: {hotelId: {eq: $hotelId}}) {
+    id
+    name
+    category
+    quantity
+    minQuantity
+    unit
+  }
+}
+
+mutation UpsertInventoryItemDC($hotelId: UUID!, $name: String!, $category: String!, $quantity: Int!, $minQuantity: Int!, $unit: String!) @auth(level: PUBLIC) {
+  inventoryItem_upsert(data: {hotelId: $hotelId, name: $name, category: $category, quantity: $quantity, minQuantity: $minQuantity, unit: $unit})
+}
+
+# Amenity Operations
+query ListAmenities($hotelId: UUID!) @auth(level: PUBLIC) {
+  amenities(where: {hotelId: {eq: $hotelId}}) {
+    id
+    name
+    description
+    location
+    status
+  }
+}
+
+mutation CreateAmenityDC($hotelId: UUID!, $name: String!, $description: String, $location: String, $status: String!) @auth(level: PUBLIC) {
+  amenity_insert(data: {hotelId: $hotelId, name: $name, description: $description, location: $location, status: $status})
+}
+

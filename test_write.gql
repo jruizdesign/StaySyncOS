@@ -1,0 +1,7 @@
+mutation CreateTestHotel {
+  hotel_insert(data: {
+    name: "Antigravity Test Hotel",
+    address: "123 Agentic Way",
+    propertyId: "AG-TEST-999"
+  })
+}

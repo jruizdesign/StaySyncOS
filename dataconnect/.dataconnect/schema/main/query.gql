@@ -1,5 +1,24 @@
 extend type Query {
   """
+  ✨ Look up a single `Amenity` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  amenity(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Amenity_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Amenity_FirstRow
+  ): Amenity @fdc_generated(from: "Amenity", purpose: QUERY_SINGLE)
+  """
   ✨ Look up a single `Booking` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   booking(
@@ -18,6 +37,25 @@ extend type Query {
     """
     first: Booking_FirstRow
   ): Booking @fdc_generated(from: "Booking", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Department` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  department(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Department_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Department_FirstRow
+  ): Department @fdc_generated(from: "Department", purpose: QUERY_SINGLE)
   """
   ✨ Look up a single `FinancialDocument` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
@@ -75,6 +113,44 @@ extend type Query {
     """
     first: Hotel_FirstRow
   ): Hotel @fdc_generated(from: "Hotel", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `HousekeepingTask` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  housekeepingTask(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: HousekeepingTask_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: HousekeepingTask_FirstRow
+  ): HousekeepingTask @fdc_generated(from: "HousekeepingTask", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `InventoryItem` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  inventoryItem(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: InventoryItem_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: InventoryItem_FirstRow
+  ): InventoryItem @fdc_generated(from: "InventoryItem", purpose: QUERY_SINGLE)
   """
   ✨ Look up a single `Log` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
@@ -247,6 +323,40 @@ extend type Query {
     first: UserHotel_FirstRow
   ): UserHotel @fdc_generated(from: "UserHotel", purpose: QUERY_SINGLE)
   """
+  ✨ List `Amenity` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  amenities(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Amenity_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Amenity_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Amenity_Having
+  ): [Amenity!]! @fdc_generated(from: "Amenity", purpose: QUERY_MULTIPLE)
+  """
   ✨ List `Booking` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
   bookings(
@@ -280,6 +390,40 @@ extend type Query {
     """
     having: Booking_Having
   ): [Booking!]! @fdc_generated(from: "Booking", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Department` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  departments(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Department_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Department_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Department_Having
+  ): [Department!]! @fdc_generated(from: "Department", purpose: QUERY_MULTIPLE)
   """
   ✨ List `FinancialDocument` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
@@ -382,6 +526,74 @@ extend type Query {
     """
     having: Hotel_Having
   ): [Hotel!]! @fdc_generated(from: "Hotel", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `HousekeepingTask` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  housekeepingTasks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: HousekeepingTask_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [HousekeepingTask_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: HousekeepingTask_Having
+  ): [HousekeepingTask!]! @fdc_generated(from: "HousekeepingTask", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `InventoryItem` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  inventoryItems(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: InventoryItem_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [InventoryItem_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: InventoryItem_Having
+  ): [InventoryItem!]! @fdc_generated(from: "InventoryItem", purpose: QUERY_MULTIPLE)
   """
   ✨ List `Log` objects in the table and return selected fields, optionally filtered by `where` conditions
   """

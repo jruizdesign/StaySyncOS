@@ -1,5 +1,14 @@
 extend type Mutation {
   """
+  ✨ Insert a single `Amenity` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  amenity_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Amenity_Data!
+  ): Amenity_KeyOutput! @fdc_generated(from: "Amenity", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `Booking` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   booking_insert(
@@ -8,6 +17,15 @@ extend type Mutation {
     """
     data: Booking_Data!
   ): Booking_KeyOutput! @fdc_generated(from: "Booking", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Department` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  department_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Department_Data!
+  ): Department_KeyOutput! @fdc_generated(from: "Department", purpose: INSERT_SINGLE)
   """
   ✨ Insert a single `FinancialDocument` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -35,6 +53,24 @@ extend type Mutation {
     """
     data: Hotel_Data!
   ): Hotel_KeyOutput! @fdc_generated(from: "Hotel", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `HousekeepingTask` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  housekeepingTask_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: HousekeepingTask_Data!
+  ): HousekeepingTask_KeyOutput! @fdc_generated(from: "HousekeepingTask", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `InventoryItem` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  inventoryItem_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: InventoryItem_Data!
+  ): InventoryItem_KeyOutput! @fdc_generated(from: "InventoryItem", purpose: INSERT_SINGLE)
   """
   ✨ Insert a single `Log` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -117,6 +153,15 @@ extend type Mutation {
     data: UserHotel_Data!
   ): UserHotel_KeyOutput! @fdc_generated(from: "UserHotel", purpose: INSERT_SINGLE)
   """
+  ✨ Insert `Amenity` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  amenity_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Amenity_Data!]!
+  ): [Amenity_KeyOutput!]! @fdc_generated(from: "Amenity", purpose: INSERT_MULTIPLE)
+  """
   ✨ Insert `Booking` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   booking_insertMany(
@@ -125,6 +170,15 @@ extend type Mutation {
     """
     data: [Booking_Data!]!
   ): [Booking_KeyOutput!]! @fdc_generated(from: "Booking", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Department` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  department_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Department_Data!]!
+  ): [Department_KeyOutput!]! @fdc_generated(from: "Department", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `FinancialDocument` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -152,6 +206,24 @@ extend type Mutation {
     """
     data: [Hotel_Data!]!
   ): [Hotel_KeyOutput!]! @fdc_generated(from: "Hotel", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `HousekeepingTask` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  housekeepingTask_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [HousekeepingTask_Data!]!
+  ): [HousekeepingTask_KeyOutput!]! @fdc_generated(from: "HousekeepingTask", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `InventoryItem` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  inventoryItem_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [InventoryItem_Data!]!
+  ): [InventoryItem_KeyOutput!]! @fdc_generated(from: "InventoryItem", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `Log` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -234,6 +306,15 @@ extend type Mutation {
     data: [UserHotel_Data!]!
   ): [UserHotel_KeyOutput!]! @fdc_generated(from: "UserHotel", purpose: INSERT_MULTIPLE)
   """
+  ✨ Insert or update a single `Amenity` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Amenity`.
+  """
+  amenity_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Amenity_Data!
+  ): Amenity_KeyOutput! @fdc_generated(from: "Amenity", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `Booking` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Booking`.
   """
   booking_upsert(
@@ -242,6 +323,15 @@ extend type Mutation {
     """
     data: Booking_Data!
   ): Booking_KeyOutput! @fdc_generated(from: "Booking", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Department` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Department`.
+  """
+  department_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Department_Data!
+  ): Department_KeyOutput! @fdc_generated(from: "Department", purpose: UPSERT_SINGLE)
   """
   ✨ Insert or update a single `FinancialDocument` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `FinancialDocument`.
   """
@@ -269,6 +359,24 @@ extend type Mutation {
     """
     data: Hotel_Data!
   ): Hotel_KeyOutput! @fdc_generated(from: "Hotel", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `HousekeepingTask` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `HousekeepingTask`.
+  """
+  housekeepingTask_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: HousekeepingTask_Data!
+  ): HousekeepingTask_KeyOutput! @fdc_generated(from: "HousekeepingTask", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `InventoryItem` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `InventoryItem`.
+  """
+  inventoryItem_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: InventoryItem_Data!
+  ): InventoryItem_KeyOutput! @fdc_generated(from: "InventoryItem", purpose: UPSERT_SINGLE)
   """
   ✨ Insert or update a single `Log` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Log`.
   """
@@ -351,6 +459,15 @@ extend type Mutation {
     data: UserHotel_Data!
   ): UserHotel_KeyOutput! @fdc_generated(from: "UserHotel", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update `Amenity` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Amenity`.
+  """
+  amenity_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Amenity_Data!]!
+  ): [Amenity_KeyOutput!]! @fdc_generated(from: "Amenity", purpose: UPSERT_MULTIPLE)
+  """
   ✨ Insert or update `Booking` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Booking`.
   """
   booking_upsertMany(
@@ -359,6 +476,15 @@ extend type Mutation {
     """
     data: [Booking_Data!]!
   ): [Booking_KeyOutput!]! @fdc_generated(from: "Booking", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Department` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Department`.
+  """
+  department_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Department_Data!]!
+  ): [Department_KeyOutput!]! @fdc_generated(from: "Department", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `FinancialDocument` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `FinancialDocument`.
   """
@@ -386,6 +512,24 @@ extend type Mutation {
     """
     data: [Hotel_Data!]!
   ): [Hotel_KeyOutput!]! @fdc_generated(from: "Hotel", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `HousekeepingTask` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `HousekeepingTask`.
+  """
+  housekeepingTask_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [HousekeepingTask_Data!]!
+  ): [HousekeepingTask_KeyOutput!]! @fdc_generated(from: "HousekeepingTask", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `InventoryItem` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `InventoryItem`.
+  """
+  inventoryItem_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [InventoryItem_Data!]!
+  ): [InventoryItem_KeyOutput!]! @fdc_generated(from: "InventoryItem", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `Log` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Log`.
   """
@@ -468,6 +612,30 @@ extend type Mutation {
     data: [UserHotel_Data!]!
   ): [UserHotel_KeyOutput!]! @fdc_generated(from: "UserHotel", purpose: UPSERT_MULTIPLE)
   """
+  ✨ Update a single `Amenity` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Amenity` or `null` if not found.
+  """
+  amenity_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Amenity_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Amenity_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Amenity_Data!
+  ): Amenity_KeyOutput @fdc_generated(from: "Amenity", purpose: UPDATE_SINGLE)
+  """
   ✨ Update a single `Booking` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Booking` or `null` if not found.
   """
   booking_update(
@@ -491,6 +659,30 @@ extend type Mutation {
     """
     data: Booking_Data!
   ): Booking_KeyOutput @fdc_generated(from: "Booking", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Department` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Department` or `null` if not found.
+  """
+  department_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Department_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Department_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Department_Data!
+  ): Department_KeyOutput @fdc_generated(from: "Department", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `FinancialDocument` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `FinancialDocument` or `null` if not found.
   """
@@ -563,6 +755,54 @@ extend type Mutation {
     """
     data: Hotel_Data!
   ): Hotel_KeyOutput @fdc_generated(from: "Hotel", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `HousekeepingTask` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `HousekeepingTask` or `null` if not found.
+  """
+  housekeepingTask_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: HousekeepingTask_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: HousekeepingTask_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: HousekeepingTask_Data!
+  ): HousekeepingTask_KeyOutput @fdc_generated(from: "HousekeepingTask", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `InventoryItem` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `InventoryItem` or `null` if not found.
+  """
+  inventoryItem_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: InventoryItem_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: InventoryItem_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: InventoryItem_Data!
+  ): InventoryItem_KeyOutput @fdc_generated(from: "InventoryItem", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `Log` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Log` or `null` if not found.
   """
@@ -780,6 +1020,25 @@ extend type Mutation {
     data: UserHotel_Data!
   ): UserHotel_KeyOutput @fdc_generated(from: "UserHotel", purpose: UPDATE_SINGLE)
   """
+  ✨ Update `Amenity` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  amenity_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Amenity_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Amenity_Data!
+  ): Int! @fdc_generated(from: "Amenity", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `Booking` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   booking_updateMany(
@@ -798,6 +1057,25 @@ extend type Mutation {
     """
     data: Booking_Data!
   ): Int! @fdc_generated(from: "Booking", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Department` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  department_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Department_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Department_Data!
+  ): Int! @fdc_generated(from: "Department", purpose: UPDATE_MULTIPLE)
   """
   ✨ Update `FinancialDocument` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
@@ -855,6 +1133,44 @@ extend type Mutation {
     """
     data: Hotel_Data!
   ): Int! @fdc_generated(from: "Hotel", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `HousekeepingTask` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  housekeepingTask_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: HousekeepingTask_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: HousekeepingTask_Data!
+  ): Int! @fdc_generated(from: "HousekeepingTask", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `InventoryItem` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  inventoryItem_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: InventoryItem_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: InventoryItem_Data!
+  ): Int! @fdc_generated(from: "InventoryItem", purpose: UPDATE_MULTIPLE)
   """
   ✨ Update `Log` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
@@ -1027,6 +1343,25 @@ extend type Mutation {
     data: UserHotel_Data!
   ): Int! @fdc_generated(from: "UserHotel", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Delete a single `Amenity` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  amenity_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Amenity_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Amenity_FirstRow
+  ): Amenity_KeyOutput @fdc_generated(from: "Amenity", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `Booking` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   booking_delete(
@@ -1045,6 +1380,25 @@ extend type Mutation {
     """
     first: Booking_FirstRow
   ): Booking_KeyOutput @fdc_generated(from: "Booking", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Department` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  department_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Department_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Department_FirstRow
+  ): Department_KeyOutput @fdc_generated(from: "Department", purpose: DELETE_SINGLE)
   """
   ✨ Delete a single `FinancialDocument` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
@@ -1102,6 +1456,44 @@ extend type Mutation {
     """
     first: Hotel_FirstRow
   ): Hotel_KeyOutput @fdc_generated(from: "Hotel", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `HousekeepingTask` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  housekeepingTask_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: HousekeepingTask_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: HousekeepingTask_FirstRow
+  ): HousekeepingTask_KeyOutput @fdc_generated(from: "HousekeepingTask", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `InventoryItem` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  inventoryItem_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: InventoryItem_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: InventoryItem_FirstRow
+  ): InventoryItem_KeyOutput @fdc_generated(from: "InventoryItem", purpose: DELETE_SINGLE)
   """
   ✨ Delete a single `Log` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
@@ -1274,6 +1666,20 @@ extend type Mutation {
     first: UserHotel_FirstRow
   ): UserHotel_KeyOutput @fdc_generated(from: "UserHotel", purpose: DELETE_SINGLE)
   """
+  ✨ Delete `Amenity` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  amenity_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Amenity_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Amenity", purpose: DELETE_MULTIPLE)
+  """
   ✨ Delete `Booking` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
   booking_deleteMany(
@@ -1287,6 +1693,20 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "Booking", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Department` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  department_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Department_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Department", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `FinancialDocument` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
@@ -1329,6 +1749,34 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "Hotel", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `HousekeepingTask` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  housekeepingTask_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: HousekeepingTask_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "HousekeepingTask", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `InventoryItem` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  inventoryItem_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: InventoryItem_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "InventoryItem", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `Log` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
