@@ -152,6 +152,27 @@ import { doc, setDoc } from 'firebase/firestore';
         </div>
       </div>
 
+      <!-- Super Admin Controls -->
+      @if (auth.currentUser()?.email === 'jruizdesign@gmail.com') {
+         <div class="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl shadow-lg border border-indigo-500 p-8 text-white relative overflow-hidden">
+             <!-- Background pattern -->
+             <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
+             
+             <h2 class="text-xl font-bold flex items-center gap-2 mb-4 relative z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                Super Admin Controls
+             </h2>
+             <p class="text-indigo-100 mb-6 relative z-10">Global actions across all {{ data.allHotelsQuery.data()?.hotels?.length || 0 }} properties.</p>
+             
+             <div class="flex flex-wrap gap-4 relative z-10">
+                 <button (click)="data.enableDemoModeForAll()" class="bg-white text-indigo-600 hover:bg-indigo-50 px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all active:scale-95 flex items-center gap-2">
+                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                     Set ALL to Demo Mode
+                 </button>
+             </div>
+         </div>
+      }
+
       <!-- Database Visualizer -->
       <div class="bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 overflow-hidden text-slate-300 ring-1 ring-white/5">
          <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-950/50 backdrop-blur">

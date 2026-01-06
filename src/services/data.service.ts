@@ -794,6 +794,28 @@ export class DataService {
     }
   }
 
+  async enableDemoModeForAll() {
+    const allHotels = this.allHotelsQuery.data()?.hotels;
+    if (!allHotels || allHotels.length === 0) {
+      console.warn("No hotels found or permission denied.");
+      return;
+    }
+
+    const confirm = window.confirm(`Found ${allHotels.length} hotels. Enable Demo Mode for ALL? This will NOT wipe data but will enable the flag.`);
+    if (!confirm) return;
+
+    for (const h of allHotels) {
+      console.log(`Enabling demo mode for ${h.name} (${h.id})...`);
+      await this.updateHotelConfigMut.mutateAsync({
+        id: h.id,
+        demoMode: true
+      });
+      // Optional: Seed basic data if needed, but let's stick to the flag for now to be safe
+    }
+    alert("All hotels set to Demo Mode.");
+    this.allHotelsQuery.refetch();
+  }
+
   async logAiUsage(feature: string, model: string, promptTokens?: number, responseTokens?: number) {
     const hotelId = this.currentHotelId();
     const userId = this.auth.currentUser()?.id;
