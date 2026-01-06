@@ -351,6 +351,8 @@ export class DataService {
     return data?.rooms ?? [];
   });
 
+  roomsLoading = computed(() => this.roomsQuery.isLoading());
+
   guests = computed(() => {
     const data = this.guestsQuery.data();
     return (data?.guests ?? []).map(g => ({
@@ -545,6 +547,14 @@ export class DataService {
     this.ai.usage$.subscribe(u => {
       this.logAiUsage(u.feature, u.model, u.promptTokens, u.responseTokens);
     });
+
+    effect(() => {
+      const hid = this.currentHotelId();
+      const status = this.roomsQuery.status();
+      const data = this.roomsQuery.data();
+      const err = this.roomsQuery.error();
+      console.log(`[DataService Debug] HotelID: ${hid}, RoomsQuery Status: ${status}, Data Count: ${data?.rooms?.length}, Error: ${err}`);
+    });
   }
 
   // Helper to get collections references (internal use)
@@ -596,7 +606,11 @@ export class DataService {
         capacity: room.capacity ?? 2
       });
       this.log('Room', 'Create', `Room ${room.roomNumber} added.`);
-      this.roomsQuery.refetch();
+      // Wait for consistency
+      setTimeout(() => {
+        console.log('[DataService] Refetching rooms after add...');
+        this.roomsQuery.refetch();
+      }, 500);
     } catch (e) {
       this.log('Room', 'Error', 'Failed to add room');
       console.error("Error adding room", e);
