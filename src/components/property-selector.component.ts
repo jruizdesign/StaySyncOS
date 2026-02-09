@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { AuthService } from '../services/auth.service';
-import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
 
 @Component({
     selector: 'app-property-selector',
@@ -119,8 +118,6 @@ export class PropertySelectorComponent {
     auth = inject(AuthService);
     router = inject(Router);
 
-
-
     hotels = computed(() => {
         const profile = this.data.userProfile() as any;
         const user = this.auth.currentUser();
@@ -134,7 +131,7 @@ export class PropertySelectorComponent {
             return this.data.allHotelsQuery.data()?.hotels || [];
         } else {
             const data = this.data.hotelsByUserQuery.data();
-            return data?.user?.userHotels_on_user?.map(uh => uh.hotel) || [];
+            return data?.user?.userHotels_on_user?.map((uh: any) => uh.hotel) || [];
         }
     });
 
@@ -143,7 +140,7 @@ export class PropertySelectorComponent {
         if (!user) return false;
 
         if (user.email === 'jruizdesign@gmail.com') {
-            return this.data.allHotelsQuery.isFetching();
+            return this.data.allHotelsQuery.isLoading();
         }
 
         const profilePre = this.data.userProfile();
@@ -154,9 +151,9 @@ export class PropertySelectorComponent {
             user?.role === 'SuperAdmin';
 
         if (isAdmin) {
-            return this.data.allHotelsQuery.isFetching();
+            return this.data.allHotelsQuery.isLoading();
         } else {
-            return this.data.hotelsByUserQuery.isFetching();
+            return this.data.hotelsByUserQuery.isLoading();
         }
     });
 

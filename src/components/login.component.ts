@@ -121,7 +121,7 @@ export class LoginComponent {
       }
 
       // Sync user to Data Connect
-      const uid = this.auth.auth.currentUser?.uid;
+      const uid = this.auth.currentUser()?.id;
       if (uid) {
         // New users default to Staff role. Admin status is evaluated by AuthService.
         await this.data.ensureUserExists(uid, this.email, 'Staff');

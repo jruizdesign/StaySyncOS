@@ -1,0 +1,1129 @@
+[
+    {
+        "table_name": "accounts",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('accounts_id_seq'::regclass)"
+    },
+    {
+        "table_name": "accounts",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "accounts",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "accounts",
+        "column_name": "code",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "accounts",
+        "column_name": "name",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "accounts",
+        "column_name": "type",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "audit_logs",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('audit_logs_id_seq'::regclass)"
+    },
+    {
+        "table_name": "audit_logs",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "audit_logs",
+        "column_name": "user_id",
+        "data_type": "uuid",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "audit_logs",
+        "column_name": "action",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "audit_logs",
+        "column_name": "table_name",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "audit_logs",
+        "column_name": "record_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "audit_logs",
+        "column_name": "old_values",
+        "data_type": "jsonb",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "audit_logs",
+        "column_name": "new_values",
+        "data_type": "jsonb",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "audit_logs",
+        "column_name": "created_at",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+        "table_name": "booking_rooms",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('booking_rooms_id_seq'::regclass)"
+    },
+    {
+        "table_name": "booking_rooms",
+        "column_name": "booking_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "booking_rooms",
+        "column_name": "room_type_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "booking_rooms",
+        "column_name": "room_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "booking_rooms",
+        "column_name": "price_per_night",
+        "data_type": "numeric",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "bookings",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('bookings_id_seq'::regclass)"
+    },
+    {
+        "table_name": "bookings",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "bookings",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "bookings",
+        "column_name": "guest_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "bookings",
+        "column_name": "status",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "bookings",
+        "column_name": "check_in_date",
+        "data_type": "date",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "bookings",
+        "column_name": "check_out_date",
+        "data_type": "date",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "bookings",
+        "column_name": "total_amount",
+        "data_type": "numeric",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "bookings",
+        "column_name": "created_at",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+        "table_name": "channel_mappings",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('channel_mappings_id_seq'::regclass)"
+    },
+    {
+        "table_name": "channel_mappings",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "channel_mappings",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "channel_mappings",
+        "column_name": "channel_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "channel_mappings",
+        "column_name": "local_room_type_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "channel_mappings",
+        "column_name": "remote_room_type_id",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "channel_mappings",
+        "column_name": "sync_status",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": "'SYNCED'::character varying"
+    },
+    {
+        "table_name": "channels",
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('channels_id_seq'::regclass)"
+    },
+    {
+        "table_name": "channels",
+        "column_name": "name",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "channels",
+        "column_name": "slug",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "daily_inventory_cache",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('daily_inventory_cache_id_seq'::regclass)"
+    },
+    {
+        "table_name": "daily_inventory_cache",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "daily_inventory_cache",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "daily_inventory_cache",
+        "column_name": "room_type_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "daily_inventory_cache",
+        "column_name": "date",
+        "data_type": "date",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "daily_inventory_cache",
+        "column_name": "available_count",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "daily_inventory_cache",
+        "column_name": "price",
+        "data_type": "numeric",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "folios",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('folios_id_seq'::regclass)"
+    },
+    {
+        "table_name": "folios",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "folios",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "folios",
+        "column_name": "booking_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "folios",
+        "column_name": "status",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": "'OPEN'::character varying"
+    },
+    {
+        "table_name": "guests",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('guests_id_seq'::regclass)"
+    },
+    {
+        "table_name": "guests",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "guests",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "guests",
+        "column_name": "first_name",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "guests",
+        "column_name": "last_name",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "guests",
+        "column_name": "email",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "guests",
+        "column_name": "phone",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "guests",
+        "column_name": "is_vip",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "false"
+    },
+    {
+        "table_name": "housekeeping_tasks",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('housekeeping_tasks_id_seq'::regclass)"
+    },
+    {
+        "table_name": "housekeeping_tasks",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "housekeeping_tasks",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "housekeeping_tasks",
+        "column_name": "room_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "housekeeping_tasks",
+        "column_name": "assigned_to_user_id",
+        "data_type": "uuid",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "housekeeping_tasks",
+        "column_name": "status",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": "'PENDING'::character varying"
+    },
+    {
+        "table_name": "housekeeping_tasks",
+        "column_name": "scheduled_date",
+        "data_type": "date",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "journal_entries",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('journal_entries_id_seq'::regclass)"
+    },
+    {
+        "table_name": "journal_entries",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "journal_entries",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "journal_entries",
+        "column_name": "date",
+        "data_type": "date",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "journal_entries",
+        "column_name": "description",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "journal_entries",
+        "column_name": "posted_by_user_id",
+        "data_type": "uuid",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "journal_lines",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('journal_lines_id_seq'::regclass)"
+    },
+    {
+        "table_name": "journal_lines",
+        "column_name": "journal_entry_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "journal_lines",
+        "column_name": "account_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "journal_lines",
+        "column_name": "debit",
+        "data_type": "numeric",
+        "is_nullable": "YES",
+        "column_default": "0.00"
+    },
+    {
+        "table_name": "journal_lines",
+        "column_name": "credit",
+        "data_type": "numeric",
+        "is_nullable": "YES",
+        "column_default": "0.00"
+    },
+    {
+        "table_name": "modules",
+        "column_name": "key",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "modules",
+        "column_name": "name",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "modules",
+        "column_name": "description",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "modules",
+        "column_name": "is_core",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "false"
+    },
+    {
+        "table_name": "organization_members",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "organization_members",
+        "column_name": "user_id",
+        "data_type": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "organization_members",
+        "column_name": "is_owner",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "false"
+    },
+    {
+        "table_name": "organization_members",
+        "column_name": "joined_at",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+        "table_name": "organization_modules",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "organization_modules",
+        "column_name": "module_key",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "organization_modules",
+        "column_name": "is_enabled",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "true"
+    },
+    {
+        "table_name": "organization_modules",
+        "column_name": "config",
+        "data_type": "jsonb",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "organizations",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('organizations_id_seq'::regclass)"
+    },
+    {
+        "table_name": "organizations",
+        "column_name": "name",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "organizations",
+        "column_name": "subdomain",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "organizations",
+        "column_name": "subscription_plan",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": "'FREE'::character varying"
+    },
+    {
+        "table_name": "organizations",
+        "column_name": "is_active",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "true"
+    },
+    {
+        "table_name": "organizations",
+        "column_name": "created_at",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+        "table_name": "permissions",
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('permissions_id_seq'::regclass)"
+    },
+    {
+        "table_name": "permissions",
+        "column_name": "slug",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "permissions",
+        "column_name": "description",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "properties",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('properties_id_seq'::regclass)"
+    },
+    {
+        "table_name": "properties",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "properties",
+        "column_name": "name",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "properties",
+        "column_name": "address_line_1",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "properties",
+        "column_name": "city",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "properties",
+        "column_name": "state",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "properties",
+        "column_name": "zip_code",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "properties",
+        "column_name": "country_code",
+        "data_type": "character",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "properties",
+        "column_name": "timezone",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": "'UTC'::character varying"
+    },
+    {
+        "table_name": "properties",
+        "column_name": "base_currency",
+        "data_type": "character",
+        "is_nullable": "YES",
+        "column_default": "'USD'::bpchar"
+    },
+    {
+        "table_name": "properties",
+        "column_name": "channex_property_id",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "properties",
+        "column_name": "created_at",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+        "table_name": "property_modules",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "property_modules",
+        "column_name": "module_key",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "property_modules",
+        "column_name": "is_enabled",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "true"
+    },
+    {
+        "table_name": "property_modules",
+        "column_name": "config",
+        "data_type": "jsonb",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "rate_plans",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('rate_plans_id_seq'::regclass)"
+    },
+    {
+        "table_name": "rate_plans",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "rate_plans",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "rate_plans",
+        "column_name": "name",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "rate_plans",
+        "column_name": "is_derived",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "false"
+    },
+    {
+        "table_name": "rate_plans",
+        "column_name": "derivation_rule",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "role_permissions",
+        "column_name": "role_id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "role_permissions",
+        "column_name": "permission_id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "roles",
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('roles_id_seq'::regclass)"
+    },
+    {
+        "table_name": "roles",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "roles",
+        "column_name": "name",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "roles",
+        "column_name": "description",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "roles",
+        "column_name": "is_system_role",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "false"
+    },
+    {
+        "table_name": "room_types",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('room_types_id_seq'::regclass)"
+    },
+    {
+        "table_name": "room_types",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "room_types",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "room_types",
+        "column_name": "name",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "room_types",
+        "column_name": "occupancy_adults",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": "2"
+    },
+    {
+        "table_name": "room_types",
+        "column_name": "base_price",
+        "data_type": "numeric",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "room_types",
+        "column_name": "channex_room_type_id",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "rooms",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('rooms_id_seq'::regclass)"
+    },
+    {
+        "table_name": "rooms",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "rooms",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "rooms",
+        "column_name": "room_type_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "rooms",
+        "column_name": "room_number",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "rooms",
+        "column_name": "status",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": "'CLEAN'::character varying"
+    },
+    {
+        "table_name": "staff_time_tracking",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('staff_time_tracking_id_seq'::regclass)"
+    },
+    {
+        "table_name": "staff_time_tracking",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "staff_time_tracking",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "staff_time_tracking",
+        "column_name": "user_id",
+        "data_type": "uuid",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "staff_time_tracking",
+        "column_name": "clock_in",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "staff_time_tracking",
+        "column_name": "clock_out",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "staff_time_tracking",
+        "column_name": "total_hours",
+        "data_type": "numeric",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "staff_time_tracking",
+        "column_name": "status",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": "'OPEN'::character varying"
+    },
+    {
+        "table_name": "user_roles",
+        "column_name": "id",
+        "data_type": "bigint",
+        "is_nullable": "NO",
+        "column_default": "nextval('user_roles_id_seq'::regclass)"
+    },
+    {
+        "table_name": "user_roles",
+        "column_name": "user_id",
+        "data_type": "uuid",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "user_roles",
+        "column_name": "role_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "user_roles",
+        "column_name": "organization_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "user_roles",
+        "column_name": "property_id",
+        "data_type": "bigint",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "user_roles",
+        "column_name": "assigned_at",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+        "table_name": "users",
+        "column_name": "id",
+        "data_type": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+    },
+    {
+        "table_name": "users",
+        "column_name": "email",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "users",
+        "column_name": "first_name",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "users",
+        "column_name": "last_name",
+        "data_type": "character varying",
+        "is_nullable": "NO",
+        "column_default": null
+    },
+    {
+        "table_name": "users",
+        "column_name": "phone",
+        "data_type": "character varying",
+        "is_nullable": "YES",
+        "column_default": null
+    },
+    {
+        "table_name": "users",
+        "column_name": "is_super_admin",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "false"
+    },
+    {
+        "table_name": "users",
+        "column_name": "created_at",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+    }
+]

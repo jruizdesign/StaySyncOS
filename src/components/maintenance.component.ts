@@ -292,19 +292,27 @@ export class MaintenanceComponent {
             this.submitting.set(true);
             const val = this.reportForm.value;
 
-            const newReq = await this.data.addMaintenanceRequest({
+            await this.data.addMaintenanceRequest({
                 roomId: val.roomId,
                 description: val.description,
                 priority: val.priority,
                 reportedBy: this.auth.currentUser()?.username || 'System'
             });
 
-            if (newReq) {
+            {
+                const roomNumber = this.data.rooms().find(r => r.id === val.roomId)?.roomNumber || 'Unknown';
                 // Simulate AI Email Dispatch
-                const emailBody = await this.ai.draftMaintenanceAlert(newReq);
+                // We'll construct a temp object for the email draft if needed, or just pass description/room
+                const tempReq: any = {
+                    roomNumber,
+                    description: val.description,
+                    priority: val.priority
+                };
+
+                const emailBody = await this.ai.draftMaintenanceAlert(tempReq);
                 console.log('--- EMAIL SIMULATION ---');
                 console.log(`To: ${this.data.hotelConfig().maintenanceEmail}`);
-                console.log(`Subject: New Work Order - Room ${newReq.roomNumber}`);
+                console.log(`Subject: New Work Order - Room ${roomNumber}`);
                 console.log(emailBody);
 
                 // Simulate network delay for "sending"

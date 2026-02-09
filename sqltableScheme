@@ -1,0 +1,336 @@
+-- =======================================================================================
+-- CARDEA PMS SCHEMA v2.0 - MULTI-TENANT & RBAC EDITION
+-- Dialect: PostgreSQL (Supabase)
+-- Author: Gemini (Assisting Jason Ruiz)
+-- Description: Multi-tenant SaaS architecture with strict Organization & Property isolation.
+-- =======================================================================================
+
+-- =============================================
+-- 1. MULTI-TENANCY CORE (The "SaaS" Layer)
+-- =============================================
+
+-- An Organization is a Hotel Chain (e.g., "Hilton Global" or "Ruiz Resorts")
+CREATE TABLE organizations (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    subdomain VARCHAR(100) UNIQUE, -- e.g., 'ruiz-resorts'.cardea.app
+    subscription_plan VARCHAR(50) DEFAULT 'FREE', -- FREE, PRO, ENTERPRISE
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
+-- 2. IAM & RBAC (Role-Based Access Control)
+-- =============================================
+
+-- Permissions are fixed system-wide constants (defined by Developers)
+CREATE TABLE permissions (
+    id SERIAL PRIMARY KEY,
+    slug VARCHAR(100) UNIQUE NOT NULL, -- e.g., 'org.billing.read', 'property.inventory.edit'
+    description TEXT
+);
+
+-- Roles can be System Defaults OR Custom created by an Organization
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id) ON DELETE CASCADE, -- Null = System Role (Global)
+    name VARCHAR(50) NOT NULL, -- 'General Manager', 'Housekeeper'
+    description TEXT,
+    is_system_role BOOLEAN DEFAULT FALSE -- If TRUE, cannot be edited by tenants
+);
+
+CREATE TABLE role_permissions (
+    role_id INT REFERENCES roles(id) ON DELETE CASCADE,
+    permission_id INT REFERENCES permissions(id) ON DELETE CASCADE,
+    PRIMARY KEY (role_id, permission_id)
+);
+
+-- Users: Synced with Supabase Auth (auth.users)
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Matches Supabase auth.uid()
+    email VARCHAR(255) UNIQUE NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    is_super_admin BOOLEAN DEFAULT FALSE, -- Platform owner (You)
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Link Users to Organizations
+-- A user can belong to multiple organizations (e.g., a Consultant)
+CREATE TABLE organization_members (
+    organization_id BIGINT REFERENCES organizations(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    is_owner BOOLEAN DEFAULT FALSE, -- Can manage billing/subscription
+    joined_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (organization_id, user_id)
+);
+
+-- =============================================
+-- 3. PROPERTY LAYER
+-- =============================================
+
+CREATE TABLE properties (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id) ON DELETE CASCADE, -- CRITICAL for Tenant Isolation
+    name VARCHAR(255) NOT NULL,
+    address_line_1 VARCHAR(255),
+    city VARCHAR(100),
+    state VARCHAR(100),
+    zip_code VARCHAR(20),
+    country_code CHAR(2),
+    timezone VARCHAR(50) DEFAULT 'UTC',
+    base_currency CHAR(3) DEFAULT 'USD',
+    channex_property_id VARCHAR(100),
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Context-Aware Role Assignment
+-- This controls "Who can do what" at "Which level"
+CREATE TABLE user_roles (
+    id BIGSERIAL PRIMARY KEY,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    role_id INT REFERENCES roles(id) ON DELETE CASCADE,
+    organization_id BIGINT REFERENCES organizations(id) ON DELETE CASCADE,
+    property_id BIGINT REFERENCES properties(id) ON DELETE CASCADE, -- Null = Role applies to WHOLE Org
+    assigned_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    -- Constraint: A user cannot have the same role twice in the same context
+    UNIQUE (user_id, role_id, organization_id, property_id)
+);
+
+-- Time Tracking (Linked to User + Property)
+CREATE TABLE staff_time_tracking (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id), -- For faster RLS
+    property_id BIGINT REFERENCES properties(id),
+    user_id UUID REFERENCES users(id),
+    clock_in TIMESTAMPTZ NOT NULL,
+    clock_out TIMESTAMPTZ,
+    total_hours DECIMAL(5,2),
+    status VARCHAR(20) DEFAULT 'OPEN'
+);
+
+-- =============================================
+-- 4. INVENTORY & ROOMS
+-- =============================================
+
+CREATE TABLE room_types (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id), -- Denormalized for RLS speed
+    property_id BIGINT REFERENCES properties(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    occupancy_adults INT DEFAULT 2,
+    base_price DECIMAL(10,2) NOT NULL,
+    channex_room_type_id VARCHAR(100)
+);
+
+CREATE TABLE rooms (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id),
+    property_id BIGINT REFERENCES properties(id),
+    room_type_id BIGINT REFERENCES room_types(id),
+    room_number VARCHAR(20) NOT NULL,
+    status VARCHAR(20) DEFAULT 'CLEAN'
+);
+
+-- =============================================
+-- 5. OTA DISTRIBUTION
+-- =============================================
+
+CREATE TABLE channels (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL, -- Booking.com, Expedia
+    slug VARCHAR(50) UNIQUE
+);
+
+CREATE TABLE channel_mappings (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id),
+    property_id BIGINT REFERENCES properties(id),
+    channel_id INT REFERENCES channels(id),
+    local_room_type_id BIGINT REFERENCES room_types(id),
+    remote_room_type_id VARCHAR(100),
+    sync_status VARCHAR(20) DEFAULT 'SYNCED'
+);
+
+CREATE TABLE daily_inventory_cache (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id),
+    property_id BIGINT REFERENCES properties(id),
+    room_type_id BIGINT REFERENCES room_types(id),
+    date DATE NOT NULL,
+    available_count INT NOT NULL,
+    price DECIMAL(10,2),
+    UNIQUE(room_type_id, date)
+);
+
+-- =============================================
+-- 6. PRICING & BOOKINGS
+-- =============================================
+
+CREATE TABLE rate_plans (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id),
+    property_id BIGINT REFERENCES properties(id),
+    name VARCHAR(100) NOT NULL,
+    is_derived BOOLEAN DEFAULT FALSE,
+    derivation_rule VARCHAR(255)
+);
+
+CREATE TABLE guests (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id), -- Guests belong to the Chain (Org)
+    property_id BIGINT REFERENCES properties(id), -- The property where they first stayed
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    email VARCHAR(255),
+    phone VARCHAR(20),
+    is_vip BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE bookings (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id), -- RLS Pivot
+    property_id BIGINT REFERENCES properties(id),
+    guest_id BIGINT REFERENCES guests(id),
+    status VARCHAR(20) NOT NULL,
+    check_in_date DATE NOT NULL,
+    check_out_date DATE NOT NULL,
+    total_amount DECIMAL(10,2),
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE booking_rooms (
+    id BIGSERIAL PRIMARY KEY,
+    booking_id BIGINT REFERENCES bookings(id) ON DELETE CASCADE,
+    room_type_id BIGINT REFERENCES room_types(id),
+    room_id BIGINT REFERENCES rooms(id),
+    price_per_night DECIMAL(10,2)
+);
+
+-- =============================================
+-- 7. OPERATIONS & ACCOUNTING
+-- =============================================
+
+CREATE TABLE housekeeping_tasks (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id),
+    property_id BIGINT REFERENCES properties(id),
+    room_id BIGINT REFERENCES rooms(id),
+    assigned_to_user_id UUID REFERENCES users(id),
+    status VARCHAR(20) DEFAULT 'PENDING',
+    scheduled_date DATE
+);
+
+CREATE TABLE accounts (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id),
+    property_id BIGINT REFERENCES properties(id),
+    code VARCHAR(20) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    type VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE folios (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id),
+    property_id BIGINT REFERENCES properties(id),
+    booking_id BIGINT REFERENCES bookings(id),
+    status VARCHAR(20) DEFAULT 'OPEN'
+);
+
+CREATE TABLE journal_entries (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id),
+    property_id BIGINT REFERENCES properties(id),
+    date DATE NOT NULL,
+    description TEXT,
+    posted_by_user_id UUID REFERENCES users(id)
+);
+
+CREATE TABLE journal_lines (
+    id BIGSERIAL PRIMARY KEY,
+    journal_entry_id BIGINT REFERENCES journal_entries(id) ON DELETE CASCADE,
+    account_id BIGINT REFERENCES accounts(id),
+    debit DECIMAL(12,2) DEFAULT 0.00,
+    credit DECIMAL(12,2) DEFAULT 0.00
+);
+
+-- =============================================
+-- 8. SYSTEM LOGS (AUDIT)
+-- =============================================
+
+CREATE TABLE audit_logs (
+    id BIGSERIAL PRIMARY KEY,
+    organization_id BIGINT REFERENCES organizations(id), -- Audit logs must be tenant-scoped
+    user_id UUID REFERENCES users(id),
+    action VARCHAR(50),
+    table_name VARCHAR(50),
+    record_id BIGINT,
+    old_values JSONB,
+    new_values JSONB,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
+-- 9. SECURITY & RLS (Supabase Native)
+-- =============================================
+
+-- Enable RLS on core tables
+ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE guests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE daily_inventory_cache ENABLE ROW LEVEL SECURITY;
+ALTER TABLE journal_entries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE staff_time_tracking ENABLE ROW LEVEL SECURITY;
+
+-- --------------------------------------------------------
+-- RLS HELPER FUNCTIONS (Database Logic Layer)
+-- --------------------------------------------------------
+
+-- Function 1: Get the Organization IDs the current user belongs to
+CREATE OR REPLACE FUNCTION get_my_org_ids()
+RETURNS SETOF BIGINT AS $$
+BEGIN
+  RETURN QUERY SELECT organization_id FROM organization_members WHERE user_id = auth.uid();
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function 2: Check if user has permission for a specific property
+-- Usage: is_property_member(123)
+CREATE OR REPLACE FUNCTION is_property_member(_property_id BIGINT)
+RETURNS BOOLEAN AS $$
+DECLARE
+  has_access BOOLEAN;
+BEGIN
+  SELECT EXISTS (
+    SELECT 1 FROM user_roles
+    WHERE user_id = auth.uid()
+    AND (property_id = _property_id OR property_id IS NULL) -- NULL means Org-wide access
+    AND organization_id = (SELECT organization_id FROM properties WHERE id = _property_id)
+  ) INTO has_access;
+  RETURN has_access;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- --------------------------------------------------------
+-- SAMPLE RLS POLICIES (How isolation is enforced)
+-- --------------------------------------------------------
+
+-- POLICY: "Tenants can only see their own Organizations"
+-- CREATE POLICY "Tenant Isolation" ON organizations
+-- FOR SELECT USING (id IN (SELECT get_my_org_ids()));
+
+-- POLICY: "Users can only see Properties they are assigned to (or whole org)"
+-- CREATE POLICY "Property Isolation" ON properties
+-- FOR SELECT USING (
+--   organization_id IN (SELECT get_my_org_ids())
+-- );
+
+-- POLICY: "Bookings are strictly isolated by Organization AND Property permissions"
+-- CREATE POLICY "Booking Isolation" ON bookings
+-- FOR ALL USING (
+--   organization_id IN (SELECT get_my_org_ids()) 
+--   AND is_property_member(property_id)
+-- );

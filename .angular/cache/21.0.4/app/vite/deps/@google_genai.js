@@ -1,4 +1,4 @@
-import "./chunk-653SOEEV.js";
+import "./chunk-GOMI4DH3.js";
 
 // node_modules/@google/genai/dist/web/index.mjs
 var _defaultBaseGeminiUrl = void 0;

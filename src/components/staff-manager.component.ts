@@ -611,7 +611,10 @@ export class StaffManagerComponent {
 
         // Refresh local staff reference from signal after update
         const updated = this.data.staff().find(u => u.id === s.id);
-        if (updated) this.selectedStaff.set(updated);
+        if (updated) {
+            const current = this.selectedStaff();
+            this.selectedStaff.set({ ...current, ...updated } as Staff);
+        }
     }
 
     resetKiosk() {
