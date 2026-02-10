@@ -146,24 +146,9 @@ export class LoginComponent {
       this.error.set(true);
       this.loading.set(false);
 
-      console.error('Full Auth/Sync Error:', err);
-      console.log('Error Code:', err.code);
-      console.log('Error Message:', err.message);
-
-      // Handle specific error codes
-      if (err.code === 'auth/network-request-failed') {
-        this.errorMessage.set('Unable to connect to login server. Please ensure emulators are running and try again.');
-      } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        this.errorMessage.set('Invalid email or password. Please check your credentials.');
-      } else if (err.code === 'auth/email-already-in-use') {
-        this.errorMessage.set('This email is already in use. Please sign in instead.');
-      } else if (err.code === 'auth/too-many-requests') {
-        this.errorMessage.set('Too many failed attempts. Please try again later.');
-      } else if (err.message && (err.message as string).includes('Security check')) {
-        this.errorMessage.set(err.message);
-      } else {
-        this.errorMessage.set('An error occurred during authentication. Please try again.');
-      }
+      console.error('Auth Error:', err);
+      // Supabase returns a message property
+      this.errorMessage.set(err.message || 'An error occurred during authentication.');
     }
   }
 }
