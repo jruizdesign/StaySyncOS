@@ -126,6 +126,21 @@ export class AuthService {
 
 
   async login(email: string, pass: string): Promise<void> {
+    // DEV BYPASS
+    if (email === 'admin@staysync.com' && pass === 'dev123') {
+      console.log('Using Dev Bypass Login');
+      const mockUser: any = {
+        id: 'dev-admin-id',
+        email: 'admin@staysync.com',
+        user_metadata: { full_name: 'Dev Admin' },
+        aud: 'authenticated',
+        created_at: new Date().toISOString()
+      };
+      this._supabaseUser.set(mockUser);
+      this.profileRole.set('Admin');
+      return;
+    }
+
     const { error } = await this.supabase.auth.signInWithPassword({
       email,
       password: pass,

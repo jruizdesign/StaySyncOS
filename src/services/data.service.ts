@@ -204,209 +204,127 @@ export class DataService {
     window.addEventListener('offline', () => this.isOnline.set(false));
   }
 
-  // --- GENERIC QUERY HELPER ---
-  private createQuery<T>(
-    tableName: string,
-    queryFn: (query: any, hotelId: string) => any,
-    transformFn: (data: any[]) => T,
-    initialValue: T
-  ): QueryResult<T> {
-    const data = signal<T | undefined>(initialValue);
-    const isLoading = signal<boolean>(false);
-    const error = signal<any>(null);
+  currentHotelQuery = injectQuery(() => ({
+    queryKey: ['hotel', this.currentHotelId()],
+    queryFn: async () => {
+      const hid = this.currentHotelId();
+      if (!hid) return { hotel: null };
+      const { data, error } = await this.supabase.from('properties').select('*').eq('id', hid).single();
+      if (error) throw error;
+      return {
+        hotel: {
+          id: data.id,
+          organizationId: data.organization_id, // Ensure snake_case matches DB result if untyped
+          name: data.name,
+          address: data.location || '',
+          email: '',
+          phoneNumber: '',
+          maintenanceEmail: '',
+          demoMode: false
+        }
+      };
+    },
+    enabled: !!this.currentHotelId()
+  }));
 
-    const fetchData = async () => {
-      const hotelId = this.currentHotelId();
-      if (!hotelId) return;
-
-      isLoading.set(true);
-      try {
-        let query = this.supabase.from(tableName).select('*');
-        query = queryFn(query, hotelId);
-
-        const { data: result, error: err } = await query;
-        if (err) throw err;
-
-        data.set(transformFn(result || []));
-        error.set(null);
-      } catch (e) {
-        console.error(`Error fetching ${tableName}:`, e);
-        error.set(e);
-      } finally {
-        isLoading.set(false);
-      }
-    };
-
-    const refetch = fetchData;
-
-    effect(() => {
-      // Trigger fetch when hotelId changes
-      if (this.currentHotelId()) {
-        fetchData();
-      }
-    }, { allowSignalWrites: true });
-
-    return { data, isLoading, error, refetch, isFetching: isLoading };
-  }
+  timeLogsQuery = { data: signal({ timeLogs: [] }), isLoading: signal(false), error: signal(null), refetch: async () => { } };
 
   // --- QUERIES ---
 
-  roomsQuery = this.createQuery(
-    'rooms',
-    // Join room_types to get info
-    (q, hid) => q.eq('property_id', hid).select('*, room_types(name, base_price, occupancy_adults)'),
-    (rows) => ({
-      rooms: rows.map(r => ({
-        id: r.id,
-        hotelId: r.property_id,
-        roomNumber: r.room_number,
-        roomTypeId: r.room_type_id,
-        roomType: r.room_types?.name || 'Unknown',
-        status: r.status ? (r.status.charAt(0).toUpperCase() + r.status.slice(1)) : 'Available',
-        dailyRate: r.room_types?.base_price || 0,
-        capacity: r.room_types?.occupancy_adults || 2
-      }))
-    }),
-    { rooms: [] }
-  );
+  roomTypesQuery = injectQuery(() => ({
+    queryKey: ['roomTypes', this.currentHotelId()],
+    queryFn: async () => {
+      const { data, error } = await this.supabase.from('room_types').select('*').eq('property_id', this.currentHotelId());
+      if (error) throw error;
+      return { roomTypes: data || [] };
+    },
+    enabled: !!this.currentHotelId()
+  }));
 
-  roomTypesQuery = this.createQuery(
-    'room_types',
-    (q, hid) => q.eq('property_id', hid),
-    (rows) => ({ roomTypes: rows }),
-    { roomTypes: [] }
-  );
+  roomsQuery = injectQuery(() => ({
+    queryKey: ['rooms', this.currentHotelId()],
+    queryFn: async () => {
+      const { data, error } = await this.supabase
+        .from('rooms')
+        .select(`*, room_types ( name, price_per_night, max_occupancy )`)
+        .eq('property_id', this.currentHotelId());
+      if (error) throw error;
+      return {
+        rooms: (data || []).map((r: any) => ({
+          id: r.id,
+          hotelId: r.property_id,
+          roomNumber: r.room_number || r.number,
+          roomTypeId: r.room_type_id,
+          status: r.status,
+          roomType: r.room_types?.name,
+          dailyRate: r.room_types?.price_per_night,
+          capacity: r.room_types?.max_occupancy || 2
+        }))
+      };
+    },
+    enabled: !!this.currentHotelId()
+  }));
 
-  currentHotelQuery = this.createQuery(
-    'properties',
-    (q, hid) => q.eq('id', hid).single(),
-    (data: any) => ({
-      hotel: {
-        id: data.id,
-        organizationId: data.organization_id,
-        name: data.name,
-        address: data.address_line_1, // Schema has address_line_1
-        phoneNumber: '', // Not in property table? check accounts or config? defaulting to empty
-        email: '',
-        maintenanceEmail: '',
-        demoMode: false // Not in property table
-      }
-    }),
-    { hotel: {} as any }
-  );
+  guestsQuery = injectQuery(() => ({
+    queryKey: ['guests', this.currentHotelId()],
+    queryFn: async () => {
+      const { data, error } = await this.supabase.from('guests').select('*').eq('property_id', this.currentHotelId());
+      if (error) throw error;
+      return { guests: (data || []).map((g: any) => ({ ...g, firstName: g.first_name, lastName: g.last_name, isVip: g.vip_status })) };
+    },
+    enabled: !!this.currentHotelId()
+  }));
 
-  guestsQuery = this.createQuery(
-    'guests',
-    (q, hid) => q.eq('property_id', hid),
-    (rows) => ({
-      guests: rows.map(g => ({
-        id: g.id,
-        hotelId: g.property_id,
-        firstName: g.first_name,
-        lastName: g.last_name,
-        name: `${g.first_name} ${g.last_name}`,
-        email: g.email || '',
-        phone: g.phone || '', // Schema has 'phone'
-        phoneNumber: g.phone || '',
-        isVip: g.is_vip || false,
-        notes: '', // Not in guest table in JSON
-        history: []
-      }))
-    }),
-    { guests: [] }
-  );
-
-  bookingsQuery = this.createQuery(
-    'bookings',
-    // We need to join booking_rooms to get the room. 
-    // bookings(..., guests(...), booking_rooms(room_id, rooms(room_number)))
-    (q, hid) => q.eq('property_id', hid).select('*, guest:guests(first_name, last_name, id), booking_rooms(room_id, room:rooms(id, room_number))'),
-    (rows) => ({
-      bookings: rows.map(b => {
-        // booking_rooms should be an array. Take the first one.
-        const firstRoom = b.booking_rooms && b.booking_rooms.length > 0 ? b.booking_rooms[0] : null;
-        return {
+  bookingsQuery = injectQuery(() => ({
+    queryKey: ['bookings', this.currentHotelId()],
+    queryFn: async () => {
+      const { data, error } = await this.supabase
+        .from('reservations')
+        .select(`*, guest:guests(first_name, last_name, id), room:rooms(id, room_number)`)
+        .eq('property_id', this.currentHotelId());
+      if (error) throw error;
+      return {
+        bookings: (data || []).map((b: any) => ({
           id: b.id,
-          hotelId: b.property_id,
           guestId: b.guest_id,
-          roomId: firstRoom?.room_id,
-          guest: { id: b.guest_id, firstName: b.guest?.first_name, lastName: b.guest?.last_name },
-          checkInDate: b.check_in_date,
-          checkOutDate: b.check_out_date,
-          checkOutActual: null, // Missing in schema
-          status: (b.status === 'confirmed' ? 'Reserved'
-            : b.status === 'checked_in' ? 'Active'
-              : b.status === 'checked_out' ? 'Completed'
-                : b.status === 'cancelled' ? 'Cancelled'
-                  : b.status) as any,
-          totalPaid: b.total_amount || 0,
-          isIndefinite: false // Not in bookings table
-        };
-      })
-    }),
-    { bookings: [] }
-  );
+          roomId: b.room_id,
+          checkInDate: b.check_in,
+          checkOutDate: b.check_out,
+          status: b.status,
+          totalPaid: b.total_amount,
+          isIndefinite: b.is_indefinite
+        }))
+      };
+    },
+    enabled: !!this.currentHotelId()
+  }));
 
+  logsQuery = injectQuery(() => ({
+    queryKey: ['audit-logs', this.hotelConfig()?.organizationId],
+    queryFn: async () => {
+      const { data, error } = await this.supabase
+        .from('system_logs')
+        .select('*')
+        .eq('property_id', this.currentHotelId())
+        .order('created_at', { ascending: false })
+        .limit(100);
+      if (error) throw error;
+      return { logs: data || [] };
+    },
+    enabled: !!this.currentHotelId()
+  }));
 
-  // Logs Query
-  logsQuery = this.createQuery(
-    'audit_logs', // mapped to audit_logs
-    (q, hid) => q.eq('organization_id', hid).order('created_at', { ascending: false }).limit(100), // using org id or prop id? JSON has both.
-    (rows) => ({
-      logs: rows.map(l => ({
-        id: l.id,
-        hotelId: l.organization_id, // or property_id
-        timestamp: l.created_at,
-        action: l.action,
-        user_id: l.user_id, // kept as user_id for now
-        table_name: l.table_name,
-        category: l.table_name || 'General', // Compat
-        user: l.user_id || 'System', // Compat
-        details: JSON.stringify(l.new_values)
-      }))
-    }),
-    { logs: [] }
-  );
+  financialDocsQuery = injectQuery(() => ({
+    queryKey: ['invoices', this.currentHotelId()],
+    queryFn: async () => {
+      const { data, error } = await this.supabase.from('invoices').select('*').eq('property_id', this.currentHotelId());
+      if (error) throw error;
+      return { financialDocuments: data || [] };
+    },
+    enabled: !!this.currentHotelId()
+  }));
 
-  staffQuery = this.createQuery(
-    'users', // fetching users as staff for now
-    (q, hid) => q.select('*'), // Filter by org/prop later
-    (rows) => ({
-      staffs: rows.map(s => ({
-        id: s.id,
-        email: s.email,
-        firstName: s.first_name,
-        lastName: s.last_name,
-        phone: s.phone,
-        role: 'Unknown', // need join with user_roles
-        status: 'Active'
-      }))
-    }),
-    { staffs: [] }
-  );
-
-  // Missing tables in schema - defaulting to empty for now
-  timeLogsQuery = { data: signal({ timeLogs: [] }), isLoading: signal(false), error: signal(null), refetch: async () => { } };
-  financialDocsQuery = this.createQuery(
-    'folios', // mapped to folios
-    (q, hid) => q.eq('property_id', hid),
-    (rows) => ({
-      financialDocuments: rows.map(f => ({
-        id: f.id,
-        hotelId: f.property_id,
-        stayId: f.booking_id,
-        guestId: '', // Need join
-        type: 'Invoice' as const,
-        number: `INV-${f.id}`,
-        date: new Date().toISOString(), // No created_at in folio json?
-        totalAmount: 0, // Need sum of lines?
-        guestName: 'Unknown',
-        items: []
-      } as FinancialDocument))
-    }),
-    { financialDocuments: [] }
-  );
-
+  staffQuery = { data: signal({ staffs: [] }), isLoading: signal(false), error: signal(null), refetch: async () => { } };
   maintenanceQuery = { data: signal({ maintenanceRequests: [] }), isLoading: signal(false), error: signal(null), refetch: async () => { } };
   shiftsQuery = { data: signal({ shifts: [] }), isLoading: signal(false), error: signal(null), refetch: async () => { } };
   housekeepingQuery = { data: signal({ housekeepingTasks: [] }), isLoading: signal(false), error: signal(null), refetch: async () => { } };
@@ -418,15 +336,15 @@ export class DataService {
   getUserByEmailQuery = { data: signal(null), isLoading: signal(false), error: signal(null), refetch: async () => { } };
 
 
+
+
   // --- MUTATIONS ---
   // To replace injectCreate... we expose methods directly or objects with mutate/mutateAsync
 
   createRoomMut = {
     mutateAsync: async (vars: any) => {
       // room_types needs to exist first?
-      const orgId = this.hotelConfig().organizationId;
       const { error } = await this.supabase.from('rooms').insert({
-        organization_id: orgId, // Added for schema alignment
         property_id: vars.hotelId,
         room_number: vars.roomNumber,
         status: vars.status,
@@ -454,9 +372,7 @@ export class DataService {
   linkUserToHotelMut = { mutateAsync: async (v: any) => { } };
   createGuestMut = {
     mutateAsync: async (v: any) => {
-      const orgId = this.hotelConfig().organizationId;
       const { error } = await this.supabase.from('guests').insert({
-        organization_id: orgId,
         property_id: v.hotelId,
         first_name: v.first_name,
         last_name: v.last_name,
@@ -501,25 +417,18 @@ export class DataService {
             : v.status === 'Cancelled' ? 'cancelled'
               : v.status || 'confirmed';
 
-      const orgId = this.hotelConfig().organizationId;
-      const { data, error } = await this.supabase.from('bookings').insert({
-        organization_id: orgId,
+      const { data, error } = await this.supabase.from('reservations').insert({
         property_id: v.hotelId,
         guest_id: v.guestId,
-        check_in_date: v.checkInDate,
-        check_out_date: v.checkOutDate,
+        room_id: v.roomId,
+        check_in: v.checkInDate,
+        check_out: v.checkOutDate,
         status: dbStatus,
         total_amount: v.totalPaid || 0
       }).select().single();
 
       if (error) throw error;
-
-      if (v.roomId) {
-        await this.supabase.from('booking_rooms').insert({
-          booking_id: data.id,
-          room_id: v.roomId
-        });
-      }
+      // booking_rooms table does not exist in current schema, room_id is on reservations table
       this.bookingsQuery.refetch();
       this.roomsQuery.refetch();
     }
@@ -544,12 +453,12 @@ export class DataService {
                 : s;
       }
 
-      if (v.checkInDate) updatePayload.check_in_date = v.checkInDate;
-      if (v.checkOutDate) updatePayload.check_out_date = v.checkOutDate;
+      if (v.checkInDate) updatePayload.check_in = v.checkInDate;
+      if (v.checkOutDate) updatePayload.check_out = v.checkOutDate;
       if (v.totalPaid !== undefined) updatePayload.total_amount = v.totalPaid;
 
       if (Object.keys(updatePayload).length > 0) {
-        const { error } = await this.supabase.from('bookings').update(updatePayload).eq('id', v.id);
+        const { error } = await this.supabase.from('reservations').update(updatePayload).eq('id', v.id);
         if (error) throw error;
       }
       this.bookingsQuery.refetch();
@@ -594,7 +503,10 @@ export class DataService {
   async fetchUserProfile(uid: string) {
     const { data } = await this.supabase.from('users').select('*').eq('id', uid).single();
     if (data) {
-      this.userProfile.set(data);
+      this.userProfile.set({
+        ...data,
+        role: data.is_super_admin ? 'SuperAdmin' : 'Staff' // Map role from is_super_admin
+      });
     }
   }
 
@@ -666,7 +578,7 @@ export class DataService {
     const data = this.currentHotelQuery.data()?.hotel;
     return {
       id: data?.id,
-      organizationId: data?.organizationId,
+      // organizationId: data?.organizationId, // Not in properties table
       name: data?.name || 'StaySyncOS Hotel',
       address: data?.address || '',
       email: data?.email || '',
@@ -677,16 +589,14 @@ export class DataService {
   });
 
   log(category: string, action: string, details: string) {
-    const hotelId = this.currentHotelId(); // property_id
-    const orgId = this.hotelConfig().organizationId;
+    const hotelId = this.currentHotelId();
+    if (!hotelId) return;
 
-    if (!orgId) return; // Audit logs need organization_id
-
-    this.supabase.from('audit_logs').insert({
-      organization_id: orgId,
-      action: action,
-      table_name: category, // Mapping category to table_name loosely
-      new_values: { details: details } // Schema uses new_values JSONB
+    this.supabase.from('system_logs').insert({
+      property_id: hotelId,
+      type: category,
+      event: action,
+      details: details
       // user_id?
     }).then(res => {
       //
@@ -696,16 +606,9 @@ export class DataService {
   async logAiUsage(feature: string, model: string, promptTokens: number, responseTokens: number) {
     const hotelId = this.currentHotelId();
     if (!hotelId) return;
-    // Attempt to log, ignore if table missing
-    this.supabase.from('ai_usage_logs').insert({
-      organization_id: hotelId,
-      feature,
-      model,
-      prompt_tokens: promptTokens,
-      response_tokens: responseTokens
-    }).then(({ error }) => {
-      if (error) console.warn("Failed to log AI usage (table might be missing)", error.message);
-    });
+    // Table ai_usage_logs does not exist in schema
+    // this.supabase.from('ai_usage_logs').insert({ ... });
+    // AI usage logging disabled as table does not exist
   }
 
   // Legacy methods (kept for compatibility)
@@ -722,8 +625,8 @@ export class DataService {
         const { data, error } = await this.supabase.from('room_types').insert({
           property_id: this.currentHotelId(),
           name: room.roomType,
-          base_price: room.dailyRate || 100,
-          occupancy_adults: room.capacity || 2
+          price_per_night: room.dailyRate || 100,
+          max_occupancy: room.capacity || 2
         }).select().single();
         if (data) typeId = data.id;
       }
@@ -1014,4 +917,42 @@ export class DataService {
   async updateMaintenanceRequest(id: string, updates: any) {
     // Stub
   }
+}
+
+// --- InjectQuery Implementation ---
+export function injectQuery<T>(optionsFn: () => { queryKey: any[], queryFn: () => Promise<T>, enabled?: boolean }) {
+  const data = signal<T | undefined>(undefined);
+  const isLoading = signal(false);
+  const error = signal<any>(null);
+  const isFetching = signal(false);
+
+  // Store options in a computed to track dependencies AND refetch when they change
+  const optionsSignal = computed(() => optionsFn());
+
+  const refetch = async () => {
+    const opts = optionsFn(); // Get latest options
+    if (opts.enabled === false) return;
+    isLoading.set(true);
+    isFetching.set(true);
+    try {
+      const res = await opts.queryFn();
+      data.set(res);
+      error.set(null);
+    } catch (e) {
+      console.error('Query Error:', e);
+      error.set(e);
+    } finally {
+      isLoading.set(false);
+      isFetching.set(false);
+    }
+  };
+
+  effect(() => {
+    const opts = optionsSignal(); // Dependency tracking
+    if (opts.enabled !== false) {
+      refetch();
+    }
+  }, { allowSignalWrites: true });
+
+  return { data, isLoading, error, refetch, isFetching };
 }
