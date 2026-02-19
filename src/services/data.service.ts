@@ -346,7 +346,7 @@ export class DataService {
       // room_types needs to exist first?
       const { error } = await this.supabase.from('rooms').insert({
         property_id: vars.hotelId,
-        room_number: vars.roomNumber,
+        number: vars.roomNumber,
         status: vars.status,
         room_type_id: vars.roomTypeId // Required
       });
