@@ -80,15 +80,14 @@ export class AiService {
   }
 
   async draftMaintenanceAlert(req: MaintenanceRequest): Promise<string> {
-    if (!this.apiKey) return `Maintenance Request for Room ${req.roomNumber}: ${req.description}`;
+    if (!this.apiKey) return `Maintenance Request for Room ${req.room_number}: ${req.description}`;
 
     try {
       const prompt = `
             Write a formal internal maintenance work order email.
-            Details:
-            - Room: ${req.roomNumber}
-            - Priority: ${req.priority}
-            - Issue: ${req.description}
+            - Request ID: ${req.id}
+            - Room: ${req.room_number}
+            - Description: ${req.description}
             - Reported By: ${req.reportedBy}
             
             Keep it actionable and concise.
