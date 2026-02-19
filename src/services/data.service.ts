@@ -187,7 +187,7 @@ export class DataService {
     if (this.selectedHotelId()) return this.selectedHotelId();
     const profile = this.userProfile();
     if (profile?.role === 'SuperAdmin') return null;
-    if (profile?.property_id) return profile.property_id;
+    if (profile?.property_uuid) return profile.property_uuid;
     return undefined;
   });
 
@@ -209,12 +209,32 @@ export class DataService {
     queryFn: async () => {
       const hid = this.currentHotelId();
       if (!hid) return { hotel: null };
-      const { data, error } = await this.supabase.from('properties').select('*').eq('id', hid).single();
+      // Select id_uuid as the ID for the application
+      const { data, error } = await this.supabase.from('properties').select('*, id:id_uuid').eq('id_uuid', hid).single();
+
+      // If by chance the user is still using an old integer ID in local state, try fetching by that backup
+      if (error && hid.length < 10) { // heuristics for int vs uuid
+        const { data: dataInt, error: errorInt } = await this.supabase.from('properties').select('*, id:id_uuid').eq('id', hid).single();
+        if (errorInt) throw error;
+        return {
+          hotel: {
+            id: dataInt.id_uuid, // Use UUID
+            organizationId: dataInt.organization_id,
+            name: dataInt.name,
+            address: dataInt.location || '',
+            email: '',
+            phoneNumber: '',
+            maintenanceEmail: '',
+            demoMode: false
+          }
+        };
+      }
+
       if (error) throw error;
       return {
         hotel: {
-          id: data.id,
-          organizationId: data.organization_id, // Ensure snake_case matches DB result if untyped
+          id: data.id, // This is id_uuid aliased
+          organizationId: data.organization_id,
           name: data.name,
           address: data.location || '',
           email: '',
@@ -234,7 +254,7 @@ export class DataService {
   roomTypesQuery = injectQuery(() => ({
     queryKey: ['roomTypes', this.currentHotelId()],
     queryFn: async () => {
-      const { data, error } = await this.supabase.from('room_types').select('*').eq('property_id', this.currentHotelId());
+      const { data, error } = await this.supabase.from('room_types').select('*').eq('property_uuid', this.currentHotelId());
       if (error) throw error;
       return { roomTypes: data || [] };
     },
@@ -247,12 +267,12 @@ export class DataService {
       const { data, error } = await this.supabase
         .from('rooms')
         .select(`*, room_types ( name, price_per_night, max_occupancy )`)
-        .eq('property_id', this.currentHotelId());
+        .eq('property_uuid', this.currentHotelId());
       if (error) throw error;
       return {
         rooms: (data || []).map((r: any) => ({
           id: r.id,
-          hotelId: r.property_id,
+          hotelId: r.property_uuid,
           roomNumber: r.room_number || r.number,
           roomTypeId: r.room_type_id,
           status: r.status,
@@ -268,7 +288,7 @@ export class DataService {
   guestsQuery = injectQuery(() => ({
     queryKey: ['guests', this.currentHotelId()],
     queryFn: async () => {
-      const { data, error } = await this.supabase.from('guests').select('*').eq('property_id', this.currentHotelId());
+      const { data, error } = await this.supabase.from('guests').select('*').eq('property_uuid', this.currentHotelId());
       if (error) throw error;
       return { guests: (data || []).map((g: any) => ({ ...g, firstName: g.first_name, lastName: g.last_name, isVip: g.vip_status })) };
     },
@@ -281,7 +301,7 @@ export class DataService {
       const { data, error } = await this.supabase
         .from('reservations')
         .select(`*, guest:guests(first_name, last_name, id), room:rooms(id, room_number)`)
-        .eq('property_id', this.currentHotelId());
+        .eq('property_uuid', this.currentHotelId());
       if (error) throw error;
       return {
         bookings: (data || []).map((b: any) => ({
@@ -305,7 +325,7 @@ export class DataService {
       const { data, error } = await this.supabase
         .from('system_logs')
         .select('*')
-        .eq('property_id', this.currentHotelId())
+        .eq('property_uuid', this.currentHotelId())
         .order('created_at', { ascending: false })
         .limit(100);
       if (error) throw error;
@@ -317,7 +337,7 @@ export class DataService {
   financialDocsQuery = injectQuery(() => ({
     queryKey: ['invoices', this.currentHotelId()],
     queryFn: async () => {
-      const { data, error } = await this.supabase.from('invoices').select('*').eq('property_id', this.currentHotelId());
+      const { data, error } = await this.supabase.from('invoices').select('*').eq('property_uuid', this.currentHotelId());
       if (error) throw error;
       return { financialDocuments: data || [] };
     },
@@ -345,7 +365,7 @@ export class DataService {
     mutateAsync: async (vars: any) => {
       // room_types needs to exist first?
       const { error } = await this.supabase.from('rooms').insert({
-        property_id: vars.hotelId,
+        property_uuid: vars.hotelId,
         number: vars.roomNumber,
         status: vars.status,
         room_type_id: vars.roomTypeId // Required
@@ -373,7 +393,7 @@ export class DataService {
   createGuestMut = {
     mutateAsync: async (v: any) => {
       const { error } = await this.supabase.from('guests').insert({
-        property_id: v.hotelId,
+        property_uuid: v.hotelId,
         first_name: v.first_name,
         last_name: v.last_name,
         email: v.email,
@@ -418,7 +438,7 @@ export class DataService {
               : v.status || 'confirmed';
 
       const { data, error } = await this.supabase.from('reservations').insert({
-        property_id: v.hotelId,
+        property_uuid: v.hotelId,
         guest_id: v.guestId,
         room_id: v.roomId,
         check_in: v.checkInDate,
@@ -502,10 +522,13 @@ export class DataService {
 
   async fetchUserProfile(uid: string) {
     const { data } = await this.supabase.from('users').select('*').eq('id', uid).single();
+    const { data: roleData } = await this.supabase.from('user_roles').select('property_uuid, roles(name)').eq('user_id', uid).maybeSingle();
+
     if (data) {
       this.userProfile.set({
         ...data,
-        role: data.is_super_admin ? 'SuperAdmin' : 'Staff' // Map role from is_super_admin
+        role: data.is_super_admin ? 'SuperAdmin' : (Array.isArray(roleData?.roles) ? roleData?.roles[0]?.name : (roleData?.roles as any)?.name) || 'Staff',
+        property_uuid: roleData?.property_uuid
       });
     }
   }
@@ -593,7 +616,7 @@ export class DataService {
     if (!hotelId) return;
 
     this.supabase.from('system_logs').insert({
-      property_id: hotelId,
+      property_uuid: hotelId,
       type: category,
       event: action,
       details: details
@@ -696,7 +719,7 @@ export class DataService {
 
   async addRoomsBulk(rooms: any[]) {
     const cleanRooms = rooms.map(r => ({
-      property_id: this.currentHotelId(),
+      property_uuid: this.currentHotelId(),
       organization_id: this.hotelConfig().organizationId,
       room_number: r.roomNumber,
       room_type_id: r.roomTypeId, // Ensure caller passes this
